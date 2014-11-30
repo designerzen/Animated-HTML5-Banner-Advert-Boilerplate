@@ -1,0 +1,103 @@
+@col-blue:      #071039;
+@col-light:     #fff;
+@col-dark:      #000;
+@col-accent:    #32a3a3;
+@path-images:   "../img";
+
+@margin-left:   20px;
+@padding-top:   72px;
+@padding-left:  116px;
+@padding-right: 20px;
+
+// Classic formats
+@width-mpu:         300px;
+@height-mpu:        250px;
+
+// Import our other css files directly into this one
+@import "reset";
+@import "typography";
+@import "buttons";
+
+// Loading animation - removed almost immediately
+#content.loading{
+
+    .mpu{
+        background:transparent url( '@{path-images}/spinner.gif' ) no-repeat center center;
+    }
+}
+
+// Main Container (should be set to the size of the MPU)
+#content{
+
+	width:@width-mpu;
+    height:@height-mpu;
+    background:@col-blue url( '@{path-images}/wall.png' ) repeat-x;
+
+	// http://alistapart.com/article/axiomatic-css-and-lobotomized-owls
+	// All elements in the flow of the document that proceed other elements must receive a top margin of one line.
+	* + * {
+		margin-top: 1.5em;
+	}
+
+	.mpu{
+        display:block;
+        position:relative;
+		width:@width-mpu;
+		height:@height-mpu;
+        overflow:hidden;    // make sure that the elements can fall outside this
+	}
+}
+
+#first,
+#second,
+#third,
+#fourth,
+#fifth,
+#cta{
+    visibility: hidden;
+	position:absolute;
+}
+
+// Animated Elements
+#first{
+    z-index:5;
+}
+
+#second{
+    z-index:1;
+}
+
+#third{
+    z-index:3;
+}
+
+
+#fourth{
+    z-index:6;
+}
+
+#fifth{
+    z-index:6;
+}
+
+
+// This is the Call To Action Button
+#cta{
+
+    a{
+        display:block;
+        position:relative;
+    }
+
+}
+
+// Click through for FlashTrack
+#clicktagholder{
+    cursor: pointer;
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    z-index: 9999;
+}

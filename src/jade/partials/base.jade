@@ -1,0 +1,23 @@
+include doctype
+
+html(class='no-js')
+
+	head
+		meta(charset='utf-8')
+		meta(http-equiv='X-UA-Compatible', content='IE=edge')
+		title MPU
+		meta(name="description", content="")
+		meta(name="viewport", content="width=device-width, initial-scale=1")
+		//- meta(name="viewport", content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no")
+		link(rel="stylesheet", href="css/style.css")
+
+	body
+		#content.loading
+			#clicktagholder
+			block content
+
+	//- Javascripts :
+	script(src='http://cdn.flashtalking.com/frameworks/js/api/2/6/html5API.js')
+	//- script(src='scripts/vendor/TweenMax.min.js')
+	script(src='http://cdnjs.cloudflare.com/ajax/libs/gsap/1.13.2/TweenMax.min.js')
+	script(src='js/main.min.js')

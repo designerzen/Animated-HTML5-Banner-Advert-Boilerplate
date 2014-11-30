@@ -1,0 +1,20 @@
+FT.manifest({
+    "filename":"index.html",
+    "width":300,
+    "height":250,
+    "clickTagCount":1,
+    "trackingEvents":[
+        {
+            "name":"imp_sku",
+            "type":"string"
+        },
+        {
+            "name":"click_sku",
+            "type":"string"
+        },
+        {
+            "name":"feed_error",
+            "type":"string"
+        }
+    ]
+});

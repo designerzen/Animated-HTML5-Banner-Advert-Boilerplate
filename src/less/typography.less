@@ -1,0 +1,87 @@
+@font-regular:	'Helvetica-Neue';
+@font-size-base: 14px;
+
+@import "fonts";
+
+// From @import
+
+html, body{
+	border: 0;
+	font-family: @font-regular, "Helvetica-Neue", "Helvetica", Arial, sans-serif;
+	font-size: @font-size-base;
+	line-height: 1.5;
+	margin: 0;
+	padding: 0;
+}
+
+body{
+    font-size:100%;
+    line-height:18px;
+}
+
+h1,h2,h3,h4,h5,h6,p{
+    color:@col-light;
+    user-select: none;
+}
+h1{
+	font-size:1.84em;
+    line-height:34px;
+}
+
+h2{
+	font-size:1.8em;
+    line-height:32px;
+}
+
+h3{
+	font-size:1.78em;
+    line-height:32px;
+}
+
+h4{
+    //font-family: @font-light;
+	font-size:1.09em;
+    line-height:18px;
+}
+
+h5{
+    font-size:1em;
+}
+
+h6 {
+	font-size:0.75em;
+}
+
+p{
+    //font-family: @font-light;
+	font-size:0.9em;
+	font-size:0.9rem;
+}
+
+// Simple links
+a{
+    color:@col-dark;
+
+    &:hover{
+        text-decoration: none;
+        color:darken( @col-dark, 10% );
+    }
+
+    &:active, &:visitied{
+        text-decoration: none;
+    }
+}
+
+sub, sup {
+    font-size: 75%;         // Specified in % so that the sup/sup is the right size relative to the surrounding text
+    line-height: 0;         // Zero out the line-height so that it doesn't interfere with the positioning that follows
+    position: relative;     // Where the magic happens: makes all browsers position the sup/sup properly, relative to the surrounding text
+}
+
+sup {
+    top: -0.5em;            // Move the superscripted text up
+}
+
+sub {
+    bottom: -0.25em;        // Move the subscripted text down, but only half as far down as the superscript moved up
+}

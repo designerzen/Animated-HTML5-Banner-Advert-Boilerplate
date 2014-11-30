@@ -1,0 +1,49 @@
+{
+  "name": "campaign",
+  "version": "0.0.1",
+  "types": [
+    "mpu",
+    "leaderboard",
+    "skyscraper"
+  ],
+  "variants": [
+    "a",
+    "b",
+    "c",
+    "d"
+  ],
+  "description": "Gulp Based html5 Animated Banner Creator",
+  "dependencies": {},
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/designerzen/animated-html5-banner-advert-boilerplate.git"
+  },
+  "keywords": [
+    "Html5",
+    "Gulp",
+    "TweenMax",
+    "Animation"
+  ],
+  "author": "designerzen",
+  "devDependencies": {
+    "del": "^0.1.3",
+    "event-stream": "^3.1.7",
+    "fs": "0.0.2",
+    "gulp": "^3.8.8",
+    "gulp-autoprefixer": "0.0.10",
+    "gulp-concat": "^2.3.4",
+    "gulp-filesize": "0.0.6",
+    "gulp-imagemin": "^1.0.1",
+    "gulp-jade": "^0.7.0",
+    "gulp-less": "^1.3.5",
+    "gulp-livereload": "^2.1.1",
+    "gulp-newer": "^0.3.0",
+    "gulp-rename": "^1.2.0",
+    "gulp-replace": "^0.5.0",
+    "gulp-sourcemaps": "^1.1.3",
+    "gulp-uglify": "^1.0.0",
+    "gulp-zip": "^2.0.2",
+    "merge-stream": "^0.1.6",
+    "run-sequence": "^1.0.1"
+  }
+}

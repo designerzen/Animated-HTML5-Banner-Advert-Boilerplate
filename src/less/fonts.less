@@ -1,0 +1,15 @@
+@path-fonts: 	'../fonts/';
+
+@font-regular:	'frutiger_rg';
+@font-filename:	'frutivccp55rm-webfont';
+
+@font-face {
+	font-family: @font-regular;
+	src: url( '@{path-fonts}/@{font-filename}.eot');
+	src: url( '@{path-fonts}/@{font-filename}.eot?#iefix') format('embedded-opentype'),
+	url( '@{path-fonts}/@{font-filename}.woff') format('woff'),
+	url( '@{path-fonts}/@{font-filename}.ttf') format('truetype'),
+	url( '@{path-fonts}/@{font-filename}.svg#@{font-filename}g') format('svg');
+	font-weight: normal;
+	font-style: normal;
+}
