@@ -1,18 +1,35 @@
-@col-blue:      	#071039;
+// Colours
+@col-main:      	#071039;
 @col-light:    	 	#fff;
 @col-dark:      	#000;
 @col-accent:    	#32a3a3;
 
-@col-border:		#ffffff;
+@col-border:		@col-light;
 @col-bg:			@col-dark;
 
+@col-font:			@col-light;
+@col-h1:			@col-light;
+@col-h2:			@col-light;
+@col-h3:			@col-light;
+@col-h4:			@col-light;
+@col-h5:			@col-light;
+@col-h6:			@col-light;
+@col-p:				@col-light;
+
+
+// Paths
 @path-images:   	"../img";
+@path-png:   		@path-images + 'png';
+@path-jpeg:   		@path-images + 'jpg';
+@path-gif:   		@path-images + 'gif';
+
 
 // Paddings and margins for project
 @margin-top:   		20px;
 @margin-left:   	20px;
 @margin-right:   	20px;
 @margin-bottom:   	20px;
+
 
 @padding-top:   	20px;
 @padding-left:  	20px;
@@ -67,7 +84,7 @@
 #content.loading{
 
     .mpu{
-        background:transparent url( '@{path-images}/spinner.gif' ) no-repeat center center;
+        background:transparent url( '@{path-gif}spinner.gif' ) no-repeat center center;
     }
 }
 
@@ -77,10 +94,12 @@
 
 	width:100%;
     height:100%;
-    background:@col-bg url( '@{path-images}/wall.png' ) repeat-x;
+    background:@col-bg url( '@{path-png}wall.png' ) repeat-x;
 	
+	// set up main frame
 	.banner,
 	.vertical-banner,
+	.half-banner,
 	.mpu,
 	.skyscraper,
 	.leaderboard,
@@ -99,6 +118,10 @@
 	.vertical-banner{
 		width:@width-vertical-banner;
 		height:@height-vertical-banner;
+	}
+	.half-banner{
+		width:@width-half-banner;
+		height:@height-half-banner;
 	}
 	.mpu{
         width:@width-mpu;
