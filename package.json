@@ -1,17 +1,6 @@
 {
   "name": "campaign",
   "version": "0.0.1",
-  "types": [
-    "mpu",
-    "leaderboard",
-    "skyscraper"
-  ],
-  "variants": [
-    "a",
-    "b",
-    "c",
-    "d"
-  ],
   "description": "Gulp Based html5 Animated Banner Creator",
   "dependencies": {},
   "repository": {

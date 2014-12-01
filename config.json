@@ -1,7 +1,9 @@
 {
-	"name": "campaign",
+	// Set the name of the brand here
+	"brand": "Campaign",
 	"version": "0.0.1",
-	
+	"description": "Gulp Based html5 Animated Banner Creator",
+  
 	/* 
 	
 	*/ 

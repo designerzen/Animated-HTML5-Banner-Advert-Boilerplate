@@ -27,62 +27,6 @@ var defaultTypes =
   "skyscraper"
 ];
 
-
-// Default dimensions for banner adverts
-// from http://notwothesame.com/banner-sizes.htm
-// nb. feel free to resize these for your project!
-var sizes =
-{
-	// Wide and short advert
-	leaderboard : {
-		w:728,
-		h:90
-	},
-	
-	// Square advert
-	mpu : {
-		w:300,
-		h:250
-	},
-	
-	// Tall and thin advert
-	skyscraper : {
-		w:120,
-		h:600
-	},
-	
-	// Tall and fat advert
-	wideSkyscraper : {
-		w:160,
-		h:600
-	},
-	
-	// Half a page advert
-	halfPage : {
-		w:300,
-		h:600
-	},
-	
-	// Regular sized banner
-	banner : {
-		w:468,
-		h:60
-	},
-	
-	// Small vertical banner
-	verticalBanner : {
-		w:120,
-		h:240
-	},
-		
-	// Half a banner
-	halfBanner : {
-		w: 234,
-		h: 60
-	}
-};
-
-
 // SOURCE_FOLDER+'scripts/vendor/**/*.js',
 // Where do our source files live?
 var source = {
@@ -169,14 +113,11 @@ var merge = require('merge-stream');			// combine multiple streams!
 var filesize = require('gulp-filesize');  		// measure the size of the project (useful if a limit is set!)
 
 // Options read in from package.json
-var types = packageJson.types || defaultTypes;	// mpu / skyscraper / leaderboard etc
-var variants = packageJson.variants || [];
+var types = defaultTypes;	// mpu / skyscraper / leaderboard etc
+var variants = [];
 var varietiesToPackage = variants;				// extensions for varieties such as A, B, C etc.
 
 var config;			// load in an external config file
-// config.sizes
-// config.sizes.leaderboard.w
-// config.sizes.leaderboard.h
 
 // =======================---------------- TASK DEFINITIONS --------------------
 
@@ -186,30 +127,23 @@ var config;			// load in an external config file
 // ACTION 	: Deletes all files and folders specified in the arguments
 //
 ///////////////////////////////////////////////////////////////////////////////////
-
 gulp.task('configuration', function(cb) {
 
-	return gulp.src( 'config.json' )
+	var pipe = gulp.src( 'config.json' )
 		.pipe( replace( /(?:\/\*(?:[\s\S]*?)\*\/)|(?:([\s;])+\/\/(?:.*)$)/gm , '' ) )
 		.pipe( rename( '.config.json' ) )
 		.pipe( gulp.dest( '' ) );
+	
+	config = require('./.config.json');		// load in the external config file
+	types = config.types;
+	varietiesToPackage = config.variants;
+	
+	return pipe;
 });
 
-gulp.task('load-config', function(cb) {
-	config = require('./.config.json');		// load in an external config file
-	console.log( config.sizes.mpu );
-	cb();
-});
-
-// The task to create the debuggable versions
-gulp.task('configure', function(callback) {
-	sequencer(
-		'configuration',
-		'load-config',
-    callback);
-});
-gulp.task('conf' , [ 'configure' ] );
-
+// The task to load in our settings file
+gulp.task('conf' , [ 'configuration' ] );
+gulp.task('configure' , [ 'configuration' ] );
 
 ///////////////////////////////////////////////////////////////////////////////////
 //
@@ -419,38 +353,38 @@ gulp.task('package',function(){
 			var html = distribution.html + '*.'+model+'.html';
 			var folder = release.html + type + '.'+model + '/';
 			var output = 'index.html';
-			var size = sizes[ type ];
+			var size = config.sizes[ type ];
 
 			// create release folder
 			var htmlStream = gulp.src( html )
-			.pipe(rename( output ))
-			.pipe(gulp.dest( folder ));
+			.pipe( rename( output ))
+			.pipe( gulp.dest( folder ));
 
 			// all except specific images
 			var imageStream = gulp.src( pattern )
-			.pipe(gulp.dest( folder + 'img' ));
+			.pipe( gulp.dest( folder + 'img' ));
 
 			// target specific
 			var variantStream = gulp.src( distribution.images +'/*.'+model+'.*' )
-			.pipe(gulp.dest( folder + 'img' ));
+			.pipe( gulp.dest( folder + 'img' ));
 
 			// fonts
 			var fontStream = gulp.src( distribution.fonts +'/*.*' )
-			.pipe(gulp.dest( folder + 'fonts' ));
+			.pipe( gulp.dest( folder + 'fonts' ));
 
 			// css
 			var styleStream = gulp.src( distribution.styles +'/*.css' )
-			.pipe(gulp.dest( folder + 'css' ));
+			.pipe( gulp.dest( folder + 'css' ));
 
 			// js
 			var scriptStream = gulp.src( distribution.scripts +'/*.js' )
-			.pipe(gulp.dest( folder + 'js' ));
+			.pipe( gulp.dest( folder + 'js' ));
 
 			// manifest
 			var manifestStream = gulp.src( distribution.html+'manifest.js' )
 			.pipe( replace(/"width":300/, '"width":'+size.w ) )
 			.pipe( replace(/"height":250/, '"height":'+size.h ) )
-			.pipe(gulp.dest( folder ));
+			.pipe( gulp.dest( folder ));
 
 			// add to merge
 			merged.add( htmlStream );
@@ -486,7 +420,7 @@ gulp.task('zip', function (cb) {
     {
     	var model = varietiesToPackage[i];
 		var folder = release.html + type + '.'+model + '/';
-   		var fileName = packageJson.name+'-'+type +'-'+model+"-" + packageJson.version + ".zip";
+   		var fileName = config.brand +'-'+type +'-'+model+"-" + config.version + ".zip";
 
 		console.log(i + '. Zipping "'+fileName +'" from ' +folder);
 
@@ -604,20 +538,28 @@ gulp.task('d' , 	[ 'distribute' ] );
 
 ///////////////////////////////////////////////////////////////////////////////////
 // The default task (called when you run 'gulp' from cli)
+///////////////////////////////////////////////////////////////////////////////////
 gulp.task('default', function(callback) {
+	sequencer(
+		// load configuration
+		'configure',
+		// show help file
+		'help',
+    callback);
+});
+
+gulp.task('help' , function(callback) {
 
 	console.log( 'Help (you can return here by typing "gulp" or "gulp help")');
 	console.log( "--Config---------------------------------");
-	console.log( 'Campaign 		: "'+packageJson.name+'" in '+varietiesToPackage.length +' variants' );
-	console.log( 'Types 		: "'+packageJson.types +'"' );
-	console.log( 'Version 		: "'+packageJson.version+'" ' );
-	console.log( 'Description 	: "'+packageJson.description+'" ' );
-	console.log( 'Settings Location : "package.json" ' );
+	console.log( 'Campaign\t: "'+config.brand+'" in '+varietiesToPackage.length +' variants' );
+	console.log( 'Types\t: "'+config.types +'"' );
+	console.log( 'Version\t: "'+config.version+'" ' );
+	console.log( 'Description\t: "'+config.description+'" ' );
+	console.log( 'Settings Location\t: "config.json" ' );
 
 	console.log( varietiesToPackage.length + ' Campaign(s) Found : "'+varietiesToPackage+'" ' );
 	console.log( "--Tasks----------------------------------");
 
-
     callback();
-});
-gulp.task('help' , [ 'default' ] );
+} );
