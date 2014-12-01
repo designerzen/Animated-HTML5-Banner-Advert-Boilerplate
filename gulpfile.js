@@ -9,10 +9,17 @@ JavaScript		-> 		JS ( Squished, uglified, concatanated )
 For help with Globbing Patterns (the defaults should be fine!) check out :
 http://gruntjs.com/configuring-tasks#globbing-patterns
 
-
 */
+
 // =======================---------------- CONFIGURATION --------------------
 
+// Set up paths here (for this boilerplate, you should not have to alter these)
+var SOURCE_FOLDER 			= 'src/';		// Source files Root
+var BUILD_FOLDER 			= 'build/';		// Where the initial build occurs (debugable)
+var DISTRIBUTION_FOLDER 	= 'dist/';		// Once debugging is complete, copy to server ready files here
+var RELEASE_FOLDER 			= 'release/';	// Convert to distributable zips
+
+// Default variations for templating
 var defaultTypes =
 [
   "mpu",
@@ -21,28 +28,60 @@ var defaultTypes =
 ];
 
 
-// default sizes!
+// Default dimensions for banner adverts
+// from http://notwothesame.com/banner-sizes.htm
+// nb. feel free to resize these for your project!
 var sizes =
 {
-	leaderboard :{
+	// Wide and short advert
+	leaderboard : {
 		w:728,
 		h:90
 	},
-	mpu :{
+	
+	// Square advert
+	mpu : {
 		w:300,
 		h:250
 	},
-	skyscraper :{
+	
+	// Tall and thin advert
+	skyscraper : {
 		w:120,
 		h:600
+	},
+	
+	// Tall and fat advert
+	wideSkyscraper : {
+		w:160,
+		h:600
+	},
+	
+	// Half a page advert
+	halfPage : {
+		w:300,
+		h:600
+	},
+	
+	// Regular sized banner
+	banner : {
+		w:468,
+		h:60
+	},
+	
+	// Small vertical banner
+	verticalBanner : {
+		w:120,
+		h:240
+	},
+		
+	// Half a banner
+	halfBanner : {
+		w: 234,
+		h: 60
 	}
 };
 
-// Set up paths here!
-var SOURCE_FOLDER 			= 'src/';		// Source files Root
-var BUILD_FOLDER 			= 'build/';		// Where the initial build occurs (debugable)
-var DISTRIBUTION_FOLDER 	= 'dist/';		// Once debugging is complete, copy to server ready files here
-var RELEASE_FOLDER 			= 'release/';	// Convert to distributable zips
 
 // SOURCE_FOLDER+'scripts/vendor/**/*.js',
 // Where do our source files live?
@@ -97,7 +136,6 @@ var htmlSquishOptions = {
 
 // =======================---------------- IMPORT DEPENDENCIES --------------------
 
-
 // Requirements for this build to work :
 var gulp = require('gulp');						// main Gulp
 var concat = require('gulp-concat');			// combine files
@@ -130,11 +168,49 @@ var rename = require('gulp-rename');			// rename files
 var merge = require('merge-stream');			// combine multiple streams!
 var filesize = require('gulp-filesize');  		// measure the size of the project (useful if a limit is set!)
 
+// Options read in from package.json
+var types = packageJson.types || defaultTypes;	// mpu / skyscraper / leaderboard etc
+var variants = packageJson.variants || [];
+var varietiesToPackage = variants;				// extensions for varieties such as A, B, C etc.
+
+var config;			// load in an external config file
+// config.sizes
+// config.sizes.leaderboard.w
+// config.sizes.leaderboard.h
+
 // =======================---------------- TASK DEFINITIONS --------------------
 
-var variants = packageJson.variants || [];
-var varietiesToPackage = variants;
-var types = packageJson.types || defaultTypes;
+///////////////////////////////////////////////////////////////////////////////////
+//
+// TASK 	: Load in our external settings and overwrite our objects
+// ACTION 	: Deletes all files and folders specified in the arguments
+//
+///////////////////////////////////////////////////////////////////////////////////
+
+gulp.task('configuration', function(cb) {
+
+	return gulp.src( 'config.json' )
+		.pipe( replace( /(?:\/\*(?:[\s\S]*?)\*\/)|(?:([\s;])+\/\/(?:.*)$)/gm , '' ) )
+		.pipe( rename( '.config.json' ) )
+		.pipe( gulp.dest( '' ) );
+});
+
+gulp.task('load-config', function(cb) {
+	config = require('./.config.json');		// load in an external config file
+	console.log( config.sizes.mpu );
+	cb();
+});
+
+// The task to create the debuggable versions
+gulp.task('configure', function(callback) {
+	sequencer(
+		'configuration',
+		'load-config',
+    callback);
+});
+gulp.task('conf' , [ 'configure' ] );
+
+
 ///////////////////////////////////////////////////////////////////////////////////
 //
 // TASK 	: Clean
@@ -158,7 +234,7 @@ gulp.task('jade-create', function() {
 	// Create our source files based on the variations tag in package.json
 	// 1. determine filename of the new template file using varietiesToPackage
 	// 2. copy the example but swap out the top line with one of
-	// mpu.base.jade leaderboard.base.jade skyscraper.base.jade
+	// mpu.base.jade / leaderboard.base.jade / skyscraper.base.jade
 	var folder = SOURCE_FOLDER+'jade/';
 	var source = folder+'partials/template.jade';
 	var merged = merge();
@@ -201,8 +277,7 @@ gulp.task('jade-release', function() {
 			.pipe( gulp.dest( distribution.html ) );
 });
 
-
-// Image Tasks ===================================================
+// Image Tasks ====================================================================
 ///////////////////////////////////////////////////////////////////////////////////
 //
 // TASK 	: Images
@@ -226,7 +301,7 @@ gulp.task('images-release', function() {
 });
 
 
-// Cascading Style Sheets ========================================
+// Cascading Style Sheets =========================================================
 ///////////////////////////////////////////////////////////////////////////////////
 //
 // TASK 	: Less
@@ -250,7 +325,7 @@ gulp.task('less-release', function() {
 });
 
 
-// Copy Files =========================================================
+// Copy Files =====================================================================
 ///////////////////////////////////////////////////////////////////////////////////
 //
 // TASK 	: Copy
@@ -276,6 +351,41 @@ gulp.task('copy-manifest',function(){
 	.pipe( replace(/"height":250/, '"height":250' ) )
 	.pipe( gulp.dest( distribution.html ));
 });
+
+
+// Scripts ========================================================================
+///////////////////////////////////////////////////////////////////////////////////
+//
+// TASK 	: Scripts
+// ACTION 	: Compress and concantenate our Javascript files into one file
+//
+///////////////////////////////////////////////////////////////////////////////////
+
+// Do stuff with our javascripts for DEBUGGING
+gulp.task('scripts', function() {
+    // Minify and copy all JavaScript (except vendor scripts)
+    // with sourcemaps all the way down
+    return  gulp.src( source.scripts )
+            .pipe( sourcemaps.init() )
+            // combine multiple files into one!
+            .pipe( concat('main.min.js') )
+            // create source maps
+            .pipe( sourcemaps.write() )
+            .pipe( gulp.dest( destination.scripts ) );
+});
+
+// Do stuff with our javascripts for RELEASE
+gulp.task('scripts-release', function() {
+    // Minify and copy all JavaScript (except vendor scripts)
+    // with sourcemaps all the way down
+    var uglify = require('gulp-uglify');            // squash files
+	return  gulp.src( source.scripts )
+            .pipe( concat('main.min.js') )
+            .pipe( uglify() )
+            .pipe( gulp.dest( distribution.scripts ) );
+});
+
+// Package ========================================================================
 ///////////////////////////////////////////////////////////////////////////////////
 //
 // TASK 	: Package
@@ -394,39 +504,6 @@ gulp.task('zip', function (cb) {
 });
 
 
-// Scripts ========================================================================
-///////////////////////////////////////////////////////////////////////////////////
-//
-// TASK 	: Scripts
-// ACTION 	: Compress and concantenate our Javascript files into one file
-//
-///////////////////////////////////////////////////////////////////////////////////
-
-// Do stuff with our javascripts for DEBUGGING
-gulp.task('scripts', function() {
-    // Minify and copy all JavaScript (except vendor scripts)
-    // with sourcemaps all the way down
-    return  gulp.src( source.scripts )
-            .pipe( sourcemaps.init() )
-            // combine multiple files into one!
-            .pipe( concat('main.min.js') )
-            // create source maps
-            .pipe( sourcemaps.write() )
-            .pipe( gulp.dest( destination.scripts ) );
-});
-
-// Do stuff with our javascripts for RELEASE
-gulp.task('scripts-release', function() {
-    // Minify and copy all JavaScript (except vendor scripts)
-    // with sourcemaps all the way down
-    var uglify = require('gulp-uglify');            // squash files
-	return  gulp.src( source.scripts )
-            .pipe( concat('main.min.js') )
-            .pipe( uglify() )
-            .pipe( gulp.dest( distribution.scripts ) );
-});
-
-
 // Utilities =====================================================
 ///////////////////////////////////////////////////////////////////////////////////
 //
@@ -472,7 +549,14 @@ gulp.task('deploy', 	[ 'less-release', 'jade-release', 'images-release', 'script
 gulp.task('serve', 		['rebuild', 'watch'] );
 
 // Create the template jade files
-gulp.task('create', 	[ 'jade-create' ] );
+// The task to create the debuggable versions
+gulp.task('create', function(callback) {
+	sequencer(
+		'configure',
+		'jade-create',
+    callback);
+});
+
 gulp.task('template', 	[ 'create' ] );
 gulp.task('templates', 	[ 'create' ] );
 gulp.task('t', 			[ 'create' ] );
@@ -482,6 +566,7 @@ gulp.task('scaffold', 	[ 'create' ] );
 // The task to create the debuggable versions
 gulp.task('build', function(callback) {
 	sequencer(
+		'configure',
 		'clean',
 		'rebuild',
     callback);
@@ -491,6 +576,7 @@ gulp.task('build', function(callback) {
 // The task to create the minified versions
 gulp.task('compile', function(callback) {
 	sequencer(
+		'configure',
 		'clean',
 		'deploy',
 		'package',
@@ -505,6 +591,7 @@ gulp.task('c' , 	[ 'compile' ] );
 // As many of these tasks are not asynch
 gulp.task('distribute', function(callback) {
 	sequencer(
+		'configure',
 		'clean',
 		'deploy',
 		'package',

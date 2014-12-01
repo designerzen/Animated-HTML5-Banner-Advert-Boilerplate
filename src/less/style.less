@@ -1,22 +1,67 @@
-@col-blue:      #071039;
-@col-light:     #fff;
-@col-dark:      #000;
-@col-accent:    #32a3a3;
-@path-images:   "../img";
+@col-blue:      	#071039;
+@col-light:    	 	#fff;
+@col-dark:      	#000;
+@col-accent:    	#32a3a3;
 
-@margin-left:   20px;
-@padding-top:   72px;
-@padding-left:  116px;
-@padding-right: 20px;
+@col-border:		#ffffff;
+@col-bg:			@col-dark;
 
-// Classic formats
-@width-mpu:         300px;
-@height-mpu:        250px;
+@path-images:   	"../img";
+
+// Paddings and margins for project
+@margin-top:   		20px;
+@margin-left:   	20px;
+@margin-right:   	20px;
+@margin-bottom:   	20px;
+
+@padding-top:   	20px;
+@padding-left:  	20px;
+@padding-right: 	20px;
+@padding-bottom: 	20px;
+
+
+// Classic formats for dimensions
+
+// Square M.P.U.
+@width-mpu:         		300px;
+@height-mpu:        		250px;
+
+
+// Wide Leaderboard
+@width-leaderboard:			728px;
+@height-leaderboard: 		90px;
+
+
+// Tall Skyscraper
+@width-skyscraper:			120px;
+@height-skyscraper: 		600px;
+
+@width-wide-skyscraper:		160px;
+@height-wide-skyscraper: 	@height-skyscraper;
+
+
+// Standard Banner
+@width-banner:				468px;
+@height-banner: 			60px;
+
+@width-half-banner:			234px;
+@height-half-banner: 		@height-banner;
+
+@width-vertical-banner:		120px;
+@height-vertical-banner: 	240px;
+
+
+// Half a page Advert
+@width-half-page:			300px;
+@height-half-page: 			600px;
+
+
 
 // Import our other css files directly into this one
 @import "reset";
 @import "typography";
 @import "buttons";
+
 
 // Loading animation - removed almost immediately
 #content.loading{
@@ -26,27 +71,44 @@
     }
 }
 
+
 // Main Container (should be set to the size of the MPU)
 #content{
 
-	width:@width-mpu;
-    height:@height-mpu;
-    background:@col-blue url( '@{path-images}/wall.png' ) repeat-x;
-
-	// http://alistapart.com/article/axiomatic-css-and-lobotomized-owls
-	// All elements in the flow of the document that proceed other elements must receive a top margin of one line.
-	* + * {
-		margin-top: 1.5em;
-	}
-
-	.mpu{
-        display:block;
+	width:100%;
+    height:100%;
+    background:@col-bg url( '@{path-images}/wall.png' ) repeat-x;
+	
+	.mpu, .skyscraper{
+		display:block;
         position:relative;
-		width:@width-mpu;
+		overflow:hidden;    // make sure that the elements can fall outside this
+	}
+	
+	// Resize
+	.mpu{
+        width:@width-mpu;
 		height:@height-mpu;
-        overflow:hidden;    // make sure that the elements can fall outside this
+	}
+	.skyscraper{
+        width:@width-skyscraper;
+		height:@height-skyscraper;
+	}
+	.leaderboard{
+		width:@width-leaderboard;
+		height:@height-leaderboard;
 	}
 }
+
+
+// Convert an element into a full sized border
+.border{
+	width:(@width-mpu - 2);
+    height:(@height-mpu - 2);
+	border: @col-border 1px solid;
+}
+
+
 
 #first,
 #second,
@@ -89,15 +151,4 @@
         position:relative;
     }
 
-}
-
-// Click through for FlashTrack
-#clicktagholder{
-    cursor: pointer;
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    top: 0;
-    left: 0;
-    z-index: 9999;
 }

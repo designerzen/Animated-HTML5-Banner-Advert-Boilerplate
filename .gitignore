@@ -3,8 +3,7 @@ dev
 build
 dist
 deploy
+release
 .tmp
 bower_components
 *.DS_Store
-release
-dist

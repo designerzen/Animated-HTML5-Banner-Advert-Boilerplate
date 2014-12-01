@@ -1,0 +1,80 @@
+{
+	"name": "campaign",
+	"version": "0.0.1",
+	
+	/* 
+	
+	*/ 
+	"types": [
+		"mpu",
+		"leaderboard",
+		"skyscraper"
+	],
+	
+	/*
+	
+	*/ 
+	"variants": [
+		"a",
+		"b",
+		"c",
+		"d"
+	],
+	
+	/* 
+	Default dimensions for banner adverts
+	from http://notwothesame.com/banner-sizes.htm
+	nb. feel free to resize these for your project!
+	*/
+	"sizes" : {
+		
+		/* Wide and short advert */
+		"leaderboard" : {
+			"w":728,
+			"h":90
+		},
+
+		/* Square advert */
+		"mpu" : {
+			"w":300,
+			"h":250
+		},
+
+		/* Tall and thin advert */
+		"skyscraper" : {
+			"w":120,
+			"h":600
+		},
+
+		/* Tall and fat advert */
+		"wideSkyscraper" : {
+			"w":160,
+			"h":600
+		},
+
+		/* Half a page advert */
+		"halfPage" : {
+			"w":300,
+			"h":600
+		},
+
+		/* Regular sized banner */
+		"banner" : {
+			"w":468,
+			"h":60
+		},
+
+		/* Small vertical banner */
+		"verticalBanner" : {
+			"w":120,
+			"h":240
+		},
+
+		/* Half a banner */
+		"halfBanner" : {
+			"w": 234,
+			"h": 60
+		}
+		
+	}
+}
