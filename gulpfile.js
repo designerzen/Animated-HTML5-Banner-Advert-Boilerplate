@@ -33,7 +33,7 @@ var source = {
 	scripts : [ SOURCE_FOLDER+'scripts/!(manifest)*.js' ],
 	styles 	: SOURCE_FOLDER+'less/style.less',
 	jade 	: [ SOURCE_FOLDER+'jade/*.jade',  '!'+SOURCE_FOLDER+'jade/*.base.jade',  '!'+SOURCE_FOLDER+'jade/partials/**)' ],
-	images	: SOURCE_FOLDER+'images/**/*',
+	images	: SOURCE_FOLDER+'images/**/*{png,jpg,jpeg,gif,webp}',
 	fonts	: SOURCE_FOLDER+'fonts/**/*'
 };
 
@@ -181,11 +181,11 @@ gulp.task('jade-create', function() {
 		for (var i = 0, l=varientsLength; i < l; i++)
 		{
 			var model = varietiesToPackage[i];
-			var filename = type+'.'+packageJson.name+'.'+model+'.jade';
+			var filename = (type+'.'+config.brand+'.'+model+'.jade').toLowerCase();
 			var destination = folder;
 			var jade = gulp.src( [source] )
-				.pipe( replace(/#{title}/, packageJson.name) )
-				.pipe( replace(/#{version}/, packageJson.version) )
+				.pipe( replace(/#{title}/, config.brand) )
+				.pipe( replace(/#{version}/, config.version) )
 				.pipe( replace(/base.jade/, type+'.base.jade') )
 				.pipe( rename( filename ) )
 				.pipe( gulp.dest( folder ) );
@@ -415,24 +415,28 @@ gulp.task('zip', function (cb) {
 	var zip = require('gulp-zip');					// zip files
 	// var date = new Date().toISOString().replace(/[^0-9]/g, '');
 	var merged = merge();
-	var type = types[0];
-    for (var i = 0, l=varietiesToPackage.length; i < l; i++)
-    {
-    	var model = varietiesToPackage[i];
-		var folder = release.html + type + '.'+model + '/';
-   		var fileName = config.brand +'-'+type +'-'+model+"-" + config.version + ".zip";
 
-		console.log(i + '. Zipping "'+fileName +'" from ' +folder);
+	for (var t = 0, e=types.length; t < e; t++)
+	{
+		var type = types[t];
+		for (var i = 0, l=varietiesToPackage.length; i < l; i++)
+		{
+			var model = varietiesToPackage[i];
+			var folder = release.html + type + '.'+model + '/';
+			var fileName = (config.brand +'-'+type +'-'+model+"-" + config.version + ".zip").toLowerCase();;
 
-       	// keep directory structure
-        var zipStream =  gulp.src( folder + '**/*' )
-        .pipe( zip(fileName) )
-		// console.log the filezie! :P
-        .pipe( filesize() )
-        .pipe( gulp.dest( RELEASE_FOLDER ) );
+			console.log(i + '. Zipping "'+fileName +'" from ' +folder);
 
-		merged.add( zipStream );
-    };
+			// keep directory structure
+			var zipStream =  gulp.src( folder + '**/*' )
+			.pipe( zip(fileName) )
+			// console.log the filezie! :P
+			.pipe( filesize() )
+			.pipe( gulp.dest( RELEASE_FOLDER ) );
+
+			merged.add( zipStream );
+		}
+	};
 
 	return merged;
 });

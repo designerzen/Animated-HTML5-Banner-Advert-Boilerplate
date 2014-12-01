@@ -8,7 +8,9 @@
 	"types": [
 		"mpu",
 		"leaderboard",
-		"skyscraper"
+		"skyscraper",
+		"wideSkyscraper",
+		"halfPage"
 	],
 	
 	// How many variants of *each* type are there?

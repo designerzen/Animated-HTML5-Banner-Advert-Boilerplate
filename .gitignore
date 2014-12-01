@@ -4,7 +4,9 @@ build
 dist
 deploy
 release
+.git
 .tmp
 .config.json
+Thumbs.db
 bower_components
 *.DS_Store

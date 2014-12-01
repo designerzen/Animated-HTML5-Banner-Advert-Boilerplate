@@ -79,13 +79,27 @@
     height:100%;
     background:@col-bg url( '@{path-images}/wall.png' ) repeat-x;
 	
-	.mpu, .skyscraper{
+	.banner,
+	.vertical-banner,
+	.mpu,
+	.skyscraper,
+	.leaderboard,
+	.half-page,
+	.wide-skyscraper {
 		display:block;
         position:relative;
 		overflow:hidden;    // make sure that the elements can fall outside this
 	}
 	
 	// Resize
+	.banner{
+		width:@width-banner;
+		height:@height-banner;
+	}
+	.vertical-banner{
+		width:@width-vertical-banner;
+		height:@height-vertical-banner;
+	}
 	.mpu{
         width:@width-mpu;
 		height:@height-mpu;
@@ -97,6 +111,14 @@
 	.leaderboard{
 		width:@width-leaderboard;
 		height:@height-leaderboard;
+	}
+	.half-page{
+		width:@width-half-page;
+		height:@height-half-page;
+	}
+	.wide-skyscraper{
+		width:@width-wide-skyscraper;
+		height:@height-wide-skyscraper;
 	}
 }
 
