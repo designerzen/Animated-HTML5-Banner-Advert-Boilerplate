@@ -30,11 +30,12 @@ var defaultTypes =
 // SOURCE_FOLDER+'scripts/vendor/**/*.js',
 // Where do our source files live?
 var source = {
-	scripts : [ SOURCE_FOLDER+'scripts/!(manifest)*.js' ],
+	// ensure that all scripts in the JS folder are compiled, but that animation is the *last* one
+	scripts : [ SOURCE_FOLDER+'scripts/!(manifest)*.js', '!'+SOURCE_FOLDER+'scripts/animation.js', SOURCE_FOLDER+'scripts/animation.js' ],
 	styles 	: SOURCE_FOLDER+'less/style.less',
 	jade 	: [ SOURCE_FOLDER+'jade/*.jade',  '!'+SOURCE_FOLDER+'jade/*.base.jade',  '!'+SOURCE_FOLDER+'jade/partials/**)' ],
-	images	: SOURCE_FOLDER+'images/**/*{png,jpg,jpeg,gif,webp}',
-	fonts	: SOURCE_FOLDER+'fonts/**/*'
+	images	: SOURCE_FOLDER+'images/**/*.+(png|jpg|jpeg|gif|webp)',
+	fonts	: SOURCE_FOLDER+'fonts/**/*.+(eot|svg|ttf|woff|otf)'
 };
 
 // Where shall we compile them to?
@@ -111,13 +112,13 @@ var fs = require('fs');							// read inside files
 var rename = require('gulp-rename');			// rename files
 var merge = require('merge-stream');			// combine multiple streams!
 var filesize = require('gulp-filesize');  		// measure the size of the project (useful if a limit is set!)
+var expect = require('gulp-expect-file');		// expect a certain file (more for debugging)
 
-// Options read in from package.json
-var types = defaultTypes;	// mpu / skyscraper / leaderboard etc
+
+var types = defaultTypes;						// mpu / skyscraper / leaderboard etc
 var variants = [];
 var varietiesToPackage = variants;				// extensions for varieties such as A, B, C etc.
-
-var config;			// load in an external config file
+var config;										// loaded in from an external config file
 
 // =======================---------------- TASK DEFINITIONS --------------------
 
@@ -127,18 +128,40 @@ var config;			// load in an external config file
 // ACTION 	: Deletes all files and folders specified in the arguments
 //
 ///////////////////////////////////////////////////////////////////////////////////
-gulp.task('configuration', function(cb) {
+var settings = 'config.json';
+var renamed = '.config.json';
 
-	var pipe = gulp.src( 'config.json' )
+gulp.task('configuration-save', function(cb) {
+	return gulp.src( settings )
+		.pipe( expect( settings ) )
 		.pipe( replace( /(?:\/\*(?:[\s\S]*?)\*\/)|(?:([\s;])+\/\/(?:.*)$)/gm , '' ) )
-		.pipe( rename( '.config.json' ) )
-		.pipe( gulp.dest( '' ) );
+		.pipe( rename( renamed ) )
+		.pipe( gulp.dest( '' ) )
+		.pipe( expect( renamed ) );
+});
+
+gulp.task('configuration-load', function(cb) {
+	config = require( './'+renamed );				// load in the external config file (cached)
+	//config = fs.readFile( renamed, 'utf-8');		// load in the external config file
 	
-	config = require('./.config.json');		// load in the external config file
+	expect( renamed );
+	
 	types = config.types;
 	varietiesToPackage = config.variants;
 	
-	return pipe;
+	console.log( 'Loading config : '+renamed );
+	console.log( 'Config : '+config );
+	console.log( 'Brand : '+config.brand +' version '+config.version );
+	console.log( 'Variants : '+config.variants );
+	
+	cb();
+});
+
+gulp.task('configuration', function(callback) {
+	sequencer(
+		'configuration-save',
+		'configuration-load',
+    callback);
 });
 
 // The task to load in our settings file
@@ -173,6 +196,7 @@ gulp.task('jade-create', function() {
 	var source = folder+'partials/template.jade';
 	var merged = merge();
 	var varientsLength = varietiesToPackage.length;
+	
 	for (var t = 0, e=types.length; t < e; t++)
 	{
 		var type = types[t];
