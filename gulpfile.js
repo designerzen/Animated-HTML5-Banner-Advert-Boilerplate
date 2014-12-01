@@ -136,8 +136,7 @@ gulp.task('configuration-save', function(cb) {
 		.pipe( expect( settings ) )
 		.pipe( replace( /(?:\/\*(?:[\s\S]*?)\*\/)|(?:([\s;])+\/\/(?:.*)$)/gm , '' ) )
 		.pipe( rename( renamed ) )
-		.pipe( gulp.dest( '' ) )
-		.pipe( expect( renamed ) );
+		.pipe( gulp.dest( '' ) );
 });
 
 gulp.task('configuration-load', function(cb) {

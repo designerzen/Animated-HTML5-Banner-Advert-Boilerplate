@@ -91,6 +91,11 @@ _eg. Kittens-mpu-a-1.1.1.zip_
 
 **A.** Be sure to have run the templater with gulp taemplate first, or at least create jade files in the jade folder that extends the base.jade partial
 
+
+**Q.** Config task seems to be failing... it can't find the config.json file?
+
+**A.** Delete the node_modules folder and then run npm install again. This sometimes happens if the dependencies have not fully resolved, yet no error message may be shown.
+
 ---
 Released under the [**GPL2.0 license**](http://www.gnu.org/licenses/gpl-2.0.txt). 
 _If you improve this work, please let us know._
