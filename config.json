@@ -1,21 +1,17 @@
 {
 	// Set the name of the brand here
-	"brand": "Campaign",
+	"brand": "Brand",
 	"version": "0.0.1",
 	"description": "Gulp Based html5 Animated Banner Creator",
   
-	/* 
-	
-	*/ 
+	// What different sizes need to be created
 	"types": [
 		"mpu",
 		"leaderboard",
 		"skyscraper"
 	],
 	
-	/*
-	
-	*/ 
+	// How many variants of *each* type are there?
 	"variants": [
 		"a",
 		"b",
@@ -30,49 +26,49 @@
 	*/
 	"sizes" : {
 		
-		/* Wide and short advert */
+		// Wide and short advert
 		"leaderboard" : {
 			"w":728,
 			"h":90
 		},
 
-		/* Square advert */
+		// Square advert
 		"mpu" : {
 			"w":300,
 			"h":250
 		},
 
-		/* Tall and thin advert */
+		// Tall and thin advert
 		"skyscraper" : {
 			"w":120,
 			"h":600
 		},
 
-		/* Tall and fat advert */
+		// Tall and fat advert
 		"wideSkyscraper" : {
 			"w":160,
 			"h":600
 		},
 
-		/* Half a page advert */
+		// Half a page advert
 		"halfPage" : {
 			"w":300,
 			"h":600
 		},
 
-		/* Regular sized banner */
+		// Regular sized banner
 		"banner" : {
 			"w":468,
 			"h":60
 		},
 
-		/* Small vertical banner */
+		// Small vertical banner
 		"verticalBanner" : {
 			"w":120,
 			"h":240
 		},
 
-		/* Half a banner */
+		// Half a banner
 		"halfBanner" : {
 			"w": 234,
 			"h": 60
