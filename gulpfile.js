@@ -34,8 +34,8 @@ var source = {
 	scripts : [ SOURCE_FOLDER+'scripts/!(manifest|animation)*.js', SOURCE_FOLDER+'scripts/animation.js' ],
 	styles 	: SOURCE_FOLDER+'less/style.less',
 	jade 	: [ SOURCE_FOLDER+'jade/*.jade',  '!'+SOURCE_FOLDER+'jade/*.base.jade',  '!'+SOURCE_FOLDER+'jade/partials/**)' ],
-	images	: SOURCE_FOLDER+'images/**/*.+(png|jpg|jpeg|gif|webp)',
-	fonts	: SOURCE_FOLDER+'fonts/**/*.+(eot|svg|ttf|woff|otf)'
+	images	: SOURCE_FOLDER+'images/**/*{png,jpg,jpeg,gif,webp}',
+	fonts	: SOURCE_FOLDER+'fonts/**/*'
 };
 
 // Where shall we compile them to?
@@ -84,6 +84,7 @@ var htmlSquishOptions = {
 // Requirements for this build to work :
 var gulp = require('gulp');						// main Gulp
 var concat = require('gulp-concat');			// combine files
+var packageJson = require("./package.json");	// read in package.json!
 
 // JS Plugins (see inside tasks)
 
@@ -105,7 +106,6 @@ var newer = require('gulp-newer');				// deal with only modified files
 
 var livereload = require('gulp-livereload');	// live reload
 var sourcemaps = require('gulp-sourcemaps');    // create source maps for debugging!
-var packageJson = require("./package.json");	// read in package.json!
 
 var replace = require('gulp-replace');			// replace content within files
 var fs = require('fs');							// read inside files
@@ -129,29 +129,29 @@ var config;										// loaded in from an external config file
 // ACTION 	: Deletes all files and folders specified in the arguments
 //
 ///////////////////////////////////////////////////////////////////////////////////
+//var settings 	= 'config.json';
 var settings = 'config.json';
 var renamed = '.config.json';
 
 gulp.task('configuration-save', function(cb) {
 	return gulp.src( settings )
 		.pipe( expect( settings ) )
+		.on( 'error', function (err) { console.error(err); } )
 		.pipe( replace( /(?:\/\*(?:[\s\S]*?)\*\/)|(?:([\s;])+\/\/(?:.*)$)/gm , '' ) )
 		.pipe( rename( renamed ) )
 		.pipe( gulp.dest( '' ) );
 });
 
 gulp.task('configuration-load', function(cb) {
-	config = require( './'+renamed );				// load in the external config file (cached)
-	//config = fs.readFile( renamed, 'utf-8');		// load in the external config file
+	config = require('./'+renamed);		// load in the external config file
+	//config = fs.readFile('./'+renamed, 'utf-8', func);
 	
 	expect( renamed );
 	
 	types = config.types;
 	varietiesToPackage = config.variants;
 	
-	console.log( 'Loading config : '+renamed );
-	console.log( 'Config : '+config );
-	console.log( 'Brand : '+config.brand +' version '+config.version );
+	console.log( 'Loading : '+renamed + ' for Brand : '+config.brand +' version '+config.version );
 	console.log( 'Variants : '+config.variants );
 	
 	cb();
@@ -179,14 +179,14 @@ gulp.task('clean', function(cb) {
 	del([BUILD_FOLDER,DISTRIBUTION_FOLDER,RELEASE_FOLDER], cb);
 });
 
+// Template ===========================================================================
+///////////////////////////////////////////////////////////////////////////////////
+//
+// TASK 	: Templates
+// ACTION 	: Cretes template JADE files and javascript MANIFEST files
+//
+///////////////////////////////////////////////////////////////////////////////////
 
-// Jade ===========================================================================
-///////////////////////////////////////////////////////////////////////////////////
-//
-// TASK 	: Jade
-// ACTION 	: Compiles Jade files into HTML files in their relevant folders
-//
-///////////////////////////////////////////////////////////////////////////////////
 gulp.task('jade-create', function() {
 	// Create our source files based on the variations tag in package.json
 	// 1. determine filename of the new template file using varietiesToPackage
@@ -196,7 +196,6 @@ gulp.task('jade-create', function() {
 	var source = folder+'partials/template.jade';
 	var merged = merge();
 	var varientsLength = varietiesToPackage.length;
-	
 	for (var t = 0, e=types.length; t < e; t++)
 	{
 		var type = types[t];
@@ -220,6 +219,45 @@ gulp.task('jade-create', function() {
 	}
 	return merged;
 });
+
+gulp.task('clone-manifests', function() {
+	
+	var folder = SOURCE_FOLDER+'scripts/';
+	var source = folder+'manifest.js';
+	var merged = merge();
+	var varientsLength = varietiesToPackage.length;
+	for (var t = 0, e=types.length; t < e; t++)
+	{
+		var type = types[t];
+		var size = config.sizes[ type ];
+		var filename = type+'.manifest.js';
+		var manifest = gulp.src( [source] )
+			.pipe( replace(/"width":300/, '"width":'+size.w ) )
+			.pipe( replace(/"height":250/, '"height":'+size.h ) )
+			.pipe( rename( filename ) )
+			.pipe( gulp.dest( folder ) );	// <- save back into source!
+
+		console.log('\t'+t+'. Creating '+type+' Template as '+folder+filename );
+		merged.add( manifest );
+	}
+	return merged;
+});
+// The task to create the debuggable versions
+gulp.task('create-manifests', function(callback) {
+	sequencer(
+		'configure',
+		'clone-manifests',
+    callback);
+});
+
+
+// Jade ===========================================================================
+///////////////////////////////////////////////////////////////////////////////////
+//
+// TASK 	: Jade
+// ACTION 	: Compiles Jade files into HTML files in their relevant folders
+//
+///////////////////////////////////////////////////////////////////////////////////
 
 gulp.task('jade', function() {
 	return 	gulp.src( source.jade )
@@ -265,10 +303,11 @@ gulp.task('images-release', function() {
 // TASK 	: Less
 // ACTION 	: Compiles a single Less files specified into a single CSS file
 //
+//.pipe( newer( destination.styles ) )
+//		
 ///////////////////////////////////////////////////////////////////////////////////
 gulp.task('less', function() {
 	return 	gulp.src( source.styles )
-			.pipe( newer( destination.styles ) )
 			.pipe( less( {strictMath: false, compress: false }) )
 			.pipe( prefixer() )
             .pipe( gulp.dest( destination.styles ) );
@@ -307,6 +346,7 @@ gulp.task('copy-manifest',function(){
 	// TODO : replace the sizes according to nomenclature
 	.pipe( replace(/"width":300/, '"width":300' ) )
 	.pipe( replace(/"height":250/, '"height":250' ) )
+	.pipe( gulp.dest( destination.html ))
 	.pipe( gulp.dest( distribution.html ));
 });
 
@@ -352,21 +392,22 @@ gulp.task('scripts-release', function() {
 // This task simply takes the relevent files from the dist folder,
 // creates a new folder in dist and then copies only the relevant files...
 // Create dist/folder
-// Copy mpu.o2.A.html and rename as index.html
-// Copy images/character.a.png
 // Copy images/
 // Copy fonts/
 //
 ///////////////////////////////////////////////////////////////////////////////////
 gulp.task('package',function(){
 
-	var pattern = [ distribution.images +'/*.*' ];
+	var pattern = [ distribution.images +'/**/*.*' ];
 	var merged = merge();
 
 	for (var p = 0, l=varietiesToPackage.length; p < l; p++)
     {
 		pattern.push( '!'+ distribution.images +'/*.'+ varietiesToPackage[p] +'.*' );
     }
+	
+	console.log( pattern );
+	
 	for (var t = 0, e=types.length; t < e; t++)
 	{
 		var type = types[t];
@@ -376,12 +417,11 @@ gulp.task('package',function(){
 			var model = varietiesToPackage[i];
 			var html = distribution.html + '*.'+model+'.html';
 			var folder = release.html + type + '.'+model + '/';
-			var output = 'index.html';
 			var size = config.sizes[ type ];
 
 			// create release folder
 			var htmlStream = gulp.src( html )
-			.pipe( rename( output ))
+			.pipe( rename( 'index.html' ))
 			.pipe( gulp.dest( folder ));
 
 			// all except specific images
@@ -405,11 +445,37 @@ gulp.task('package',function(){
 			.pipe( gulp.dest( folder + 'js' ));
 
 			// manifest
-			var manifestStream = gulp.src( distribution.html+'manifest.js' )
-			.pipe( replace(/"width":300/, '"width":'+size.w ) )
-			.pipe( replace(/"height":250/, '"height":'+size.h ) )
-			.pipe( gulp.dest( folder ));
+			var 
+				manifestFile = 'manifest.js',
+				folder = SOURCE_FOLDER+'scripts/',
+				files = [],
+				manifest = folder+type+'.'+manifestFile;
 
+			// This first checks to see if the manifest for this file exists...
+			if( fs.existsSync( manifest ) )
+			{
+				// Use custom Manifest file
+				files.push( manifest );
+				console.error('Custom Manifest FOUND! at : '+manifest );
+			} else {
+				// Use default Manifest file
+				files.push( folder+'manifest.js' );
+				console.error('[error] Manifest missing for size '+type+' \n\t Please create the file : '+manifest );
+			}
+		
+			
+			console.log( files );
+			var manifestStream = gulp.src( files )
+			// automatically update sizes within
+			//.pipe( replace(/"width":300/, '"width":'+size.w ) )
+			//.pipe( replace(/"height":250/, '"height":'+size.h ) )
+			// and save into the correct distribution folder...
+			.pipe( expect( files ) )
+			.pipe( rename( manifestFile ) )
+			.pipe( gulp.dest( release.html + type + '.'+model ));
+			
+
+			
 			// add to merge
 			merged.add( htmlStream );
 			merged.add( imageStream );
@@ -447,8 +513,9 @@ gulp.task('zip', function (cb) {
 		{
 			var model = varietiesToPackage[i];
 			var folder = release.html + type + '.'+model + '/';
-			var fileName = (config.brand +'-'+type +'-'+model+"-" + config.version + ".zip").toLowerCase();
-
+			var fileName = (config.brand +'-'+type +'-'+model+".zip").toLowerCase();
+			
+			// NB. FlashTalking does *not* allow periods and such... so config.version is a no go
 			console.log(i + '. Zipping "'+fileName +'" from ' +folder);
 
 			// keep directory structure
@@ -478,14 +545,14 @@ gulp.task('watch', function() {
 
 	// Watch any files in build/, reload on change
 	gulp.watch(['build/**']).on('change', 'refresh' );
-
+	
 });
 
 ///////////////////////////////////////////////////////////////////////////////////
 //
 // TASK : Serve
 //
-// Start a webserver and display the
+// Start a webserver and display the 
 //
 ///////////////////////////////////////////////////////////////////////////////////
 gulp.task('refresh', function() {
@@ -511,6 +578,8 @@ gulp.task('connect', function() {
 
 
 
+
+
 ///////////////////////////////////////////////////////////////////////////////////
 // COMPOSITE TASKS =====================================================
 ///////////////////////////////////////////////////////////////////////////////////
@@ -519,10 +588,10 @@ gulp.task('connect', function() {
 gulp.task('rebuild', 	[ 'less', 'jade', 'images', 'scripts', 'copy' ] );
 
 // squish everything & concatanate scripts
-gulp.task('deploy', 	[ 'less-release', 'jade-release', 'images-release', 'scripts-release', 'copy-release','copy-manifest' ] );
+gulp.task('deploy', 	[ 'less-release', 'jade-release', 'images-release', 'scripts-release', 'copy-release' ] );
 
 // create a server to host this project
-gulp.task('serve', 		['rebuild', 'watch'] );
+gulp.task('serve', 		['rebuild', 'server', 'watch'] );
 
 // Create the template jade files
 // The task to create the debuggable versions
@@ -547,7 +616,6 @@ gulp.task('build', function(callback) {
 		'rebuild',
     callback);
 });
-
 
 // The task to create the minified versions
 gulp.task('compile', function(callback) {

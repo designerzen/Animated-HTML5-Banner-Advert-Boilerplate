@@ -20,7 +20,7 @@ In a Command Prompt :
 
 > sudo npm install
 
-Then while that is downloading and installing, **edit the package.json** file in the root folder.
+Then while that is downloading and installing, **edit the config.json** file in the root folder.
 
 Once the installation has completed, ensure all the software is correctly installed by
  typing :
@@ -31,13 +31,18 @@ Once the installation has completed, ensure all the software is correctly instal
 ###To Create templates###
 You should really start here, with the built in template system. This creates a series of Jade files that just require personalisation of content - ready for adding in your animated elements.
 
-Firstly _ensure that you have editted the package.json_ with your appropriate settings.
+Firstly _ensure that you have editted the config.json_ with your appropriate settings.
 Pay close attention to types (remove any that don't apply) and variants...
 And add as many variants as you wish (these are the duplicate templates named accordingly)
 
 Then run :
 
 > gulp templates
+
+##Configuration##
+All of the settings can be set by altering the parameters in the config.json file.
+You may use various styles of comments within this file (although json itself does not allow them - these are stripped off before compilation)
+There is internal documentation directly next to the parameters that you can set.
 
 
 ##To Develop##

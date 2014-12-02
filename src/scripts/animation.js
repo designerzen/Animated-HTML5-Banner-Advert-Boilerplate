@@ -28,7 +28,7 @@ var Animations = (function(){
     // This creates all of our animation elements
     Animations.prototype.assign = function()
     {
-        elements.contents   = document.getElementById('content');
+        elements.content	= document.getElementById('content');
 		elements.first 		= document.getElementById('first');
 		elements.second 	= document.getElementById('second');
 		elements.third 		= document.getElementById('third');
@@ -83,21 +83,10 @@ var Animations = (function(){
         timeline.play();
 	};
 
-    // Sets FlashTalking clicktags
-    Animations.prototype.setClickTags = function (id)
-    {
-        var
-			ft = new FT,
-			clicker = FT.query(id);
-
-		ft.applyClickTag(clicker, 1);
-    };
-
 	return Animations;
 
 })();
 
 var anim = new Animations();
 anim.assign();
-anim.setClickTags('#clicktagholder');
 anim.begin();

@@ -19,10 +19,9 @@
 
 // Paths
 @path-images:   	"../img/";
-@path-png:   		@path-images + 'png';
-@path-jpeg:   		@path-images + 'jpg';
-@path-gif:   		@path-images + 'gif';
-
+@path-png:   		(@path-images + "png");
+@path-jpg:   		(@path-images + "jpg");
+@path-gif:   		(@path-images + "gif");
 
 // Paddings and margins for project
 @margin-top:   		20px;
@@ -82,9 +81,8 @@
 
 // Loading animation - removed almost immediately
 #content.loading{
-	background:transparent url( '@{path-gif}spinner.gif' ) no-repeat center center;
+	background:@col-bg url( '@{path-gif}spinner.gif' ) no-repeat center center;
 }
-
 
 // Main Container (should be set to the size of the MPU)
 #content{
@@ -141,8 +139,51 @@
 		width:@width-wide-skyscraper;
 		height:@height-wide-skyscraper;
 	}
+	
+	// Bordered
+	/*
+	.banner{
+		width:(@width-banner - @border-thickness * 2);
+		height:(@height-banner - @border-thickness * 2);
+		border: @col-border @border-thickness solid;
+	}
+	.vertical-banner{
+		width:(@width-vertical-banner - @border-thickness * 2);
+		height:(@height-vertical-banner - @border-thickness * 2);
+		border: @col-border @border-thickness solid;
+	}
+	.half-banner{
+		width:(@width-half-banner - @border-thickness * 2);
+		height:(@height-half-banner - @border-thickness * 2);
+		border: @col-border @border-thickness solid;
+	}
+	.mpu{
+		width:(@width-mpu - @border-thickness * 2);
+		height:(@height-mpu - @border-thickness * 2);
+		border: @col-border @border-thickness solid;
+	}
+	.skyscraper{
+		width:(@width-skyscraper - @border-thickness * 2);
+		height:(@height-skyscraper - @border-thickness * 2);
+		border: @col-border @border-thickness solid;
+	}
+	.leaderboard{
+		width:(@width-leaderboard - @border-thickness * 2);
+		height:(@height-leaderboard - @border-thickness * 2);
+		border: @col-border @border-thickness solid;
+	}
+	.half-page{
+		width:(@width-half-page - @border-thickness * 2);
+		height:(@height-half-page - @border-thickness * 2);
+		border: @col-border @border-thickness solid;
+	}
+	.wide-skyscraper{
+		width:(@width-wide-skyscraper - @border-thickness * 2);
+		height:(@height-wide-skyscraper - @border-thickness * 2);
+		border: @col-border @border-thickness solid;
+	}
+	*/
 }
-
 
 // Convert an element into a full sized border
 .border{
@@ -150,7 +191,6 @@
     height:(@height-mpu - 2);
 	border: @col-border 1px solid;
 }
-
 
 
 #first,
