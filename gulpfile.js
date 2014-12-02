@@ -31,7 +31,7 @@ var defaultTypes =
 // Where do our source files live?
 var source = {
 	// ensure that all scripts in the JS folder are compiled, but that animation is the *last* one
-	scripts : [ SOURCE_FOLDER+'scripts/!(manifest)*.js', '!'+SOURCE_FOLDER+'scripts/animation.js', SOURCE_FOLDER+'scripts/animation.js' ],
+	scripts : [ SOURCE_FOLDER+'scripts/!(manifest|animation)*.js', SOURCE_FOLDER+'scripts/animation.js' ],
 	styles 	: SOURCE_FOLDER+'less/style.less',
 	jade 	: [ SOURCE_FOLDER+'jade/*.jade',  '!'+SOURCE_FOLDER+'jade/*.base.jade',  '!'+SOURCE_FOLDER+'jade/partials/**)' ],
 	images	: SOURCE_FOLDER+'images/**/*.+(png|jpg|jpeg|gif|webp)',
@@ -114,6 +114,7 @@ var merge = require('merge-stream');			// combine multiple streams!
 var filesize = require('gulp-filesize');  		// measure the size of the project (useful if a limit is set!)
 var expect = require('gulp-expect-file');		// expect a certain file (more for debugging)
 
+var connect = require('gulp-connect');			// live reload capable server for files
 
 var types = defaultTypes;						// mpu / skyscraper / leaderboard etc
 var variants = [];
@@ -446,7 +447,7 @@ gulp.task('zip', function (cb) {
 		{
 			var model = varietiesToPackage[i];
 			var folder = release.html + type + '.'+model + '/';
-			var fileName = (config.brand +'-'+type +'-'+model+"-" + config.version + ".zip").toLowerCase();;
+			var fileName = (config.brand +'-'+type +'-'+model+"-" + config.version + ".zip").toLowerCase();
 
 			console.log(i + '. Zipping "'+fileName +'" from ' +folder);
 
@@ -475,15 +476,29 @@ gulp.task('zip', function (cb) {
 ///////////////////////////////////////////////////////////////////////////////////
 gulp.task('watch', function() {
 
-	// Create LiveReload server
-	livereload.listen();
+	// Watch any files in build/, reload on change
+	gulp.watch(['build/**']).on('change', 'refresh' );
 
-	// Watch any files in dist/, reload on change
-	gulp.watch(['dist/**']).on('change', livereload.changed);
 });
 
+///////////////////////////////////////////////////////////////////////////////////
+//
+// TASK : Serve
+//
+// Start a webserver and display the
+//
+///////////////////////////////////////////////////////////////////////////////////
+gulp.task('refresh', function() {
+	return pipe(connect.reload());
+});
 
-
+gulp.task('connect', function() {
+  	connect.server({
+		root: 'build',
+		port:8080,
+		livereload: true
+  	});
+});
 
 
 

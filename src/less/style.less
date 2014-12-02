@@ -18,7 +18,7 @@
 
 
 // Paths
-@path-images:   	"../img";
+@path-images:   	"../img/";
 @path-png:   		@path-images + 'png';
 @path-jpeg:   		@path-images + 'jpg';
 @path-gif:   		@path-images + 'gif';
@@ -92,6 +92,7 @@
 	width:100%;
     height:100%;
     background:@col-bg url( '@{path-png}wall.png' ) repeat-x;
+	position:relative;		// ensure it inherits the size of it's parent
 	
 	// set up main frame
 	.banner,
