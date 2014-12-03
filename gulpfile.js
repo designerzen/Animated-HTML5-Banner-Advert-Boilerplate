@@ -13,6 +13,9 @@ http://gruntjs.com/configuring-tasks#globbing-patterns
 
 // =======================---------------- CONFIGURATION --------------------
 
+// Maximum file sizes for stuff...
+var MAX_SIZE_JPEG = 30;
+
 // Set up paths here (for this boilerplate, you should not have to alter these)
 var SOURCE_FOLDER 			= 'src/';		// Source files Root
 var BUILD_FOLDER 			= 'build/';		// Where the initial build occurs (debugable)
@@ -27,15 +30,16 @@ var defaultTypes =
   "skyscraper"
 ];
 
+
 // SOURCE_FOLDER+'scripts/vendor/**/*.js',
 // Where do our source files live?
 var source = {
 	// ensure that all scripts in the JS folder are compiled, but that animation is the *last* one
-	scripts : [ SOURCE_FOLDER+'scripts/!(manifest|animation)*.js', SOURCE_FOLDER+'scripts/animation.js' ],
+	scripts : [ SOURCE_FOLDER+'scripts/vendor/*.js', SOURCE_FOLDER+'scripts/!(manifest|animation)*.js', SOURCE_FOLDER+'scripts/animation.js' ],
 	styles 	: SOURCE_FOLDER+'less/style.less',
 	jade 	: [ SOURCE_FOLDER+'jade/*.jade',  '!'+SOURCE_FOLDER+'jade/*.base.jade',  '!'+SOURCE_FOLDER+'jade/partials/**)' ],
-	images	: SOURCE_FOLDER+'images/**/*{png,jpg,jpeg,gif,webp}',
-	fonts	: SOURCE_FOLDER+'fonts/**/*'
+	images	: SOURCE_FOLDER+'images/**/*.+(png|jpg|jpeg|gif|webp|svg)',
+	fonts	: SOURCE_FOLDER+'fonts/**/*.+(svg|eot|woff|ttf|otf)'
 };
 
 // Where shall we compile them to?
@@ -65,19 +69,15 @@ var release = {
 	fonts	: RELEASE_FOLDER+'fonts'
 };
 
-// How much to squish images
-var imageCrunchOptions = {
-	optimizationLevel: 3,
-	progressive: false
+// Files and folders to watch for changes in...
+var watch = {
+	scripts : SOURCE_FOLDER+'scripts/*.js',
+	styles 	: SOURCE_FOLDER+'less/*.less',
+	jade 	: SOURCE_FOLDER+'jade/*.jade',
+	images	: SOURCE_FOLDER+'images/**/*',
+	fonts	: SOURCE_FOLDER+'fonts/**/*'
 };
 
-// How much to squish HTML
-var htmlSquishOptions = {
-	removeComments     : true,
-	collapseWhitespace : true,
-	minifyCSS          : true,
-	keepClosingSlash   : true
-};
 
 // =======================---------------- IMPORT DEPENDENCIES --------------------
 
@@ -90,10 +90,13 @@ var packageJson = require("./package.json");	// read in package.json!
 
 // Image Plugins
 var imagemin = require('gulp-imagemin');		// squish images
+var pngquant = require('imagemin-pngquant');	// png squisher
+var jpegoptim = require('imagemin-jpegoptim');	// jpg squisher ( with file size imiter :) )
 
 // CSS Plugins
 var less = require('gulp-less');				// compile less files to css
 var prefixer = require('gulp-autoprefixer');    // add missing browser prefixes
+var uncss = require('gulp-uncss');				// remove unused css
 
 // HTML Plugins
 var jade = require('gulp-jade');				// convert jade to html
@@ -117,9 +120,42 @@ var expect = require('gulp-expect-file');		// expect a certain file (more for de
 var connect = require('gulp-connect');			// live reload capable server for files
 
 var types = defaultTypes;						// mpu / skyscraper / leaderboard etc
-var variants = [];
+var variants = [];								// campaign variants such as "a","b","c","d" or "1","2","3","4"
 var varietiesToPackage = variants;				// extensions for varieties such as A, B, C etc.
 var config;										// loaded in from an external config file
+
+// How much to squish images by :
+/* 
+The optimization level 0 enables a set of optimization operations that require minimal effort. There will be no changes to image attributes like bit depth or color type, and no recompression of existing IDAT datastreams. The optimization level 1 enables a single IDAT compression trial. The trial chosen is what. OptiPNG thinks it’s probably the most effective. The optimization levels 2 and higher enable multiple IDAT compression trials; the higher the level, the more trials.
+
+Level and trials:
+
+    1 trial
+    8 trials
+    16 trials
+    24 trials
+    48 trials
+    120 trials
+    240 trials,
+	// Additional plugins to use with imagemin.{ size:MAX_SIZE_JPEG }
+	use: [jpegoptim()]
+*/
+var imageCrunchOptions = {
+	// Select an optimization level between 0 and 7
+	optimizationLevel: 3,
+	// Lossless conversion to progressive
+	progressive: false,
+	// Interlace gif for progressive rendering.
+	interlaced : false
+};
+
+// How much to squish HTML
+var htmlSquishOptions = {
+	removeComments     : true,
+	collapseWhitespace : true,
+	minifyCSS          : true,
+	keepClosingSlash   : true
+};
 
 // =======================---------------- TASK DEFINITIONS --------------------
 
@@ -129,7 +165,6 @@ var config;										// loaded in from an external config file
 // ACTION 	: Deletes all files and folders specified in the arguments
 //
 ///////////////////////////////////////////////////////////////////////////////////
-//var settings 	= 'config.json';
 var settings = 'config.json';
 var renamed = '.config.json';
 
@@ -151,8 +186,9 @@ gulp.task('configuration-load', function(cb) {
 	types = config.types;
 	varietiesToPackage = config.variants;
 	
-	console.log( 'Loading : '+renamed + ' for Brand : '+config.brand +' version '+config.version );
+	console.log( 'Loading : '+settings + ' for Brand : '+config.brand +' version '+config.version );
 	console.log( 'Variants : '+config.variants );
+	console.log( 'Types : '+config.types );
 	
 	cb();
 });
@@ -291,11 +327,31 @@ gulp.task('images', function() {
 // Copy all static images & squish
 gulp.task('images-release', function() {
 	return 	gulp.src( source.images)
-			.pipe( newer(distribution.images) )
+			//.pipe( newer(distribution.images) )
 			.pipe( imagemin( imageCrunchOptions ) )
+			.pipe( pngquant({optimizationLevel: 3})() )
+			//.pipe( jpegoptim({ size:MAX_SIZE_JPEG })() )
 			.pipe( gulp.dest( distribution.images ) );
+			//.pipe( expect( source.images ) );
 });
 
+/*
+// Copy all static images & squish
+// DOES NOT WORK! results in filesize 0k...
+// Be more pragmatic whilst creating your assets!
+gulp.task('images-jpegs', function() {
+	//return 	gulp.src( SOURCE_FOLDER+'images/jpg/*.+(jpg|jpeg)' )
+	var test = [ SOURCE_FOLDER+'images/jpg/bg_mpu*.jpg', SOURCE_FOLDER+'images/jpg/bg_wideskyscraper*.+(jpg|jpeg)' ];
+	//var test = [ SOURCE_FOLDER+'images/jpg/bg_halfpage*.jpg', SOURCE_FOLDER+'images/jpg/bg_leaderboard*.+(jpg|jpeg)', distribution.images+'/jpg/bg_mpu*.jpg', distribution.images+'/jpg/bg_wideskyscraper*.+(jpg|jpeg)' ];
+	//var test = [ distribution.images+'/jpg/bg_wideskyscraper*.+(jpg|jpeg)' ];
+	return 	gulp.src( test )
+	//return 	gulp.src( SOURCE_FOLDER+'images/jpg/*.jpg' )
+			.pipe( jpegoptim({ size:MAX_SIZE_JPEG })() )
+			.pipe( expect( test ) )
+			.pipe( gulp.dest( distribution.images+'/jpg' ) );
+});
+
+*/
 
 // Cascading Style Sheets =========================================================
 ///////////////////////////////////////////////////////////////////////////////////
@@ -398,24 +454,39 @@ gulp.task('scripts-release', function() {
 ///////////////////////////////////////////////////////////////////////////////////
 gulp.task('package',function(){
 
-	var pattern = [ distribution.images +'/**/*.*' ];
 	var merged = merge();
+	var p, t, e, l, g, k;
 
-	for (var p = 0, l=varietiesToPackage.length; p < l; p++)
-    {
-		pattern.push( '!'+ distribution.images +'/*.'+ varietiesToPackage[p] +'.*' );
-    }
-	
-	console.log( pattern );
-	
-	for (var t = 0, e=types.length; t < e; t++)
+	for (t = 0, e=types.length; t < e; t++)
 	{
 		var type = types[t];
+		var imageGlob = [ distribution.images +'/**/*' ];
+			
+		// Loop through types and create a glob that finds *all* files that do NOT have a type in their title
+		// AS WELL as *all* files that have this SPECIFIC type of 
+		for (g = 0, k=types.length; g < k; g++)
+		{
+			// 
+			// we only want to copy files that *HAVE* either a unique file name with no type specified
+			// or an image that has the specific type specified...
+			
+			if ( type === types[g] )
+			{
+				// Yes we want!
+				// imageGlob.push( distribution.images +'/**/*'+ type +'*' );
+			}else{
+				// No we *dont* want
+				imageGlob.push( '!'+ distribution.images +'/**/*'+ (types[g]) +'*' );
+				imageGlob.push( '!'+ distribution.images +'/**/*'+ (types[g]).toLowerCase() +'*' );
+			}
+		}
+				
 		// loop through varieties
 		for (var i = 0, l=varietiesToPackage.length; i < l; i++)
 		{
 			var model = varietiesToPackage[i];
-			var html = distribution.html + '*.'+model+'.html';
+			//var html = distribution.html + '*.'+model+'.html';
+			var html = distribution.html + (type+'.'+config.brand+'.'+model+'.html').toLowerCase();
 			var folder = release.html + type + '.'+model + '/';
 			var size = config.sizes[ type ];
 
@@ -425,20 +496,16 @@ gulp.task('package',function(){
 			.pipe( gulp.dest( folder ));
 
 			// all except specific images
-			var imageStream = gulp.src( pattern )
+			var imageStream = gulp.src( imageGlob )
 			.pipe( gulp.dest( folder + 'img' ));
 
 			// target specific
 			var variantStream = gulp.src( distribution.images +'/*.'+model+'.*' )
 			.pipe( gulp.dest( folder + 'img' ));
-
+			
 			// fonts
 			var fontStream = gulp.src( distribution.fonts +'/*.*' )
 			.pipe( gulp.dest( folder + 'fonts' ));
-
-			// css
-			var styleStream = gulp.src( distribution.styles +'/*.css' )
-			.pipe( gulp.dest( folder + 'css' ));
 
 			// js
 			var scriptStream = gulp.src( distribution.scripts +'/*.js' )
@@ -447,24 +514,22 @@ gulp.task('package',function(){
 			// manifest
 			var 
 				manifestFile = 'manifest.js',
-				folder = SOURCE_FOLDER+'scripts/',
+				manifestFolder = SOURCE_FOLDER+'scripts/',
 				files = [],
-				manifest = folder+type+'.'+manifestFile;
+				manifest = manifestFolder+type+'.'+manifestFile;
 
 			// This first checks to see if the manifest for this file exists...
 			if( fs.existsSync( manifest ) )
 			{
 				// Use custom Manifest file
 				files.push( manifest );
-				console.error('Custom Manifest FOUND! at : '+manifest );
+				//console.error('Custom Manifest FOUND! at : '+manifest );
 			} else {
 				// Use default Manifest file
-				files.push( folder+'manifest.js' );
+				files.push( manifestFolder+'manifest.js' );
 				console.error('[error] Manifest missing for size '+type+' \n\t Please create the file : '+manifest );
 			}
 		
-			
-			console.log( files );
 			var manifestStream = gulp.src( files )
 			// automatically update sizes within
 			//.pipe( replace(/"width":300/, '"width":'+size.w ) )
@@ -474,6 +539,14 @@ gulp.task('package',function(){
 			.pipe( rename( manifestFile ) )
 			.pipe( gulp.dest( release.html + type + '.'+model ));
 			
+			// css
+			console.log('Attempting to uncss the files linked through '+html);
+			var styleStream = gulp.src( distribution.styles +'/*.css' )
+			// Remove unused CSS with UnCSS for *this* campaign
+			/*
+			.pipe( expect(html) )*/
+			
+			.pipe( gulp.dest( folder + 'css' ));
 
 			
 			// add to merge
@@ -481,19 +554,39 @@ gulp.task('package',function(){
 			merged.add( imageStream );
 			merged.add( variantStream );
 			merged.add( fontStream );
-			merged.add( styleStream );
 			merged.add( scriptStream );
 			merged.add( manifestStream );
-
-
+			merged.add( styleStream );
+			
 			// create package folders in dist folder
 			console.log(t+ '. Packaging "'+type+'.'+model+'" from '+html +' to '+folder );
 		}
 	}
-	// the base option sets the relative root for the set of files,
-	// preserving the folder structure, { base: './' }
+	
+	// now loop through each new campaign folder and uncss & optimise it!
+	for (t = 0, e=types.length; t < e; t++)
+	{
+		var type = types[t];
+		// loop through varieties
+		for (var i = 0, l=varietiesToPackage.length; i < l; i++)
+		{
+			var model = varietiesToPackage[i];
+			var folder = release.html + type + '.'+model + '/';
+			var styleStream = gulp.src( folder +'css/style.css' )
+				// Remove unused CSS with UnCSS for *this* campaign
+				.pipe( uncss({
+					html: [ folder+'index.html' ]
+				}) )
+				.pipe( gulp.dest( folder + 'css' ));
+
+			merged.add( styleStream );
+		}
+	}
+	
 	return merged;
 });
+
+
 ///////////////////////////////////////////////////////////////////////////////////
 //
 // TASK 	: Zip
@@ -533,10 +626,11 @@ gulp.task('zip', function (cb) {
 });
 
 
-// Utilities =====================================================
+// Utilities ======================================================================
+
 ///////////////////////////////////////////////////////////////////////////////////
 //
-// TASK : Watch
+// TASK : Watch BUILD
 //
 // Rerun the task when a file changes
 //
@@ -544,22 +638,36 @@ gulp.task('zip', function (cb) {
 gulp.task('watch', function() {
 
 	// Watch any files in build/, reload on change
-	gulp.watch(['build/**']).on('change', 'refresh' );
+	gulp.watch( [ watch.scripts ] 	, 'scripts' );
+	gulp.watch( [ watch.styles ] 	, 'less' );
+	gulp.watch( [ watch.jade ] 		, 'jade' );
+	gulp.watch( [ watch.images ] 	, 'images' );
+	gulp.watch( [ watch.fonts ] 	, 'copy' );
 	
+	//gulp.watch( [ BUILD_FOLDER+'**/*' ] , 'refresh' ).on('change', function (file) {
+	gulp.watch( [ BUILD_FOLDER+'**/*' ] ).on('change', function (file) {
+    	gulp.src( file.path ).pipe( connect.reload() );
+	});
 });
+
+
+
+
+// Server =========================================================================
 
 ///////////////////////////////////////////////////////////////////////////////////
 //
 // TASK : Serve
 //
-// Start a webserver and display the 
+// Start a webserver and display the index
 //
 ///////////////////////////////////////////////////////////////////////////////////
 gulp.task('refresh', function() {
-	return pipe(connect.reload());
+	return gulp.src( BUILD_FOLDER+'*.html' )
+		.pipe(connect.reload());
 });
 
-gulp.task('connect', function() {
+gulp.task('server', function() {
   	connect.server({
 		root: 'build',
 		port:8080,
@@ -635,10 +743,7 @@ gulp.task('c' , 	[ 'compile' ] );
 // As many of these tasks are not asynch
 gulp.task('distribute', function(callback) {
 	sequencer(
-		'configure',
-		'clean',
-		'deploy',
-		'package',
+		'compile',
 		'zip',
     callback);
 });

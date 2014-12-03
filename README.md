@@ -84,11 +84,11 @@ Compiling creates a **Release** folder that contains X folders _(per campaign)_
 As well as **one ZIP file that represents one release folder** in the format
 The filesize is displayed in the console when run.
 
-**Name-Type-Variant-Version(-Date).zip**
+**Name-Type-Variant.zip**
 
-Where **Name**, **Type**, **Variant** and **Version** are set in the **package.json** file
+Where **Name**, **Type** and **Variant**  are set in the **package.json** file
 
-_eg. Kittens-mpu-a-1.1.1.zip_
+_eg. Kittens-mpu-a.zip_
 
 
 ###FAQ###
@@ -100,6 +100,12 @@ _eg. Kittens-mpu-a-1.1.1.zip_
 **Q.** Config task seems to be failing... it can't find the config.json file?
 
 **A.** Delete the node_modules folder and then run npm install again. This sometimes happens if the dependencies have not fully resolved, yet no error message may be shown.
+
+
+**Q.** Getting errors about things not being found when running node
+**A.** Weirdness in that the modules do not get added to dependencies so run
+npm install --save-dev imagemin-pngquant
+npm install --save-dev imagemin-jpegoptim
 
 ---
 Released under the [**GPL2.0 license**](http://www.gnu.org/licenses/gpl-2.0.txt). 
