@@ -35,7 +35,7 @@ var defaultTypes =
 // Where do our source files live?
 var source = {
 	// ensure that all scripts in the JS folder are compiled, but that animation is the *last* one
-	scripts : [ SOURCE_FOLDER+'scripts/vendor/*.js', SOURCE_FOLDER+'scripts/!(manifest|animation)*.js', SOURCE_FOLDER+'scripts/animation.js' ],
+	scripts : [ SOURCE_FOLDER+'scripts/vendor/*.js', SOURCE_FOLDER+'scripts/!(*manifest|animation)*.js', SOURCE_FOLDER+'scripts/animation.js' ],
 	styles 	: SOURCE_FOLDER+'less/style.less',
 	jade 	: [ SOURCE_FOLDER+'jade/*.jade',  '!'+SOURCE_FOLDER+'jade/*.base.jade',  '!'+SOURCE_FOLDER+'jade/partials/**)' ],
 	images	: SOURCE_FOLDER+'images/**/*.+(png|jpg|jpeg|gif|webp|svg)',
