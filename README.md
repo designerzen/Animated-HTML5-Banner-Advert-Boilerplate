@@ -38,6 +38,7 @@ And add as many variants as you wish (these are the duplicate templates named ac
 Then run :
 
 > gulp templates
+> gulp manifests
 
 ##Configuration##
 All of the settings can be set by altering the parameters in the config.json file.

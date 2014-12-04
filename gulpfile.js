@@ -707,6 +707,7 @@ gulp.task('create', function(callback) {
 	sequencer(
 		'configure',
 		'jade-create',
+		'clone-manifests',
     callback);
 });
 
