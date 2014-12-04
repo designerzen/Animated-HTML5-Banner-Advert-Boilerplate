@@ -1,6 +1,6 @@
-// Project #{title}
-// Version #{version}
-// Type #{type}
+// Project 		#{title}
+// Version 		#{version}
+// Type 		#{type}
 extends partials/base.jade
 
 block main
@@ -8,7 +8,8 @@ block main
 	#first
 		h1
 		h2
-		img#logo( src="img/png/#{type}_logo.png" )
+		img#bg( src="img/jpg/bg_#{type}.png", width="#{width}", height="#{height}" )
+		img#logo( src="img/png/logo_#{type}.png" )
 		
 	#second
 
