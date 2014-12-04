@@ -235,6 +235,8 @@ gulp.task('jade-create', function() {
 	for (var t = 0, e=types.length; t < e; t++)
 	{
 		var type = types[t];
+		var size = config.sizes[ type ];
+		
 		console.log((t+1)+'/'+types.length+'. Creating '+varientsLength+' templates for '+type);
 
 		for (var i = 0, l=varientsLength; i < l; i++)
@@ -246,6 +248,8 @@ gulp.task('jade-create', function() {
 				.pipe( replace(/#{title}/, config.brand) )
 				.pipe( replace(/#{version}/, config.version) )
 				.pipe( replace(/#{type}/, type) )
+				.pipe( replace(/#{width}/, size.w) )
+				.pipe( replace(/#{height}/, size.h) )
 				.pipe( replace(/base.jade/, type+'.base.jade') )
 				.pipe( rename( filename ) )
 				.pipe( gulp.dest( folder ) );

@@ -36,7 +36,9 @@ Pay close attention to types (remove any that don't apply) and variants...
 And add as many variants as you wish (these are the duplicate templates named accordingly)
 
 If you have common elements on all of your pages, you can edit the **template.jade partial** as these will be cloned into your templates. 
-You can use the shortcut #{type} where-ever you want to have type specific elements.
+
+You can use the shortcut #{type} where-ever you want to have type specific elements (mpu/skyscraper/banner etc).
+The shortcuts #{width} and #{height} are also available if you wish to use them!
 
 Then run :
 
