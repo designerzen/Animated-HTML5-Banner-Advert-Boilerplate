@@ -275,6 +275,13 @@ gulp.task('clone-manifests', function() {
 		var manifest = gulp.src( [source] )
 			.pipe( replace(/"width":300/, '"width":'+size.w ) )
 			.pipe( replace(/"height":250/, '"height":'+size.h ) )
+		
+			.pipe( replace(/#{title}/, config.brand) )
+			.pipe( replace(/#{version}/, config.version) )
+			.pipe( replace(/#{type}/, type) )
+		
+			.pipe( replace(/#{width}/, size.w) )
+			.pipe( replace(/#{height}/, size.h) )
 			.pipe( rename( filename ) )
 			.pipe( gulp.dest( folder ) );	// <- save back into source!
 
