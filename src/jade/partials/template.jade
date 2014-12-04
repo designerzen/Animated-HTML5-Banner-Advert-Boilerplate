@@ -1,11 +1,15 @@
 // Project #{title}
 // Version #{version}
+// Type #{type}
 extends partials/base.jade
 
 block main
 
 	#first
-
+		h1
+		h2
+		img#logo( src="img/png/#{type}_logo.png" )
+		
 	#second
 
 	#third
@@ -13,3 +17,5 @@ block main
 	#fourth
 
 	#fifth
+		#cta
+			a#button( title="View offers", href='#' ) Call To Action

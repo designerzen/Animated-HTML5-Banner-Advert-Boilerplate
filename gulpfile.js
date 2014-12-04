@@ -245,6 +245,7 @@ gulp.task('jade-create', function() {
 			var jade = gulp.src( [source] )
 				.pipe( replace(/#{title}/, config.brand) )
 				.pipe( replace(/#{version}/, config.version) )
+				.pipe( replace(/#{type}/, type) )
 				.pipe( replace(/base.jade/, type+'.base.jade') )
 				.pipe( rename( filename ) )
 				.pipe( gulp.dest( folder ) );

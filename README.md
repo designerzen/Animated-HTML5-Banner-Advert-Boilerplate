@@ -35,10 +35,17 @@ Firstly _ensure that you have editted the config.json_ with your appropriate set
 Pay close attention to types (remove any that don't apply) and variants...
 And add as many variants as you wish (these are the duplicate templates named accordingly)
 
+If you have common elements on all of your pages, you can edit the **template.jade partial** as these will be cloned into your templates. 
+You can use the shortcut #{type} where-ever you want to have type specific elements.
+
 Then run :
 
 > gulp templates
 > gulp manifests
+
+or simply : 
+
+> gulp create
 
 ##Configuration##
 All of the settings can be set by altering the parameters in the config.json file.
@@ -47,6 +54,7 @@ There is internal documentation directly next to the parameters that you can set
 
 
 ##To Develop##
+Edit template.jade before running gulp templates
 
 
 #####Less#####
