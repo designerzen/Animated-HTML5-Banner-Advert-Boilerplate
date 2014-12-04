@@ -73,8 +73,6 @@
 @width-half-page:			300px;
 @height-half-page: 			600px;
 
-
-
 // Import our other css files directly into this one
 @import "reset";
 @import "typography";
@@ -194,6 +192,7 @@
 	border: @col-border 1px solid;
 }
 
+// Scenes -----------------------------------------------
 
 #first,
 #second,
@@ -208,13 +207,12 @@
 	overflow:hidden;
 }
 
-// Animated Elements
 #first{
-    z-index:5;
+    z-index:1;
 }
 
 #second{
-    z-index:1;
+    z-index:2;
 }
 
 #third{
@@ -223,20 +221,9 @@
 
 
 #fourth{
-    z-index:6;
+    z-index:4;
 }
 
 #fifth{
-    z-index:6;
-}
-
-
-// This is the Call To Action Button
-#cta{
-
-    a{
-        display:block;
-        position:relative;
-    }
-
+    z-index:5;
 }
