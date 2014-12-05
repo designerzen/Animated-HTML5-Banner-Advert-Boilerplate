@@ -7,6 +7,7 @@
 // Mixin for font sizing...
 // With aded in fudge factor to accomodate
 // Photoshop file point mis-matching
+// (1 ÷ parent font-size × required pixel value = em value)
 .fontScale( @points:18 )
 {
 	// as a percentage of scale...
@@ -22,7 +23,7 @@ html, body{
 	padding: 0;
 }
 
-body{
+html{
     font-size:100%;
     line-height:18px;
 }
