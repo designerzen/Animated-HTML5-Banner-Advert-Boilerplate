@@ -7,7 +7,13 @@ var FlashTrack = (function(){
 	// Construct
 	function FlashTrack()
     {
-		ft = new FT();
+		if (FT)
+		{
+			ft = new FT();
+			this.available = true;
+		}else{
+			this.available = false;
+		}
     };
 	
 	// Injects dynamic content from the flashTalking API via the manifest.js
@@ -38,6 +44,14 @@ var FlashTrack = (function(){
    
 })();
 
+// Set up and test
 var ft = new FlashTrack();
-ft.loadContent();
-ft.setClickTags('#clicktagholder');
+if (ft.available)
+{
+	// Flash Talking is available :)
+	ft.loadContent();
+	ft.setClickTags('#clicktagholder');
+}else{
+	// Failed to load Flash Talking API
+	document.body.className += " failed";
+}

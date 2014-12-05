@@ -245,11 +245,11 @@ gulp.task('jade-create', function() {
 			var filename = (type+'.'+config.brand+'.'+model+'.jade').toLowerCase();
 			var destination = folder;
 			var jade = gulp.src( [source] )
-				.pipe( replace(/#{title}/, config.brand) )
+				.pipe( replace(/#{title}/gi, config.brand) )
 				.pipe( replace(/#{version}/, config.version) )
-				.pipe( replace(/#{type}/, type) )
-				.pipe( replace(/#{width}/, size.w) )
-				.pipe( replace(/#{height}/, size.h) )
+				.pipe( replace(/#{type}/gi, type.toLowerCase() ) )
+				.pipe( replace(/#{width}/gi, size.w) )
+				.pipe( replace(/#{height}/gi, size.h) )
 				.pipe( replace(/base.jade/, type+'.base.jade') )
 				.pipe( rename( filename ) )
 				.pipe( gulp.dest( folder ) );
@@ -275,13 +275,11 @@ gulp.task('clone-manifests', function() {
 		var manifest = gulp.src( [source] )
 			.pipe( replace(/"width":300/, '"width":'+size.w ) )
 			.pipe( replace(/"height":250/, '"height":'+size.h ) )
-		
-			.pipe( replace(/#{title}/, config.brand) )
-			.pipe( replace(/#{version}/, config.version) )
-			.pipe( replace(/#{type}/, type) )
-		
-			.pipe( replace(/#{width}/, size.w) )
-			.pipe( replace(/#{height}/, size.h) )
+			.pipe( replace(/#{title}/gi, config.brand) )
+			.pipe( replace(/#{version}/gi, config.version) )
+			.pipe( replace(/#{type}/gi, type.toLowerCase() ) )
+			.pipe( replace(/#{width}/gi, size.w) )
+			.pipe( replace(/#{height}/gi, size.h) )
 			.pipe( rename( filename ) )
 			.pipe( gulp.dest( folder ) );	// <- save back into source!
 
@@ -297,6 +295,7 @@ gulp.task('create-manifests', function(callback) {
 		'clone-manifests',
     callback);
 });
+gulp.task('manifest', 	[ 'create-manifests' ] );
 
 
 // Jade ===========================================================================
@@ -399,7 +398,7 @@ gulp.task('less-release', function() {
 ///////////////////////////////////////////////////////////////////////////////////
 gulp.task('copy',function(){
 	return gulp.src( source.fonts )
-	.pipe( newer( distribution.fonts ) )
+	.pipe( newer( destination.fonts ) )
 	.pipe( gulp.dest( destination.fonts ));
 });
 
@@ -414,10 +413,10 @@ gulp.task('copy-manifest',function(){
 	// TODO : replace the sizes according to nomenclature
 	.pipe( replace(/"width":300/, '"width":300' ) )
 	.pipe( replace(/"height":250/, '"height":250' ) )
+	.pipe( replace(/#{type}/gi, 'mpu' ) )
 	.pipe( gulp.dest( destination.html ))
 	.pipe( gulp.dest( distribution.html ));
 });
-
 
 // Scripts ========================================================================
 ///////////////////////////////////////////////////////////////////////////////////
@@ -498,6 +497,7 @@ gulp.task('package',function(){
 		{
 			var model = varietiesToPackage[i];
 			//var html = distribution.html + '*.'+model+'.html';
+			var title = config.brand+' ' + type;
 			var html = distribution.html + (type+'.'+config.brand+'.'+model+'.html').toLowerCase();
 			var folder = release.html + type + '.'+model + '/';
 			var size = config.sizes[ type ];
@@ -505,6 +505,7 @@ gulp.task('package',function(){
 			// create release folder
 			var htmlStream = gulp.src( html )
 			.pipe( rename( 'index.html' ))
+			.pipe( replace(/<title>(.*)<\/title>/i, title ) )
 			.pipe( gulp.dest( folder ));
 
 			// all except specific images
@@ -525,9 +526,9 @@ gulp.task('package',function(){
 
 			// manifest
 			var 
+				files = [],
 				manifestFile = 'manifest.js',
 				manifestFolder = SOURCE_FOLDER+'scripts/',
-				files = [],
 				manifest = manifestFolder+type+'.'+manifestFile;
 
 			// This first checks to see if the manifest for this file exists...
@@ -557,7 +558,6 @@ gulp.task('package',function(){
 			// Remove unused CSS with UnCSS for *this* campaign
 			/*
 			.pipe( expect(html) )*/
-			
 			.pipe( gulp.dest( folder + 'css' ));
 
 			
@@ -705,7 +705,7 @@ gulp.task('server', function() {
 ///////////////////////////////////////////////////////////////////////////////////
 
 // compile all assets & create sourcemaps
-gulp.task('rebuild', 	[ 'less', 'jade', 'images', 'scripts', 'copy' ] );
+gulp.task('rebuild', 	[ 'less', 'jade', 'images', 'scripts', 'copy', 'copy-manifest' ] );
 
 // squish everything & concatanate scripts
 gulp.task('deploy', 	[ 'less-release', 'jade-release', 'images-release', 'scripts-release', 'copy-release' ] );
@@ -778,8 +778,7 @@ gulp.task('default', function(callback) {
 
 gulp.task('help' , function(callback) {
 
-	console.log( 'Help (you can return here by typing "gulp" or "gulp help")');
-	console.log( "--Config---------------------------------");
+	console.log( "-- Config ---------------------------------");
 	console.log( 'Campaign\t: "'+config.brand+'" in '+varietiesToPackage.length +' variants' );
 	console.log( 'Types\t: "'+config.types +'"' );
 	console.log( 'Version\t: "'+config.version+'" ' );
@@ -787,7 +786,10 @@ gulp.task('help' , function(callback) {
 	console.log( 'Settings Location\t: "config.json" ' );
 
 	console.log( varietiesToPackage.length + ' Campaign(s) Found : "'+varietiesToPackage+'" ' );
-	console.log( "--Tasks----------------------------------");
-
+	console.log( "-- Tasks ----------------------------------");
+	
+	console.log( '');
+	console.log( 'NB. Help (you can return here by typing "gulp" or "gulp help")');
+	
     callback();
 } );

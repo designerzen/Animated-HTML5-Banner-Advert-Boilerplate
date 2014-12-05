@@ -5,19 +5,28 @@ html(class='no-js')
 	head
 		meta(charset='utf-8')
 		meta(http-equiv='X-UA-Compatible', content='IE=edge')
-		title MPU
+		title Advert
 		meta(name="description", content="")
 		meta(name="viewport", content="width=device-width, initial-scale=1")
 		//- meta(name="viewport", content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no")
 		link(rel="stylesheet", href="css/style.css")
 
 	body
+		//- Loading class always gets put on the content element until flashtalking and the associated images
+		//- Have been loaded into memory, at which point this class is removed from the #content element
 		#content.loading
+			//- Permanent click tag overlaid button
 			#clicktagholder
+			//- Where we stick in our content
 			block content
 
 		//- Javascripts :
+		//- Flash Talking html5 API (If you are not using this system, delete this line)
 		script(src='http://cdn.flashtalking.com/frameworks/js/api/2/6/html5API.js')
-		//- script(src='scripts/vendor/TweenMax.min.js')
+		
+		//- If you are allowed to import external scripts from a CDN, 
+		// you can uncomment the following line and delete the TweenMLite.min.js file from src/scripts/vendor
 		//- script(src='http://cdnjs.cloudflare.com/ajax/libs/gsap/1.13.2/TweenMax.min.js')
+		
+		//- This is the compiled, concantenated, squished and optimised javascript
 		script(src='js/main.min.js')

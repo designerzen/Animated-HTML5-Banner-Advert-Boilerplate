@@ -49,11 +49,12 @@ or simply :
 
 > gulp create
 
+
 ##Configuration##
 All of the settings can be set by altering the parameters in the config.json file.
 You may use various styles of comments within this file (although json itself does not allow them - these are stripped off before compilation)
-There is internal documentation directly next to the parameters that you can set.
-
+There is internal documentation directly next to the parameters that you can set. 
+You should not have to change the dimensions in the sizes object unless you are working on  campaign that is a unique size, and it may be best to create a new set of sizes specifically for your project.
 
 ##To Develop##
 Edit template.jade before running gulp templates
@@ -69,8 +70,21 @@ src/less
 src/jade/
 src/jade/partials
 ```
-You can edit these partials too, then it will appear in your templates when you run "gulp template"
+You can edit the **template.jade** partial too, this will appear in your templates when you run "gulp template"
 
+To overwrite your jade template files, you can run 
+
+> gulp jade-create
+
+#####Javascript####
+In the src/scripts folder you will find 3 files of interest. 
+The FlashTrack file contains the Flash Talking interface (If you are doing instant Ads, it has the method preset, if not, delete as applicable)
+The Animation file is boilerplate code for writing your own timeline based animations. Delete whatever you feel you don't need.
+
+```
+src/jade/
+src/jade/partials
+```
 
 
 ###To Build For _Testing_###
@@ -86,6 +100,7 @@ This creates a minified version that allows creatives to test the varieties easi
 > gulp compile
 
 
+
 ###To Compile For _Distribution_###
 
 Compiling creates a **Release** folder that contains X folders _(per campaign)_
@@ -95,11 +110,12 @@ Compiling creates a **Release** folder that contains X folders _(per campaign)_
 As well as **one ZIP file that represents one release folder** in the format
 The filesize is displayed in the console when run.
 
-**Name-Type-Variant.zip**
+release / **Name-Type-Variant.zip**
 
-Where **Name**, **Type** and **Variant**  are set in the **package.json** file
+Where **Name**, **Type** and **Variant**  are read in from the **package.json** file
 
 _eg. Kittens-mpu-a.zip_
+
 
 
 ###FAQ###
@@ -114,9 +130,12 @@ _eg. Kittens-mpu-a.zip_
 
 
 **Q.** Getting errors about things not being found when running node
-**A.** Weirdness in that the modules do not get added to dependencies so run
-npm install --save-dev imagemin-pngquant
-npm install --save-dev imagemin-jpegoptim
+
+**A.** Weirdness in that the modules do not get added to dependencies so run,
+they seem to work for most people but if you are having issues, run :
+
+> npm install --save-dev imagemin-pngquant
+> npm install --save-dev imagemin-jpegoptim
 
 ---
 Released under the [**GPL2.0 license**](http://www.gnu.org/licenses/gpl-2.0.txt). 
