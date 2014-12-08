@@ -1,20 +1,19 @@
-/**
- * Global Reset of all HTML Elements
- *
- * Resetting all of our HTML Elements ensures a smoother
- * visual transition between browsers. If you don't believe me,
- * try temporarily commenting out this block of code, then go
- * and look at Mozilla versus Safari, both good browsers with
- * a good implementation of CSS. The thing is, all browser CSS
- * defaults are different and at the end of the day if visual
- * consistency is what we're shooting for, then we need to
- * make sure we're resetting all spacing elements.
- *
- */
+//////////////////////////////////////////////////////////////////////
+//
+// Global Reset of all HTML Elements
+//
+// Resetting all of our HTML Elements ensures a smoother
+// visual transition between browsers. If you don't believe me,
+// try temporarily commenting out this block of code, then go
+// and look at Mozilla versus Safari, both good browsers with
+// a good implementation of CSS. The thing is, all browser CSS
+// defaults are different and at the end of the day if visual
+// consistency is what we're shooting for, then we need to
+// make sure we're resetting all spacing elements.
+//
+//////////////////////////////////////////////////////////////////////
 html, body {
 	border: 0;
-	font-family: "Helvetica-Neue", "Helvetica", Arial, sans-serif;
-	line-height: 1.5;
 	margin: 0;
 	padding: 0;
 }
@@ -57,4 +56,16 @@ a img {
 
 :focus {
   outline: 0;
+}
+
+// Remove the gap between audio, canvas, iframes,
+// images, videos and the bottom of their containers:
+// https://github.com/h5bp/html5-boilerplate/issues/440
+audio,
+canvas,
+iframe,
+img,
+svg,
+video {
+    vertical-align: middle;
 }

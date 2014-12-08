@@ -1,5 +1,5 @@
 @font-regular:	'Helvetica-Neue';
-@font-size-base: 14px;
+@font-size-base: 16px;
 
 @import "fonts";
 
@@ -11,16 +11,14 @@
 .fontScale( @points:18 )
 {
 	// as a percentage of scale...
-	font-size:( @points / @font-size-base ) * 100%;
+	font-size:( @points + 0px );						// Fallback
+	font-size:( @points / @font-size-base ) * 100%;		// Set in EMS so that they can be scaled relative to their parent
 }
 
 html, body{
-	border: 0;
 	font-family: @font-regular, "Helvetica-Neue", "Helvetica", Arial, sans-serif;
-	font-size: @font-size-base;
+	font-size: @font-size-base;		// EXPLICITLY set the font size to a pixel height here to override user's own custom browser settings
 	line-height: 1.5;
-	margin: 0;
-	padding: 0;
 }
 
 html{

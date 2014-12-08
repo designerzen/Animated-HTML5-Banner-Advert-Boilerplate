@@ -21,6 +21,12 @@
 		"d"
 	],
 	
+	
+	"manifests": {
+		"enabled":false,
+		"flashTalking" : true
+	},
+	
 	/* 
 	Default dimensions for banner adverts
 	from http://notwothesame.com/banner-sizes.htm

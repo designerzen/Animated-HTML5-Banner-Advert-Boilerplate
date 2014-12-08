@@ -1,0 +1,121 @@
+// SIZING =====================================================
+
+
+// Sizing shortcuts
+.size(@width ; @height) {  width:@width;  height:@height; }
+// Square sizing (takes only one argument)
+.size(@size) {  .size(@size, @size);	}
+
+
+// Set width / height
+.w( @width ){	width:@width }
+.h( @height ){	height:@height }
+
+// Top / Left Shortcuts
+.x( @left ){	left:@left; }
+.y( @top ){		top:@top; }
+
+
+// POSITIONING ================================================
+
+
+// Absolute positioning 
+.position(  @top:auto; @right:auto; @bottom:auto; @left:auto )
+{
+	position:absolute;
+	top:@top;
+	left:@left;
+	bottom:@bottom;
+	right:@right;
+}
+
+// Absolute positioning 
+.position(  @top:auto; @right:auto; @bottom:auto; @left:auto; @z:0 )
+{
+	position:absolute;
+	top:@top;
+	left:@left;
+	bottom:@bottom;
+	right:@right;
+	z-index:@z;
+}
+
+// Position relative to the top left of the parent container
+.position( @top:auto; @left:auto ){ .position-tl( @top, @left ); }
+.position-tl( @top:auto; @left:auto ){	position:absolute;	top:@top;	left:@left; }
+.position-tl( @position:auto ){	.position-tl( @position, @position ); }
+
+
+// Position relative to the bottom and right of the parent container
+.position-tr( @top:auto; @right:auto ){	position:absolute;	top:@top;	right:@right; }
+.position-tr( @position:auto ){	.position-tr( @position, @position ); }
+
+
+// Position relative to the bottom and right of the parent container
+.position-br( @bottom:auto; @right:auto ){	position:absolute;	bottom:@bottom;	right:@right; }
+.position-br( @position:auto ){	.position-br( @position, @position ); }
+
+
+// Position relative to the bottom and right of the parent container
+.position-bl( @bottom:auto; @left:auto ){	position:absolute;	bottom:@bottom;	left:@left; }
+.position-bl( @position:auto ){	.position-br( @position, @position ); }
+
+
+
+
+// Clearfix: contain floats
+//
+// For modern browsers
+// 1. The space content is one way to avoid an Opera bug when the
+//    `contenteditable` attribute is included anywhere else in the document.
+//    Otherwise it causes space to appear at the top and bottom of elements
+//    that receive the `clearfix` class.
+// 2. The use of `table` rather than `block` is only necessary if using
+//    `:before` to contain the top-margins of child elements.
+ 
+.clearfix () { 
+	*zoom:1; 
+	&:before, &:after{ content:" "; display:table; } 
+	&:after{clear:both;}
+}
+
+// DESIGN ======================================================
+
+
+// Add an alphatransparency value to any background or border color (via Elyse Holladay)
+.background-translucent(@color:@white; @alpha:1) {
+    background-color: hsla(hue(@color), saturation(@color), lightness(@color), @alpha);
+}
+
+
+// UTILITIES ===================================================
+
+
+// Make any button, link or element refuse to accept mouse events
+.prevent(){
+	pointer-events : none;
+}
+
+// User can select?
+.user-select( @select:none ){ 
+	user-select:@select; 
+}
+
+
+// DEBUG =======================================================
+
+
+// Useful classes for testing. 
+.incomplete() 	{outline: 3px dotted green; }
+.fixme() 		{outline: 3px dotted yellow; }
+.todo() 		{outline: 3px dotted blue; }
+.xxx() 			{outline: 1px dotted red; }
+
+// Create Debug code for adding to classes
+// Call this in your body somewhere
+.debug()
+{
+	.incomplete();		// add class 'incomplete' to an element
+	.todo();			// add class 'todo' to an element
+	.xxx();				// add class 'xxx' to an element
+}

@@ -114,7 +114,7 @@ var replace = require('gulp-replace');			// replace content within files
 var fs = require('fs');							// read inside files
 var rename = require('gulp-rename');			// rename files
 var merge = require('merge-stream');			// combine multiple streams!
-var filesize = require('gulp-filesize');  		// measure the size of the project (useful if a limit is set!)
+var filesize = require('gulp-size');  		// measure the size of the project (useful if a limit is set!)
 var expect = require('gulp-expect-file');		// expect a certain file (more for debugging)
 
 var connect = require('gulp-connect');			// live reload capable server for files
@@ -122,6 +122,7 @@ var connect = require('gulp-connect');			// live reload capable server for files
 var types = defaultTypes;						// mpu / skyscraper / leaderboard etc
 var variants = [];								// campaign variants such as "a","b","c","d" or "1","2","3","4"
 var varietiesToPackage = variants;				// extensions for varieties such as A, B, C etc.
+
 var config;										// loaded in from an external config file
 
 // How much to squish images by :
@@ -444,9 +445,12 @@ gulp.task('scripts-release', function() {
     // Minify and copy all JavaScript (except vendor scripts)
     // with sourcemaps all the way down
     var uglify = require('gulp-uglify');            // squash files
+	var jshint = require('gulp-jshint');			// lint!
 	return  gulp.src( source.scripts )
             .pipe( concat('main.min.js') )
             .pipe( uglify() )
+			.pipe( jshint('.jshintrc'))
+			.pipe( jshint.reporter('default') )
             .pipe( gulp.dest( distribution.scripts ) );
 });
 
@@ -525,39 +529,40 @@ gulp.task('package',function(){
 			.pipe( gulp.dest( folder + 'js' ));
 
 			// manifest
-			var 
-				files = [],
-				manifestFile = 'manifest.js',
-				manifestFolder = SOURCE_FOLDER+'scripts/',
-				manifest = manifestFolder+type+'.'+manifestFile;
-
-			// This first checks to see if the manifest for this file exists...
-			if( fs.existsSync( manifest ) )
+			if ( config.manifests.enabled )
 			{
-				// Use custom Manifest file
-				files.push( manifest );
-				//console.error('Custom Manifest FOUND! at : '+manifest );
-			} else {
-				// Use default Manifest file
-				files.push( manifestFolder+'manifest.js' );
-				console.error('[error] Manifest missing for size '+type+' \n\t Please create the file : '+manifest );
+				var 
+					manifestFiles = [],
+					manifestFile = 'manifest.js',
+					manifestFolder = SOURCE_FOLDER+'scripts/',
+					manifest = manifestFolder+type+'.'+manifestFile;
+
+				// This first checks to see if the manifest for this file exists...
+				if( fs.existsSync( manifest ) )
+				{
+					// Use custom Manifest file
+					manifestFiles.push( manifest );
+					//console.error('Custom Manifest FOUND! at : '+manifest );
+				} else {
+					// Use default Manifest file
+					manifestFiles.push( manifestFolder+'manifest.js' );
+					console.error('[error] Manifest missing for size '+type+' \n\t Please create the file : '+manifest );
+				}
+
+				var manifestStream = gulp.src( manifestFiles )
+				// automatically update sizes within
+				//.pipe( replace(/"width":300/, '"width":'+size.w ) )
+				//.pipe( replace(/"height":250/, '"height":'+size.h ) )
+				// and save into the correct distribution folder...
+				.pipe( expect( manifestFiles ) )
+				.pipe( rename( manifestFile ) )
+				.pipe( gulp.dest( release.html + type + '.'+model ));
 			}
-		
-			var manifestStream = gulp.src( files )
-			// automatically update sizes within
-			//.pipe( replace(/"width":300/, '"width":'+size.w ) )
-			//.pipe( replace(/"height":250/, '"height":'+size.h ) )
-			// and save into the correct distribution folder...
-			.pipe( expect( files ) )
-			.pipe( rename( manifestFile ) )
-			.pipe( gulp.dest( release.html + type + '.'+model ));
+			
 			
 			// css
-			console.log('Attempting to uncss the files linked through '+html);
+			
 			var styleStream = gulp.src( distribution.styles +'/*.css' )
-			// Remove unused CSS with UnCSS for *this* campaign
-			/*
-			.pipe( expect(html) )*/
 			.pipe( gulp.dest( folder + 'css' ));
 
 			
@@ -567,7 +572,7 @@ gulp.task('package',function(){
 			merged.add( variantStream );
 			merged.add( fontStream );
 			merged.add( scriptStream );
-			merged.add( manifestStream );
+			if (manifestStream) merged.add( manifestStream );
 			merged.add( styleStream );
 			
 			// create package folders in dist folder
@@ -621,13 +626,13 @@ gulp.task('zip', function (cb) {
 			var fileName = (config.brand +'-'+type +'-'+model+".zip").toLowerCase();
 			
 			// NB. FlashTalking does *not* allow periods and such... so config.version is a no go
-			console.log(i + '. Zipping "'+fileName +'" from ' +folder);
+			//console.log(i + '. Zipping "'+fileName +'" from ' +folder);
 
 			// keep directory structure
 			var zipStream =  gulp.src( folder + '**/*' )
 			.pipe( zip(fileName) )
 			// console.log the filezie! :P
-			.pipe( filesize() )
+			.pipe( filesize( {title:fileName, showFiles:false } ) )
 			.pipe( gulp.dest( RELEASE_FOLDER ) );
 
 			merged.add( zipStream );
@@ -648,13 +653,13 @@ gulp.task('zip', function (cb) {
 //
 ///////////////////////////////////////////////////////////////////////////////////
 gulp.task('watch', function() {
-
+	var print = function(event) { console.log('File ' + event.path + ' was ' + event.type + ', running tasks...'); }
 	// Watch any files in build/, reload on change
-	gulp.watch( [ watch.scripts ] 	, 'scripts' );
-	gulp.watch( [ watch.styles ] 	, 'less' );
-	gulp.watch( [ watch.jade ] 		, 'jade' );
-	gulp.watch( [ watch.images ] 	, 'images' );
-	gulp.watch( [ watch.fonts ] 	, 'copy' );
+	gulp.watch( [ watch.scripts ] 	, 'scripts' ).on('change', function(event) { console.log('File ' + event.path + ' was ' + event.type + ', running tasks...'); } );
+	gulp.watch( [ watch.styles ] 	, 'less' ).on('change', function(event) { console.log('File ' + event.path + ' was ' + event.type + ', running tasks...'); } );
+	gulp.watch( [ watch.jade ] 		, 'jade' ).on('change', function(event) { console.log('File ' + event.path + ' was ' + event.type + ', running tasks...'); } );
+	gulp.watch( [ watch.images ] 	, 'images' ).on('change', function(event) { console.log('File ' + event.path + ' was ' + event.type + ', running tasks...'); } );
+	gulp.watch( [ watch.fonts ] 	, 'copy' ).on('change', function(event) { console.log('File ' + event.path + ' was ' + event.type + ', running tasks...'); } );
 	
 	//gulp.watch( [ BUILD_FOLDER+'**/*' ] , 'refresh' ).on('change', function (file) {
 	gulp.watch( [ BUILD_FOLDER+'**/*' ] ).on('change', function (file) {
@@ -715,18 +720,16 @@ gulp.task('serve', 		['rebuild', 'server', 'watch'] );
 
 // Create the template jade files
 // The task to create the debuggable versions
-gulp.task('create', function(callback) {
+gulp.task('scaffold', function(callback) {
 	sequencer(
 		'configure',
-		'jade-create',
-		'clone-manifests',
+		 [ 'jade-create', 'clone-manifests'] ,
     callback);
 });
 
-gulp.task('template', 	[ 'create' ] );
-gulp.task('templates', 	[ 'create' ] );
-gulp.task('t', 			[ 'create' ] );
-gulp.task('scaffold', 	[ 'create' ] );
+gulp.task('template', 	[ 'scaffold' ] );
+gulp.task('templates', 	[ 'scaffold' ] );
+gulp.task('t', 			[ 'scaffold' ] );
 
 
 // The task to create the debuggable versions

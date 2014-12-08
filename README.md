@@ -42,12 +42,12 @@ The shortcuts #{width} and #{height} are also available if you wish to use them!
 
 Then run :
 
+> gulp scaffold
+
+or if you just want jade (templates) or javascript manifests
+
 > gulp templates
 > gulp manifests
-
-or simply : 
-
-> gulp create
 
 
 ##Configuration##
