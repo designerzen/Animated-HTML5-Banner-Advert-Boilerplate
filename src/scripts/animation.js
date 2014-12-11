@@ -89,4 +89,7 @@ var Animations = (function(){
 
 var anim = new Animations();
 anim.assign();
-anim.begin();
+
+// begin animating...
+// defer animation
+// anim.begin();

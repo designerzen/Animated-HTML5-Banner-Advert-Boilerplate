@@ -27,9 +27,15 @@ var FlashTrack = (function(){
 		// populate instantAd components
 		ft.addEventListener("instantads", function(){
 			
-			dynamicImage.src = ft.instantAds.imageVariable;	
-			dynamicText.innerHTML = ft.instantAds.textVariable;
+			// Set dynamic Images
+			if (dynamicImage) dynamicImage.src = ft.instantAds.imageVariable;	
 			
+			// Set dynamic Text
+			if (dynamicText) dynamicText.innerHTML = ft.instantAds.textVariable;
+			
+			
+			// begin animating...
+			anim.begin();
 		});
     };
 	
@@ -53,5 +59,6 @@ if (ft.available)
 	ft.setClickTags('#clicktagholder');
 }else{
 	// Failed to load Flash Talking API
+	// Append failed class to body tag
 	document.body.className += " failed";
 }
