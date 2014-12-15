@@ -13,22 +13,24 @@ Motion Sequence
 // Elements
 var Animations = (function(){
 
-	"use strict";
+	'use strict';
 
 	var
 		timeline,		// Main Animation that hold the child animations
+		variant,		// style... mpu / leaderboard etc
 		elements = {}; 	// Home of all of the DOM Node Elements
 
 	// Construct
 	function Animations()
     {
 
-    };
+    }
 
     // This creates all of our animation elements
     Animations.prototype.assign = function()
     {
-        elements.content	= document.getElementById('content');
+        variant 			= document.getElementById('variant').className || 'unknown';
+		elements.content	= document.getElementById('content');
 		elements.first 		= document.getElementById('first');
 		elements.second 	= document.getElementById('second');
 		elements.third 		= document.getElementById('third');

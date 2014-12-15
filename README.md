@@ -22,10 +22,12 @@ In a Command Prompt :
 
 Then while that is downloading and installing, **edit the config.json** file in the root folder.
 
-Once the installation has completed, ensure all the software is correctly installed by
- typing :
+Once the installation has completed, ensure all the software is correctly installed by typing :
  
 > gulp
+
+Which should bring up a little help message with the available options. 
+If you cannot see this, try doing a fresh clone of this repo and retrying the installation steps.
 
 
 ###To Create templates###
@@ -44,10 +46,12 @@ Then run :
 
 > gulp scaffold
 
-or if you just want jade (templates) or javascript manifests
+to create both jade template files for adding in your content, and a project manifest for each size.
+
+NB. if you just want jade (templates) or javascript manifests
 
 > gulp templates
-> gulp manifests
+> gulp manifest
 
 
 ##Configuration##

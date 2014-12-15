@@ -17,10 +17,11 @@ http://gruntjs.com/configuring-tasks#globbing-patterns
 var MAX_SIZE_JPEG = 30;
 
 // Set up paths here (for this boilerplate, you should not have to alter these)
-var SOURCE_FOLDER 			= 'src/';		// Source files Root
-var BUILD_FOLDER 			= 'build/';		// Where the initial build occurs (debugable)
-var DISTRIBUTION_FOLDER 	= 'dist/';		// Once debugging is complete, copy to server ready files here
-var RELEASE_FOLDER 			= 'release/';	// Convert to distributable zips
+var SOURCE_FOLDER 			= 'src/';						// Source files Root
+var BUILD_FOLDER 			= 'build/';						// Where the initial build occurs (debugable)
+var DISTRIBUTION_FOLDER 	= 'dist/';						// Once debugging is complete, copy to server ready files here
+var RELEASE_FOLDER 			= 'release/';					// Convert to distributable zips
+var TEMPLATE_HOME 			= 'partials/template.jade';		// Where does the root template live?
 
 // Default variations for templating
 var defaultTypes =
@@ -79,6 +80,39 @@ var watch = {
 	fonts	: SOURCE_FOLDER+'fonts/**/*'
 };
 
+// File name format for creating distributions
+// You can set this to however your campaign needs
+// Defaults to brand-type-variant.zip
+// Fetch and create a nice filename that excludes punctuation
+// and spaces are a no-go too...
+var getFileName = function( brand, type, variant, suffix ){
+	var name = brand +'-'+type +'-'+variant;
+	// remove spaces and replace with underscores
+	name = name.replace(/ +?/g, '_');
+	// remove not allowed characters...
+	name = name.replace(/[\u2000-\u206F\u2E00-\u2E7F\\'!"#\$%&\(\)\*\+,\.\/:;<=>\?@\[\]\^_`\{\|\}~]/, "_");
+	// make sure we have a suffix if needed
+	if (suffix) name += suffix;
+	return name.toLowerCase();
+};
+
+// File name format for creating templates
+var sanitisedFileName = function( brand, type, variant, suffix ){
+	var name = type + '.'+ brand +'.'+variant;
+	// remove spaces
+	name = name.replace(/ +?/g, '_');
+	// remove not allowed characters...
+	// make sure we have a suffix if needed
+	if (suffix) name += suffix;
+	return name.toLowerCase();
+};
+
+var changeEvent = function(evt) {
+    console.log('File', evt.path.replace(new RegExp('/.*(?=/' + basePaths.src + ')/'), ''), 'was', evt.type );
+};
+
+
+
 
 // =======================---------------- IMPORT DEPENDENCIES --------------------
 
@@ -115,10 +149,15 @@ var replace = require('gulp-replace');			// replace content within files
 var fs = require('fs');							// read inside files
 var rename = require('gulp-rename');			// rename files
 var merge = require('merge-stream');			// combine multiple streams!
-var filesize = require('gulp-size');  		// measure the size of the project (useful if a limit is set!)
+var filesize = require('gulp-size');  			// measure the size of the project (useful if a limit is set!)
 var expect = require('gulp-expect-file');		// expect a certain file (more for debugging)
 
 var connect = require('gulp-connect');			// live reload capable server for files
+var console = require('better-console');		// sexy console output
+
+// Start by clearing the console of any gubbins
+console.clear();
+
 
 var types = defaultTypes;						// mpu / skyscraper / leaderboard etc
 var variants = [];								// campaign variants such as "a","b","c","d" or "1","2","3","4"
@@ -188,9 +227,9 @@ gulp.task('configuration-load', function(cb) {
 	types = config.types;
 	varietiesToPackage = config.variants;
 	
-	console.log( 'Loading : '+settings + ' for Brand : '+config.brand +' version '+config.version );
-	console.log( 'Variants : '+config.variants );
-	console.log( 'Types : '+config.types );
+	console.info( 'Loading : '+settings + ' for Brand : '+config.brand +' version '+config.version );
+	console.info( 'Variants : '+config.variants );
+	console.info( 'Types : '+config.types );
 	
 	cb();
 });
@@ -231,7 +270,7 @@ gulp.task('jade-create', function() {
 	// 2. copy the example but swap out the top line with one of
 	// mpu.base.jade / leaderboard.base.jade / skyscraper.base.jade
 	var folder = SOURCE_FOLDER+'jade/';
-	var source = folder+'partials/template.jade';
+	var source = folder+TEMPLATE_HOME;
 	var merged = merge();
 	var varientsLength = varietiesToPackage.length;
 	for (var t = 0, e=types.length; t < e; t++)
@@ -244,24 +283,34 @@ gulp.task('jade-create', function() {
 		for (var i = 0, l=varientsLength; i < l; i++)
 		{
 			var model = varietiesToPackage[i];
-			var filename = (type+'.'+config.brand+'.'+model+'.jade').toLowerCase();
+			var fileName = sanitisedFileName( config.brand, type, model, ".jade" );
 			var destination = folder;
 			var jade = gulp.src( [source] )
 				.pipe( replace(/#{title}/gi, config.brand) )
 				.pipe( replace(/#{version}/, config.version) )
 				.pipe( replace(/#{type}/gi, type.toLowerCase() ) )
+				.pipe( replace(/#{variant}/gi, model) )
 				.pipe( replace(/#{width}/gi, size.w) )
 				.pipe( replace(/#{height}/gi, size.h) )
 				.pipe( replace(/base.jade/, type+'.base.jade') )
-				.pipe( rename( filename ) )
+				.pipe( rename( fileName ) )
 				.pipe( gulp.dest( folder ) );
 
-			console.log('\t'+(1+i)+'/'+varietiesToPackage.length+'. Creating '+type+' Template as '+destination+filename );
+			console.log('\t'+(1+i)+'/'+varietiesToPackage.length+'. Creating '+type+' Template as '+destination+fileName );
 			merged.add( jade );
 		}
 	}
 	return merged;
 });
+// The task to create the debuggable versions
+gulp.task('templates', function(callback) {
+	sequencer(
+		'configure',
+		'clone-manifests',
+    callback);
+});
+gulp.task('manifest', 	[ 'create-manifests' ] );
+
 
 gulp.task('clone-manifests', function() {
 	
@@ -279,6 +328,7 @@ gulp.task('clone-manifests', function() {
 			.pipe( replace(/"height":250/, '"height":'+size.h ) )
 			.pipe( replace(/#{title}/gi, config.brand) )
 			.pipe( replace(/#{version}/gi, config.version) )
+			.pipe( replace(/#{variant}/gi, type) )
 			.pipe( replace(/#{type}/gi, type.toLowerCase() ) )
 			.pipe( replace(/#{width}/gi, size.w) )
 			.pipe( replace(/#{height}/gi, size.h) )
@@ -341,7 +391,7 @@ gulp.task('images', function() {
 gulp.task('images-release', function() {
 	return 	gulp.src( source.images)
 			//.pipe( newer(distribution.images) )
-			.pipe( imagemin( imageCrunchOptions ) )
+			//.pipe( imagemin( imageCrunchOptions ) )
 			.pipe( pngquant({optimizationLevel: 3})() )
 			//.pipe( jpegoptim({ size:MAX_SIZE_JPEG })() )
 			.pipe( gulp.dest( distribution.images ) );
@@ -429,14 +479,30 @@ gulp.task('copy-manifest',function(){
 ///////////////////////////////////////////////////////////////////////////////////
 
 // Do stuff with our javascripts for DEBUGGING
+gulp.task('scripts-lint', function() {
+    // Minify and copy all JavaScript (except vendor scripts)
+    // with sourcemaps all the way down
+	var uglify = require('gulp-uglify');            // squash files
+	 var jshint = require('gulp-jshint');			// lint!
+	return  gulp.src([ SOURCE_FOLDER+'scripts/*.js' ] )
+            //.pipe( uglify() )
+			.pipe( jshint('.jshintrc'))
+			.pipe( jshint.reporter('default') );
+});
+
+// Do stuff with our javascripts for DEBUGGING
 gulp.task('scripts', function() {
     // Minify and copy all JavaScript (except vendor scripts)
     // with sourcemaps all the way down
-    return  gulp.src( source.scripts )
+   var uglify = require('gulp-uglify');            // squash files
+	 var jshint = require('gulp-jshint');			// lint!
+	return  gulp.src( source.scripts )
             .pipe( sourcemaps.init() )
             // combine multiple files into one!
             .pipe( concat('main.min.js') )
-            // create source maps
+			.pipe( jshint('.jshintrc'))
+			.pipe( jshint.reporter('default') )
+			// create source maps
             .pipe( sourcemaps.write() )
             .pipe( gulp.dest( destination.scripts ) );
 });
@@ -503,14 +569,17 @@ gulp.task('package',function(){
 			var model = varietiesToPackage[i];
 			//var html = distribution.html + '*.'+model+'.html';
 			var title = config.brand+' ' + type;
-			var html = distribution.html + (type+'.'+config.brand+'.'+model+'.html').toLowerCase();
+			
+			var fileName = sanitisedFileName( config.brand , type, model, ".html" );
+			
+			var html = distribution.html + fileName;
 			var folder = release.html + type + '.'+model + '/';
 			var size = config.sizes[ type ];
 
 			// create release folder
 			var htmlStream = gulp.src( html )
 			.pipe( rename( 'index.html' ))
-			.pipe( replace(/<title>(.*)<\/title>/i, title ) )
+			.pipe( replace(/<title>(.*)<\/title>/i, '<title>'+title+'</title>' ) )
 			.pipe( gulp.dest( folder ));
 
 			// all except specific images
@@ -547,7 +616,7 @@ gulp.task('package',function(){
 				} else {
 					// Use default Manifest file
 					manifestFiles.push( manifestFolder+'manifest.js' );
-					console.error('[error] Manifest missing for size '+type+' \n\t Please create the file : '+manifest );
+					console.error('Manifest missing for size '+type+' \n\t Please create the file : '+manifest );
 				}
 
 				var manifestStream = gulp.src( manifestFiles )
@@ -624,7 +693,7 @@ gulp.task('zip', function (cb) {
 		{
 			var model = varietiesToPackage[i];
 			var folder = release.html + type + '.'+model + '/';
-			var fileName = (config.brand +'-'+type +'-'+model+".zip").toLowerCase();
+			var fileName = getFileName( config.brand , type, model, ".zip" );
 			
 			// NB. FlashTalking does *not* allow periods and such... so config.version is a no go
 			//console.log(i + '. Zipping "'+fileName +'" from ' +folder);
@@ -654,18 +723,17 @@ gulp.task('zip', function (cb) {
 //
 ///////////////////////////////////////////////////////////////////////////////////
 gulp.task('watch', function() {
-	var print = function(event) { console.log('File ' + event.path + ' was ' + event.type + ', running tasks...'); }
-	// Watch any files in build/, reload on change
-	gulp.watch( [ watch.scripts ] 	, 'scripts' ).on('change', function(event) { console.log('File ' + event.path + ' was ' + event.type + ', running tasks...'); } );
-	gulp.watch( [ watch.styles ] 	, 'less' ).on('change', function(event) { console.log('File ' + event.path + ' was ' + event.type + ', running tasks...'); } );
-	gulp.watch( [ watch.jade ] 		, 'jade' ).on('change', function(event) { console.log('File ' + event.path + ' was ' + event.type + ', running tasks...'); } );
-	gulp.watch( [ watch.images ] 	, 'images' ).on('change', function(event) { console.log('File ' + event.path + ' was ' + event.type + ', running tasks...'); } );
-	gulp.watch( [ watch.fonts ] 	, 'copy' ).on('change', function(event) { console.log('File ' + event.path + ' was ' + event.type + ', running tasks...'); } );
 	
-	//gulp.watch( [ BUILD_FOLDER+'**/*' ] , 'refresh' ).on('change', function (file) {
-	gulp.watch( [ BUILD_FOLDER+'**/*' ] ).on('change', function (file) {
-    	gulp.src( file.path ).pipe( connect.reload() );
-	});
+	// Watch any files in build/, reload on change
+	gulp.watch( watch.scripts	, ['scripts'] ).on('change', function(event) { 	changeEvent(event); } );
+	gulp.watch( watch.styles 	, ['less'] ).on('change', function(event) { 	changeEvent(event); } );
+	gulp.watch( watch.jade  	, ['jade'] ).on('change', function(event) { 	changeEvent(event); } );
+	gulp.watch( watch.images 	, ['images'] ).on('change', function(event) { 	changeEvent(event); } );
+	gulp.watch( watch.fonts  	, ['copy'] ).on('change', function(event) { 	changeEvent(event); } );
+
+	//gulp.watch( [ BUILD_FOLDER+'**/*' ] ).on('change', function (file) {
+    	//gulp.src( file.path ).pipe( connect.reload() );
+	//});
 });
 
 
@@ -677,7 +745,7 @@ gulp.task('watch', function() {
 //
 // TASK : Serve
 //
-// Start a webserver and display the index
+// Start a webserver and display the index file
 //
 ///////////////////////////////////////////////////////////////////////////////////
 gulp.task('refresh', function() {
@@ -692,11 +760,6 @@ gulp.task('server', function() {
 		livereload: true
   	});
 });
-
-
-
-
-
 
 
 
@@ -729,8 +792,6 @@ gulp.task('scaffold', function(callback) {
 });
 
 gulp.task('template', 	[ 'scaffold' ] );
-gulp.task('templates', 	[ 'scaffold' ] );
-gulp.task('t', 			[ 'scaffold' ] );
 
 
 // The task to create the debuggable versions
@@ -751,9 +812,6 @@ gulp.task('compile', function(callback) {
 		'package',
     callback);
 });
-// Shortcuts for compile
-gulp.task('comp' , 	[ 'compile' ] );
-gulp.task('c' , 	[ 'compile' ] );
 
 
 // The task to create the final output!
@@ -766,7 +824,6 @@ gulp.task('distribute', function(callback) {
 });
 // Shortcuts for distribute
 gulp.task('dist' , 	[ 'distribute' ] );
-gulp.task('d' , 	[ 'distribute' ] );
 
 ///////////////////////////////////////////////////////////////////////////////////
 // The default task (called when you run 'gulp' from cli)
@@ -780,20 +837,31 @@ gulp.task('default', function(callback) {
     callback);
 });
 
+/*
+console.log, console.warn, console.error, console.info, console.debug, console.dir, console.trace
+console.warn("Warning!");
+console.info("Information");
+console.table([ [1,2], [3,4] ]);
+console.time("Timer");
+console.timeEnd("Timer");
+*/
+
 gulp.task('help' , function(callback) {
 
-	console.log( "-- Config ---------------------------------");
-	console.log( 'Campaign\t: "'+config.brand+'" in '+varietiesToPackage.length +' variants' );
-	console.log( 'Types\t: "'+config.types +'"' );
-	console.log( 'Version\t: "'+config.version+'" ' );
-	console.log( 'Description\t: "'+config.description+'" ' );
-	console.log( 'Settings Location\t: "config.json" ' );
+	console.info( "-- Config ---------------------------------");
+	console.info( 'Campaign\t: "'+config.brand+'" in '+varietiesToPackage.length +' variants' );
+	console.info( 'Types\t: "'+config.types +'"' );
+	console.info( 'Version\t: "'+config.version+'" ' );
+	console.info( 'Description\t: "'+config.description+'" ' );
+	console.info( 'Settings Location\t: "config.json" ' );
 
-	console.log( varietiesToPackage.length + ' Campaign(s) Found : "'+varietiesToPackage+'" ' );
-	console.log( "-- Tasks ----------------------------------");
+	console.info( varietiesToPackage.length + ' Campaign(s) Found : "'+varietiesToPackage+'" ' );
+	console.info( "-- Tasks ----------------------------------");
 	
 	console.log( '');
 	console.log( 'NB. Help (you can return here by typing "gulp" or "gulp help")');
 	
     callback();
 } );
+
+

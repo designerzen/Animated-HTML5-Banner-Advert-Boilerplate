@@ -1,6 +1,7 @@
-"use strict";
-
+// Flash Talking API
 var FlashTrack = (function(){
+	
+	'use strict';
 	
 	var ft;
 	
@@ -14,7 +15,7 @@ var FlashTrack = (function(){
 		}else{
 			this.available = false;
 		}
-    };
+    }
 	
 	// Injects dynamic content from the flashTalking API via the manifest.js
     FlashTrack.prototype.loadContent = function ()
