@@ -12,8 +12,8 @@
 .h( @height ){	height:@height }
 
 // Top / Left Shortcuts
-.x( @left ){	left:@left; }
-.y( @top ){		top:@top; }
+.x( @left ){	left:@left + 0px; }
+.y( @top ){		top:@top + 0px; }
 
 
 // POSITIONING ================================================
@@ -32,11 +32,7 @@
 // Absolute positioning 
 .position(  @top:auto; @right:auto; @bottom:auto; @left:auto; @z:0 )
 {
-	position:absolute;
-	top:@top;
-	left:@left;
-	bottom:@bottom;
-	right:@right;
+	.position( @top, @right, @bottom, @left);
 	z-index:@z;
 }
 

@@ -60,13 +60,35 @@ You may use various styles of comments within this file (although json itself do
 There is internal documentation directly next to the parameters that you can set. 
 You should not have to change the dimensions in the sizes object unless you are working on  campaign that is a unique size, and it may be best to create a new set of sizes specifically for your project.
 
-##To Develop##
-Edit template.jade before running gulp templates
 
+##To Develop##
+To aid in the rapid development of campaigns, there are a number of time saving features and helpers available to help shape your CSS and HTML.
+Once you have created your templates, you can manually change each one as is relevant for that variant. For example, you may set in your config file 
+
+> variants : [ 'en', 'th', 'hk', 'de' ]
+
+The scaffold task would then create Jade files for each language and size. You can then open the hk variant for example, and update the copy to the Chinese labguage
 
 #####Less#####
 ```
 src/less
+```
+There are a few helper mixins in the src/less/helpers.less file such as
+
+```
+
+.x(50) 					which once compiled becomes left:50px;
+.y(50) 					which once compiled becomes top:50px;
+
+.size(150px) 			which when compiled becomes width:150px; height:150px;
+.size(150px,75px)		which when compiled becomes width:150px; height:75px;
+
+.w( 50px )				which when compiled becomes width:50px;
+.h( 75px )				which when compiled becomes height:75px;
+
+.position( x, y )
+.position( top, right, bottom, left )
+
 ```
 
 #####Jade####
@@ -74,11 +96,12 @@ src/less
 src/jade/
 src/jade/partials
 ```
-You can edit the **template.jade** partial too, this will appear in your templates when you run "gulp template"
+You can edit the **template.jade** partial too, these changes will appear in your templates when you run "gulp template"
 
-To overwrite your jade template files, you can run 
+To overwrite your created jade template files, you can run 
 
 > gulp jade-create
+
 
 #####Javascript####
 In the src/scripts folder you will find 3 files of interest. 
