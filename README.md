@@ -2,14 +2,17 @@
 
 **Incredibly quick framework** and toolset for developing and deploying **Banner Adverts** based around the GreenSock Tweening Engine.
 
-Includes FlashTalking **built in!**
+Includes [FlashTalking](http://www.flashtalking.net/) **built in!**
+
+With a few simple changes, html and css are easy to modify and leverage Jade and LESS to allow you to use regular html or css as well as their more advanced siblings.
 
 It uses the [Gulp](www.github.com) infrastructure to build and create templates for your projects as well as creating deliverable zip files with everything ready and set up built right in.
 
 This is a fully working beta version! 
 
+
 ##Requirements##
-The only requirement is [NodeJS](http://nodejs.org/)
+The only requirement is [NodeJS](http://nodejs.org/) and about 100mb of free space on your machine.
 
 
 ##Installation##
@@ -27,7 +30,7 @@ Once the installation has completed, ensure all the software is correctly instal
 > gulp
 
 Which should bring up a little help message with the available options. 
-If you cannot see this, try doing a fresh clone of this repo and retrying the installation steps.
+_If you cannot see this_, try doing a **fresh clone of this repo** and retrying the installation steps.
 
 
 ###To Create templates###
@@ -130,13 +133,11 @@ src/javascript/vendors/		Home for any libraries you want transcluded in your mai
 > gulp build
 
 
-
 ###To Compile For Release to _Creatives_###
 
 This creates a minified version that allows creatives to test the varieties easily while retaining a single folder structure
 
 > gulp compile
-
 
 
 ###To Compile For _Distribution_###
@@ -155,7 +156,6 @@ Where **Name**, **Type** and **Variant**  are read in from the **package.json** 
 _eg. Kittens-mpu-a.zip_
 
 
-
 ###FAQ###
 **Q.** There are no html files in my build or dist folders!
 
@@ -169,11 +169,13 @@ _eg. Kittens-mpu-a.zip_
 
 **Q.** Getting errors about things not being found when running node
 
-**A.** Weirdness in that the modules do not get added to dependencies so run,
-they seem to work for most people but if you are having issues, run :
+**A.** Weirdness in that the modules do not get added to dependencies so run, so delete node_modules folder then re-run installation steps.
 
-> npm install --save-dev imagemin-pngquant
-> npm install --save-dev imagemin-jpegoptim
+
+**Q.** Error while running **distribute**
+
+**A.** Sometimes (in Windows) node will fail to delete a folder due to Explorer keeping certain files in it's cached memory (such as thumbs.db). If you encounter this, try and close down any app that uses those files then re-run the dist task.
+
 
 ---
 Released under the [**GPL2.0 license**](http://www.gnu.org/licenses/gpl-2.0.txt). 
