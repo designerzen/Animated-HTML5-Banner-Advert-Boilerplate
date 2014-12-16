@@ -1,7 +1,7 @@
 FT.manifest({
     "filename":"index.html",
-    "width":300,
-    "height":250,
+    "width":#{width},
+    "height":#{height},
     "clickTagCount":1,
 	"instantAds":[
 		

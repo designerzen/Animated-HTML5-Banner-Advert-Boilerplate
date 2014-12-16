@@ -1,36 +1,14 @@
 {
-	// http://jshint.com/docs/options
-	
+	// http://jshint.com/docs/options for more details
+	// JSHint Default Configuration File (as on JSHint website)
+   
 	// Settings :
     "passfail"     			: false,  				// Stop on first error.
     "maxerr"        		: 100,    				// Maximum error before stopping.
-
     "browser"       		: true,   				// Standard browser globals e.g. `window`, `document`.
-
-	// Environments : 
-	// These options let JSHint know about some pre-defined global variables.
-    "couch"         		: false,
-    "dojo"          		: false,
-	"jquery"        		: true,					// This option defines globals exposed by the jQuery JavaScript library.
-	"mootools"      		: false,				// MooTools JavaScript framework.
-    "node"          		: true,
-    "nonstandard"   		: false,				// This option defines non-standard but widely adopted globals such as escape and unescape.
-    "phantom"   			: false,
-    "prototypejs"   		: false,
-   	"rhino"         		: false,
-    "worker"           		: true,   				// This option defines globals available when your code is running inside of a Web Worker
-    "wsh"           		: false,   				// Windows Scripting Host
-    "yui"           		: false,   				// YUI JavaScript framework
-
-    
-   
-   	// Predefined globals whom JSHint will ignore.
-    "predef"        		: [ "FT", "TweenMax", "TimelineLite" ],
-
 
     // Development :
      "devel"         		: false,   				// Allow developments statements e.g. `console.log();`.
-
 
     // ECMAScript 5.
     "strict"        		: true,  				// Require `use strict` pragma  in every file.
@@ -41,15 +19,23 @@
     "boss"          		: false,  				// Tolerate assignments inside if, for & while. Usually conditions & loops are for comparison, not assignments.
     "debug"         		: false,  				// Allow debugger statements e.g. browser breakpoints.
    	"eqnull"        		: true,  				// Tolerate use of `== null`.
+	"moz"           		: false,     			// true: Allow Mozilla specific syntax (extends and overrides esnext features)
 	"evil"          		: false,  				// Tolerate use of `eval`.
     "expr"          		: false,  				// Tolerate `ExpressionStatement` as Programs.
     "funcscope"          	: false,  				// This option suppresses warnings about declaring variables inside of control structures while accessing them later from the outside. Even though JavaScript has only two real scopes—global and function—such practice leads to confusion among people new to the language and hard-to-debug bugs. This is why, by default, JSHint warns about variables that are used outside of their intended scope.
    	"globalstrict"  		: false,  				// Allow global "use strict" (also enables 'strict').
-   	"laxbreak"      		: false,   				// Tolerate unsafe line breaks e.g. `return [\n] x` without semicolons.
+   	"iterator"      		: false,     			// true: Tolerate using the `__iterator__` property
+    "lastsemic"     		: false,     			// true: Tolerate omitting a semicolon for the last statement of a 1-line block
+	"laxbreak"      		: false,   				// Tolerate unsafe line breaks e.g. `return [\n] x` without semicolons.
 	"laxcomma"  			: false,  				// This option suppresses warnings about comma-first coding style.
-
-	
-    // The Good Parts.
+	"loopfunc"      		: false,  				// Allow functions to be defined within loops.
+    "multistr"      		: false,     			// true: Tolerate multi-line strings
+	"noyield"       		: false,     			// true: Tolerate generator functions with no yield statement in them.
+    "notypeof"      		: false,     			// true: Tolerate invalid typeof operator values
+    "scripturl"     		: true,   				// true: Tolerate script-targeted URLs.
+    "shadow"        		: false,     			// true: Allows re-define variables later in code e.g. `var x=1; x=2;`
+   
+   // Enforcing
    	"bitwise"       		: false,   				// Prohibit bitwise operators (&, |, ^, etc.).
 	"camelcase"       		: false,   				// This option allows you to force all variable names to use either camelCase style or UPPER_CASE with underscores.
     "curly"         		: false,   				// Require {} for every new block or scope.
@@ -57,27 +43,56 @@
 	"eqeqeq"				: false,				// This option will enforce === and !== in your code.
 	"es3"        			: false,  				// This option tells JSHint that your code needs to adhere to ECMAScript 3 specification. Use this option if you need your program to be executable in older browsers—such as Internet Explorer 6/7/8/9—and other legacy JavaScript environments.
     "forin"         		: false,  				// Tolerate `for in` loops without `hasOwnPrototype`.
-    "immed"         		: true,   				// Require immediate invocations to be wrapped in parens e.g. `( function(){}() );`
+    "freeze"       			: true,     			// true: prohibits overwriting prototypes of native objects such as Array, Date etc.
+	"immed"         		: true,   				// Require immediate invocations to be wrapped in parens e.g. `( function(){}() );`
     "latedef"       		: true,  				// Prohibit variable use before definition.
-    "loopfunc"      		: false,  				// Allow functions to be defined within loops.
     "noarg"        			: true,   				// Prohibit use of `arguments.caller` and `arguments.callee`.
-    "regexp"        		: true,   				// Prohibit `.` and `[^...]` in regular expressions.
+    "proto"         		: false,     			// true: Tolerate using the `__proto__` property
+	"regexp"        		: true,   				// Prohibit `.` and `[^...]` in regular expressions.
     "regexdash"     		: false,  				// Tolerate unescaped last dash i.e. `[-...]`.
-    "scripturl"     		: true,   				// Tolerate script-targeted URLs.
-    "shadow"        		: false,  				// Allows re-define variables later in code e.g. `var x=1; x=2;`.
     "supernew"      		: true,  				// Tolerate `new function () { ... };` and `new Object;`.
-    "undef"         		: true,   				// Require all non-global variables be declared before they are used.
+	"undef"         		: true,   				// Require all non-global variables be declared before they are used.
+	"unused"       	 		: true,     			// true: Require all defined variables be used
+	"validthis"     		: false,     			// true: Tolerate using this in a non-constructor function
 	//"no-floating-decimal" 	: false,				// Prevent numerics literal preceded by a . token which itself is not preceded by a decimal integer literal
 
+	
     // Personal styling preferences.
     "newcap"       			: true,   				// Require capitalization of all constructor functions e.g. `new F()`.
     "noempty"       		: true,  				// Prohibit use of empty blocks.
     "nonew"         		: true,  				// Prohibit use of constructors for side-effects.
     "nomen"         		: true,  				// Prohibit use of initial or trailing underbars in names.
-    "onevar"        		: false, 				// Allow only one `var` statement per function.
+    "nonbsp"        		: true,     			// true: Prohibit "non-breaking whitespace" characters.
+	"onevar"        		: false, 				// Allow only one `var` statement per function.
     "plusplus"      		: false, 				// Prohibit use of `++` & `--`.
     "sub"           		: true, 				// Tolerate all forms of subscript notation besides dot notation e.g. `dict['key']` instead of `dict.key`.
     "trailing"      		: true,   				// Prohibit trailing whitespaces.
     "white"         		: false,  				// Check against strict whitespace and indentation rules.
-    "indent"        		: 2       				// Specify indentation spacing
+    "indent"        		: 2,       				// Specify indentation spacing
+	"quotmark"      		: false,    			// Quotation mark consistency:  false - do nothing (default)
+	
+	// Environments : 
+	// These options let JSHint know about some pre-defined global variables.
+	"browser"       		: true,     			// Web Browser (window, document, etc)
+    "browserify"    		: false,    			// Browserify (node.js code in the browser)
+    "couch"         		: false,				// CouchDB
+	"devel"         		: true,     			// Development/debugging (alert, confirm, etc)
+    "dojo"          		: false,				// Dojo Toolkit
+	"jasmine"       		: false,    			// Jasmine
+	"jquery"        		: true,					// This option defines globals exposed by the jQuery JavaScript library.
+	"mocha"         		: true,     			// Mocha
+	"mootools"      		: false,				// MooTools JavaScript framework.
+    "node"          		: true,					// Node.js
+    "nonstandard"   		: false,				// This option defines non-standard but widely adopted globals such as escape and unescape.
+    "phantom"   			: false,
+    "prototypejs"   		: false,				// Prototype and Scriptaculous
+	"qunit"         		: false,    			// QUnit
+   	"rhino"         		: false,				// Rhine
+	"shelljs"      			: false,    			// ShellJS
+    "worker"           		: true,   				// This option defines globals available when your code is running inside of a Web Worker
+    "wsh"           		: false,   				// Windows Scripting Host
+    "yui"           		: false,   				// YUI JavaScript framework
+	
+   	// Predefined globals whom JSHint will ignore.
+    "predef"        		: [ "FT", "TweenMax", "TimelineLite" ]
 }
