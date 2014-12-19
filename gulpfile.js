@@ -13,14 +13,18 @@ http://gruntjs.com/configuring-tasks#globbing-patterns
 
 // =======================---------------- CONFIGURATION --------------------
 
+// choice of tween engines either TweenMax or TweenLite
+var tweenEngine = 'tweenlite'.toLowerCase();
+var squish = true;
+
 // Maximum file sizes for stuff...
 var MAX_SIZE_JPEG = 30;
 
 // Set up paths here (for this boilerplate, you should not have to alter these)
-var SOURCE_FOLDER 			= 'src/';		// Source files Root
-var BUILD_FOLDER 			= 'build/';		// Where the initial build occurs (debugable)
-var DISTRIBUTION_FOLDER 	= 'dist/';		// Once debugging is complete, copy to server ready files here
-var RELEASE_FOLDER 			= 'release/';	// Convert to distributable zips
+var SOURCE_FOLDER 			= 'src/';									// Source files Root
+var BUILD_FOLDER 			= 'build/';									// Where the initial build occurs (debugable)
+var DISTRIBUTION_FOLDER 	= 'dist/';									// Once debugging is complete, copy to server ready files here
+var RELEASE_FOLDER 			= squish ? 'release/' : 'uncompressed/';	// Convert to distributable zips
 
 // Default variations for templating
 var defaultTypes =
@@ -29,9 +33,6 @@ var defaultTypes =
   "leaderboard",
   "skyscraper"
 ];
-
-// choice of tween engines either TweenMax or TweenLite
-var tweenEngine = 'tweenlite'.toLowerCase();
 
 // Where do our source files live?
 var source = {
@@ -88,7 +89,7 @@ var watch = {
 	fonts	: SOURCE_FOLDER+'fonts/**/*'
 };
 
-////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////
 // File name format for creating distributions
 // You can set this to however your campaign needs
 // Defaults to brand-type-variant.zip
@@ -102,7 +103,7 @@ var getFileName = function( brand, type, variant, suffix, extras ){
 	// remove spaces and replace with underscores
 	name = name.replace(/ +?/g, '_');
 	// swap out full stops for hyphens (mainly for versioning)
-	name = name.replace(/\./, "-");
+	name = name.replace(/\./g, "-");
 	// remove not allowed characters...
 	name = name.replace(/[\u2000-\u206F\u2E00-\u2E7F\\'!"#\$%&\(\)\*\+,\/:;<=>\?@\[\]\^_`\{\|\}~]/g, "_");
 	// make sure we have a suffix if needed
@@ -133,7 +134,7 @@ var changeEvent = function(evt) {
 // =======================---------------- IMPORT DEPENDENCIES --------------------
 
 // Requirements for this build to work :
-var gulp = require('gulp');						// main Gulp
+var gulp = require('gulp');
 var concat = require('gulp-concat');			// combine files
 var packageJson = require("./package.json");	// read in package.json!
 
@@ -154,6 +155,7 @@ var jade = require('gulp-jade');				// convert jade to html
 var del = require('del');						// delete things and folders
 var sequencer = require('run-sequence');		// run synchronously
 var es = require('event-stream');				// combine streams
+var gulpif = require('gulp-if');				// conditional compiles
 
 var newer = require('gulp-newer');				// deal with only modified files
 
@@ -271,7 +273,6 @@ gulp.task('configuration', function(callback) {
 gulp.task('conf' , [ 'configuration' ] );
 gulp.task('configure' , [ 'configuration' ] );
 
-
 ///////////////////////////////////////////////////////////////////////////////////
 //
 // TASK 	: Clean
@@ -280,13 +281,8 @@ gulp.task('configure' , [ 'configuration' ] );
 ///////////////////////////////////////////////////////////////////////////////////
 gulp.task('clean', function(cb) {
 	// You can use multiple globbing patterns as you would with `gulp.src`
-	del( [
-			BUILD_FOLDER,
-		 	DISTRIBUTION_FOLDER,
-			RELEASE_FOLDER
-		], cb);
+	del([BUILD_FOLDER,DISTRIBUTION_FOLDER,RELEASE_FOLDER], cb);//.on('error', function() { console.error('Could not delete the folder :('); });
 });
-
 
 // Template ===========================================================================
 ///////////////////////////////////////////////////////////////////////////////////
@@ -397,12 +393,15 @@ gulp.task('jade', function() {
 			.pipe( gulp.dest( destination.html ) );
 });
 
+
+// here we use the config file to determine how to output the html
+
 gulp.task('jade-release', function() {
 	var htmlmin = require('gulp-htmlmin');			// squish html
 	return 	gulp.src( source.jade )
-			// ugly code but smaller
-			.pipe( jade( { pretty:false, debug:false, compileDebug:false } ) )
-			.pipe( htmlmin(htmlSquishOptions) )
+			.pipe( gulpif( squish, jade( { pretty:false, debug:false, compileDebug:false } ) ) )
+			.pipe( gulpif( !squish, jade( { pretty:true, debug:false, compileDebug:false } ) ) )
+			.pipe( gulpif( squish, htmlmin(htmlSquishOptions)) )	// ugly code but smaller
 			.pipe( gulp.dest( distribution.html ) );
 });
 
@@ -469,7 +468,8 @@ gulp.task('less', function() {
 gulp.task('less-release', function() {
 	return 	gulp.src( source.styles )
 			.pipe( newer( distribution.styles ) )
-			.pipe( less( {strictMath: false, compress: true }) )
+			.pipe( gulpif( squish, less( {strictMath: false, compress: true }) ))	// ugly code but smaller
+			.pipe( gulpif( !squish, less( {strictMath: false, compress: false }) ))
 			.pipe( prefixer() )
             .pipe( gulp.dest( distribution.styles ) );
 });
@@ -549,7 +549,7 @@ gulp.task('scripts-release', function() {
 	var jshint = require('gulp-jshint');			// lint!
 	return  gulp.src( source.scripts )
             .pipe( concat('main.min.js') )
-            .pipe( uglify() )
+    		.pipe( gulpif( squish, uglify() ) )
 			.pipe( jshint('.jshintrc'))
 			.pipe( jshint.reporter('default') )
             .pipe( gulp.dest( distribution.scripts ) );
@@ -633,7 +633,7 @@ gulp.task('package',function(){
 			.pipe( gulp.dest( folder + 'js' ));
 
 			// manifest
-			if ( config.manifests.enabled != 'false' )
+			if ( config.manifests.enabled )
 			{
 				var 
 					manifestFiles = [],
@@ -727,7 +727,7 @@ gulp.task('zip', function (cb) {
 		{
 			var model = varietiesToPackage[i];
 			var folder = release.html + type + '.'+model + '/';
-			var fileName = getFileName( config.brand , type, model, ".zip", config.version );
+			var fileName = getFileName( config.brand , type, model, ".zip", config.version+'-' );
 			
 			// NB. FlashTalking does *not* allow periods and such... so config.version is a no go
 			//console.log(i + '. Zipping "'+fileName +'" from ' +folder);

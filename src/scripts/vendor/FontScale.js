@@ -38,6 +38,8 @@ var FontScale = (function(){
 	
 	// absolute maximum times we try to reduce the size...
 	var COUNTER_LIMIT = 100;
+	var MINIMUM_INCREMENT = 0.05;
+	var INITIAL_INCREMENT = 10;
 	
 	// Extends the options
 	var extend = function (a, b){
@@ -50,7 +52,7 @@ var FontScale = (function(){
 	
 	// Set minimum and maximum font size thresholds aong with other settings
 	var settings = {
-		baseFont 		: 14,
+		catchment 		: 20,
 		tolerance		: 2,
 		maxFont 		: 180,
 		minFont 		: 6,
@@ -111,7 +113,6 @@ var FontScale = (function(){
 		element.style.height = height;				// overwrite existing height
 		return onlyNumbers(height);
 	};
-
 
 	// Get the size of a font as numerals
 	var getFontSize = function( element )
@@ -307,7 +308,7 @@ var FontScale = (function(){
 			spanElementWidth 	= getWidth( spanElement ),							// span element width
 			space 				= savedParameters.width - spanElementWidth,			// how much left over space is there?
 			exit				= false,
-			increment			= space < 0 ? -1  : 1,
+			increment			= space < 0 ? -INITIAL_INCREMENT  : INITIAL_INCREMENT,
 			counter				= 0,
 			newSpace;
 		
@@ -321,9 +322,7 @@ var FontScale = (function(){
 			var 
 				currentFontSize 	= getFontSize( spanElement ),
 				newFontSize         = currentFontSize + increment;
-            
-			//parentElement.style.fontSize 	= '20'+'px';
-            /*
+  
 			// User wants integers 
 			if ( settings.wholeNumbers )
 			{
@@ -342,7 +341,6 @@ var FontScale = (function(){
 				exit = true;
 				console.error(counter+'. EXIT > Due to Min size being reached' );
 			}
-			*/
 			
 			// now resize to host our new sizes
 			spanElement.style.fontSize = newFontSize + 'px';
@@ -350,65 +348,65 @@ var FontScale = (function(){
 			
 			var newWidth = getWidth( spanElement );
 			var flipped = false;
+			var inZone = false;
 		
+			console.log( counter+'. maxWidth : '+savedParameters.width+'px newWidth : '+newWidth + 'px increment : '+increment );
+            
+			// check to see if by incrementing we have crossed the extents available
 			if (newWidth > spanElementWidth)
 			{
-				
+				// GROWN
 				if (increment < 0) 
 				{
 					console.error('Growing from Shrinking');
 					flipped = true;
 				} else {
-					console.error('Growing');
+					console.error('We have Grown from '+spanElementWidth+' to '+newWidth+' by '+increment );
+					if ( newWidth > savedParameters.width )
+					{
+						console.error('And now we are TOO big!' );
+						if (increment > 0) increment *= -1;
+						inZone = true;
+					}
+					
 				}
+				
 			}else{
 				
+				// SHRANK
 				if (increment > 0) 
 				{
 					console.error('Shrinking from Growing');
 					flipped = true;
 				}else{
-					console.error('Shrinking');
+					console.error('We have Shrank from '+spanElementWidth+' to '+newWidth+' by '+increment );
+					
+					if ( newWidth < savedParameters.width )
+					{
+						console.error('we are TOO small!' );
+						if (increment < 0) increment *= -1;
+						inZone = true;
+					}
 				}
-			}
-			
-			if (flipped) console.error('Flipping...');
-			
-			if ( newWidth > savedParameters.width )
-			{
-				// now check to see if the sign has flipped since last loop
-				if ( flipped )
-				{
-					// it HAS so reset the incrementor
-					increment = -1;
-					alert('Flip to negative');
-				}else{
-					increment *= 0.5;
-				}
-
-			}else if (newWidth < savedParameters.width){
 				
-				// Check to see if we have flipped signs the other way
-				if ( flipped )
-				{
-					// it HAS so reset the incrementor
-					increment = 1;
-					alert('Flip to positive');
-				}else{
-					increment *= 0.5;
-				}
 			}
 			
-			console.log( counter+'. maxWidth : '+savedParameters.width+'px newWidth : '+spanElementWidth + 'px' );
-            //console.log( increment+ ' Size variation :' + space + 'px calculated size : '+newFontSize+'px' );
-            console.log( counter+'. CurrentFontSize:'+currentFontSize+'px NewFontSize:'+newFontSize+'px Increment:'+increment+'px' );
+			// now check to see if we are within the range...
+			if ( inZone )
+			{
+				increment *= 0.75;
+				if (increment < MINIMUM_INCREMENT && increment > 0) increment = MINIMUM_INCREMENT;
+				else if (increment > -MINIMUM_INCREMENT && increment < 0 ) increment = -MINIMUM_INCREMENT;
+				console.error('Reducing Increment to '+increment );
+			}
+			
+			//console.log( increment+ ' Size variation :' + space + 'px calculated size : '+newFontSize+'px' );
+            //console.log( counter+'. CurrentFontSize:'+currentFontSize+'px NewFontSize:'+newFontSize+'px Increment:'+increment+'px' );
             //console.log( counter+'. Oversize : '+ (100*spanElementWidth/savedParameters.width)+'%' );
             //console.log( 'Which as a percentage gives : '+percentage+'% or '+newSize+'px' );
            
-			
 			spanElementWidth 	= newWidth;
 			newSpace 			= savedParameters.width - spanElementWidth;
-			
 			
 			/*
 			// check height is not exceeded first
@@ -454,45 +452,25 @@ var FontScale = (function(){
 				increment *= -0.33;
 			}
 			
-			
-			// There could be the case where the size has not changed since the last loop...
-			// Also conditionally, this may or may not be larger than allowed
-			if ( newSpace == space )
-			{
-				if (newSpace < 0)
-				{
-					console.error( newSpace+'. RESCALE > ERROR! Still larger than needed '+ (100*spanElementWidth/savedParameters.width)+'%' );
-					//var exitSize = currentFontSize / (spanElementWidth/savedParameters.width);
-					//spanElement.style.fontSize = exitSize + 'px';
-					//spanElementWidth = getWidth( spanElement );
-					
-				}else{
-					console.error( newSpace+'. RESCALE > ERROR! Stalled at '+ (100*spanElementWidth/savedParameters.width)+'%' );
-					exit = true;	// size reached!
-				}
-				
-			}
 			*/
-			/*
+			
 			// Check to see if conditions have been met
-			if (( newSpace < settings.tolerance ) && ( newSpace > -settings.tolerance )) 
+			if (( newSpace < settings.tolerance ) && ( newSpace > 0 )) 
 			{
 				console.error('EXIT > Text size reached :'+spanElementWidth + ' tolerance:' + newSpace / settings.tolerance );
 				exit = true;	// size reached!
-			}*/
+			}
 			
 			// Too small or Bang on
 			if ( exit || (counter++ > COUNTER_LIMIT ) ) 
 			{
-				//console.error('EXIT > early ? '+exit+' overcount ? '+ (100*counter/COUNTER_LIMIT)+'%' );
 				console.error('EXIT > Size '+ (100*spanElementWidth/savedParameters.width)+'%' );
 				break; 
 			}else{
-				
-				// update the available space ready for the next loop
 				space = newSpace;
 			}
         }
+		
 		
 		// Now centralise in both axis!
 		if ( savedParameters.centred )

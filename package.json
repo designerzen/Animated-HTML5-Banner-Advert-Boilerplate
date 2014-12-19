@@ -29,6 +29,7 @@
     "gulp-expect-file": "0.0.7",
     "gulp-filesize": "0.0.6",
     "gulp-htmlmin": "^0.2.0",
+    "gulp-if": "^1.2.5",
     "gulp-imagemin": "^1.0.1",
     "gulp-jade": "^0.7.0",
     "gulp-jshint": "^1.9.0",
