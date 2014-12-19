@@ -30,39 +30,33 @@ h1,h2,h3,h4,h5,h6,p{
     color:@col-light;
     user-select: none;
 }
+
 h1{
-	font-size:1.84em;
-    line-height:34px;
+	.fontScale( 19 );
 }
 
 h2{
-	font-size:1.8em;
-    line-height:32px;
+	.fontScale( 18 );
 }
 
 h3{
-	font-size:1.78em;
-    line-height:32px;
+	.fontScale( 17 );
 }
 
 h4{
-    //font-family: @font-light;
-	font-size:1.09em;
-    line-height:18px;
+	.fontScale( 16 );
 }
 
 h5{
-    font-size:1em;
+	.fontScale( 15 );
 }
 
 h6 {
-	font-size:0.75em;
+	.fontScale( 14 );
 }
 
 p{
-    //font-family: @font-light;
-	font-size:0.9em;
-	font-size:0.9rem;
+	.fontScale( 14 );
 }
 
 // Simple links
@@ -94,4 +88,6 @@ sub {
 }
 
 
+// Non-English Typefaces
+@import "i18n";
 @import "typography-antialiasing";

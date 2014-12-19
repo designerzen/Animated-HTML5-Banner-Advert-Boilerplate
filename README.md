@@ -8,7 +8,9 @@ With a few simple changes, html and css are easy to modify and leverage Jade and
 
 It uses the [Gulp](www.github.com) infrastructure to build and create templates for your projects as well as creating deliverable zip files with everything ready and set up built right in.
 
-This is a fully working beta version! 
+Contains full versions of [Type Rendering Mix](http://typerendering.com/)
+
+This is a fully working version that has been used in many campaigns already! 
 
 
 ##Requirements##
@@ -17,19 +19,24 @@ The only requirement is [NodeJS](http://nodejs.org/) and about 100mb of free spa
 
 ##Installation##
 After installing NodeJS on your machine,
-In a Command Prompt :
+In a Command Prompt (if you do not have gulp already globally installed) :
 
 > sudo npm install -g gulp
 
+then
+
 > sudo npm install
 
-Then while that is downloading and installing, **edit the config.json** file in the root folder.
+This will create a folder called "node_modules" which inside will contain all of this project's dependencies.
+
+Whilst that is downloading and installing (usually a few minutes) you can **edit the config.json** file in the root folder.
 
 Once the installation has completed, ensure all the software is correctly installed by typing :
  
 > gulp
 
 Which should bring up a little help message with the available options. 
+
 _If you cannot see this_, try doing a **fresh clone of this repo** and retrying the installation steps.
 
 
@@ -40,9 +47,16 @@ Firstly _ensure that you have editted the config.json_ with your appropriate set
 Pay close attention to types (remove any that don't apply) and variants...
 And add as many variants as you wish (these are the duplicate templates named accordingly)
 
+Types are the required sizes for the campaign. You can use any of the following :
+
+**"banner", "halfBanner", "halfPage", "leaderboard", "mpu", "skyscraper", "verticalBanner", "wideSkyscraper"**
+
+Variants can be anything you want but primarily are useful for creating language variants
+eg. 'en', 'th', 'hk', 'de'
+
 If you have common elements on all of your pages, you can edit the **template.jade partial** as these will be cloned into your templates. 
 
-You can use the shortcut #{type} where-ever you want to have type specific elements (mpu/skyscraper/banner etc).
+You can use the shortcut #{type} wherever you want to have type specific elements (mpu/skyscraper/banner etc).
 The shortcuts #{width} and #{height} are also available if you wish to use them!
 
 Then run :
@@ -85,7 +99,6 @@ src/less
 There are a few helper mixins in the src/less/helpers.less file such as
 
 ```
-
 .x(50) 						which once compiled becomes left:50px;
 .y(50) 						which once compiled becomes top:50px;
 
@@ -99,10 +112,9 @@ There are a few helper mixins in the src/less/helpers.less file such as
 .position( top, right, bottom, left )
 .position( top, right, bottom, left, z-index )
 
-.user-select()			prevents textfields being selectable for example
+.user-select()				prevents textfields being selectable for example
 
-.clearfix() 			inserts the clear-fix hack for clearing floating elements
-
+.clearfix() 				inserts the clear-fix hack for clearing floating elements
 ```
 
 #####Jade####
@@ -123,8 +135,15 @@ The FlashTrack file contains the Flash Talking interface (If you are doing insta
 The Animation file is boilerplate code for writing your own timeline based animations. Delete whatever you feel you don't need.
 
 ```
-src/javascript/				Home for your own scripts
-src/javascript/vendors/		Home for any libraries you want transcluded in your main.js file
+src/javascript/							Home for your own scripts
+src/javascript/animation.js				The script that conatins your time line and associated animations
+src/javascript/manifest.js				FlashTalking manifest template
+src/javascript/flashtrack.js			FlashTalking API code
+src/javascript/vendors/					Home for any libraries you want transcluded in your main.js file
+src/javascript/vendors/trmix.min.js		http://typerendering.com/
+src/javascript/vendors/FontScale.js		A simple way to resize the font in a field to maximum size
+src/javascript/vendors/tweenlite/		One of two potential rendering engines - this one is small
+src/javascript/vendors/tweenmax/		This one is much bigger but is more feature rich
 ```
 
 
@@ -155,8 +174,10 @@ Where **Name**, **Type** and **Variant**  are read in from the **package.json** 
 
 _eg. Kittens-mpu-a.zip_
 
+Uploading your advert to agencies usually requires a zip file with the campaign inside - these are those files.
 
-###FAQ###
+
+###Troubleshooting###
 **Q.** There are no html files in my build or dist folders!
 
 **A.** Be sure to have run the templater with gulp taemplate first, or at least create jade files in the jade folder that extends the base.jade partial

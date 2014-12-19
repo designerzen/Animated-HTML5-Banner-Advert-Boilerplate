@@ -11,17 +11,16 @@ http://gruntjs.com/configuring-tasks#globbing-patterns
 
 */
 
-// =======================---------------- CONFIGURATION ---------------------------------------------------------
-
-// Set up paths here (for this boilerplate, you should not have to alter these)
-var SOURCE_FOLDER 			= 'src/';						// Source files Root
-var BUILD_FOLDER 			= 'build/';						// Where the initial build occurs (debugable)
-var DISTRIBUTION_FOLDER 	= 'dist/';						// Once debugging is complete, copy to server ready files here
-var RELEASE_FOLDER 			= 'release/';					// Convert to distributable zips
-var TEMPLATE_HOME 			= 'partials/template.jade';		// Where does the root template live?
+// =======================---------------- CONFIGURATION --------------------
 
 // Maximum file sizes for stuff...
-// var MAX_SIZE_JPEG 			= 30;
+var MAX_SIZE_JPEG = 30;
+
+// Set up paths here (for this boilerplate, you should not have to alter these)
+var SOURCE_FOLDER 			= 'src/';		// Source files Root
+var BUILD_FOLDER 			= 'build/';		// Where the initial build occurs (debugable)
+var DISTRIBUTION_FOLDER 	= 'dist/';		// Once debugging is complete, copy to server ready files here
+var RELEASE_FOLDER 			= 'release/';	// Convert to distributable zips
 
 // Default variations for templating
 var defaultTypes =
@@ -31,20 +30,16 @@ var defaultTypes =
   "skyscraper"
 ];
 
-var tweenEngine = 'tweenlite';
+// choice of tween engines either TweenMax or TweenLite
+var tweenEngine = 'tweenlite'.toLowerCase();
 
 // Where do our source files live?
 var source = {
 	// ensure that all scripts in the JS folder are compiled, but that flashtrack is the *last* one
 	scripts : [ 
 		SOURCE_FOLDER+'scripts/vendor/'+tweenEngine+'/**/*.js', 
-		// This is a font optimiser class in JS
-		SOURCE_FOLDER+'scripts/vendor/trmix.min.js', 
-		// If you need dynamic text sizes within fields
-		SOURCE_FOLDER+'scripts/vendor/FontScale.js', 
-		// make sure we exclude the manifest and flashtrack at this point
-		SOURCE_FOLDER+'scripts/!(*manifest|flashtrack)*.js',
-		// last file to transclude is the flashtrack 
+		SOURCE_FOLDER+'scripts/vendor/trmix*.js', 
+		SOURCE_FOLDER+'scripts/!(*manifest|flashtrack)*.js', 
 		SOURCE_FOLDER+'scripts/flashtrack.js' 
 	],
 	styles 	: SOURCE_FOLDER+'less/style.less',
@@ -93,73 +88,31 @@ var watch = {
 	fonts	: SOURCE_FOLDER+'fonts/**/*'
 };
 
-
-// How much to squish images by :
-/* 
-The optimization level 0 enables a set of optimization operations that require minimal effort. 
-There will be no changes to image attributes like bit depth or color type, and no recompression of existing IDAT datastreams. 
-The optimization level 1 enables a single IDAT compression trial. 
-The trial chosen is what. OptiPNG thinks it’s probably the most effective. 
-The optimization levels 2 and higher enable multiple IDAT compression trials; the higher the level, the more trials.
-
-Level and trials:
-
-    1 trial
-    8 trials
-    16 trials
-    24 trials
-    48 trials
-    120 trials
-    240 trials,
-	// Additional plugins to use with imagemin.{ size:MAX_SIZE_JPEG }
-	use: [jpegoptim()]
-*/
-var imageCrunchOptions = {
-	// Select an optimization level between 0 and 7
-	optimizationLevel: 3,
-	// Lossless conversion to progressive
-	progressive: false,
-	// Interlace gif for progressive rendering.
-	interlaced : false
-};
-
-
-// How much to squish HTML
-// These options are setup to provide maximum squishage
-// You should not have to tweak these too much
-// All options : https://github.com/kangax/html-minifier
-var htmlSquishOptions = {
-	removeComments     			: true,
-	removeIgnored				: true,
-	removeEmptyElements			: false,
-	removeOptionalTags			: false,
-	removeEmptyAttributes		: true,
-	removeRedundantAttributes	: true,
-	removeOptionalTags			: true,
-	collapseWhitespace 			: true,
-	minifyJS          			: true,
-	keepClosingSlash   			: true
-};
-
-
+////////////////////////////////////////////////////////////////////////////////////
 // File name format for creating distributions
 // You can set this to however your campaign needs
 // Defaults to brand-type-variant.zip
 // Fetch and create a nice filename that excludes punctuation
-// and spaces and other banned filename characters
-var getFileName = function( brand, type, variant, suffix ){
-	var name = brand +'-'+type +'-'+variant;
+// and spaces are a no-go too...
+///////////////////////////////////////////////////////////////////////////////////
+var getFileName = function( brand, type, variant, suffix, extras ){
+	// optional
+	extras = extras || "";
+	var name = extras + brand +'-'+type +'-'+variant;
 	// remove spaces and replace with underscores
 	name = name.replace(/ +?/g, '_');
+	// swap out full stops for hyphens (mainly for versioning)
+	name = name.replace(/\./, "-");
 	// remove not allowed characters...
-	name = name.replace(/[\u2000-\u206F\u2E00-\u2E7F\\'!"#\$%&\(\)\*\+,\.\/:;<=>\?@\[\]\^_`\{\|\}~]/, "_");
+	name = name.replace(/[\u2000-\u206F\u2E00-\u2E7F\\'!"#\$%&\(\)\*\+,\/:;<=>\?@\[\]\^_`\{\|\}~]/g, "_");
 	// make sure we have a suffix if needed
 	if (suffix) name += suffix;
 	return name.toLowerCase();
 };
 
-
+///////////////////////////////////////////////////////////////////////////////////
 // File name format for creating templates
+///////////////////////////////////////////////////////////////////////////////////
 var sanitisedFileName = function( brand, type, variant, suffix ){
 	var name = type + '.'+ brand +'.'+variant;
 	// remove spaces
@@ -170,21 +123,20 @@ var sanitisedFileName = function( brand, type, variant, suffix ){
 	return name.toLowerCase();
 };
 
-
+///////////////////////////////////////////////////////////////////////////////////
 // monitor output from watched files and their changes
+///////////////////////////////////////////////////////////////////////////////////
 var changeEvent = function(evt) {
     console.log('File', evt.path.replace(new RegExp('/.*(?=/' + basePaths.src + ')/'), ''), 'was', evt.type );
 };
 
-
-
-
-// =======================---------------- IMPORT DEPENDENCIES --------------------------------------------------
+// =======================---------------- IMPORT DEPENDENCIES --------------------
 
 // Requirements for this build to work :
 var gulp = require('gulp');						// main Gulp
 var concat = require('gulp-concat');			// combine files
 var packageJson = require("./package.json");	// read in package.json!
+
 
 // Image Plugins
 var imagemin = require('gulp-imagemin');		// squish images
@@ -218,16 +170,61 @@ var expect = require('gulp-expect-file');		// expect a certain file (more for de
 var connect = require('gulp-connect');			// live reload capable server for files
 var console = require('better-console');		// sexy console output
 
+
 var types = defaultTypes;						// mpu / skyscraper / leaderboard etc
-var variants = [];								// campaign variants such as "a","b","c","d" or "1","2","3","4" or "jp","kr","en","de" etc
+var variants = [];								// campaign variants such as "a","b","c","d" or "1","2","3","4"
 var varietiesToPackage = variants;				// extensions for varieties such as A, B, C etc.
 
 var config;										// loaded in from an external config file
 
-console.clear();								// Start by clearing the console of any gubbins
+// How much to squish images by :
+/* 
+The optimization level 0 enables a set of optimization operations that require minimal effort. 
+There will be no changes to image attributes like bit depth or color type, and no recompression of existing IDAT datastreams. 
+The optimization level 1 enables a single IDAT compression trial. 
+The trial chosen is what. OptiPNG thinks it’s probably the most effective. 
+The optimization levels 2 and higher enable multiple IDAT compression trials; the higher the level, the more trials.
+
+Level and trials:
+
+    1 trial
+    8 trials
+    16 trials
+    24 trials
+    48 trials
+    120 trials
+    240 trials,
+	// Additional plugins to use with imagemin.{ size:MAX_SIZE_JPEG }
+	use: [jpegoptim()]
+*/
+
+var imageCrunchOptions = {
+	// Select an optimization level between 0 and 7
+	optimizationLevel: 3,
+	// Lossless conversion to progressive
+	progressive: false,
+	// Interlace gif for progressive rendering.
+	interlaced : false
+};
 
 
-// =======================---------------- TASK DEFINITIONS -----------------------------------------------
+// How much to squish HTML
+// All options : https://github.com/kangax/html-minifier
+var htmlSquishOptions = {
+	removeComments     			: true,
+	removeIgnored				: true,
+	removeEmptyElements			: false,
+	removeOptionalTags			: false,
+	removeEmptyAttributes		: true,
+	removeRedundantAttributes	: true,
+	removeOptionalTags			: true,
+	collapseWhitespace 			: true,
+	minifyJS          			: true,
+	keepClosingSlash   			: true
+	//lint						: true
+};
+
+// =======================---------------- TASK DEFINITIONS --------------------
 
 ///////////////////////////////////////////////////////////////////////////////////
 //
@@ -235,8 +232,10 @@ console.clear();								// Start by clearing the console of any gubbins
 // ACTION 	: Deletes all files and folders specified in the arguments
 //
 ///////////////////////////////////////////////////////////////////////////////////
+var settings = 'config.json';
+var renamed = '.config.json';
+
 gulp.task('configuration-save', function(cb) {
-	var settings = 'config.json';
 	return gulp.src( settings )
 		.pipe( expect( settings ) )
 		.on( 'error', function (err) { console.error(err); } )
@@ -246,7 +245,6 @@ gulp.task('configuration-save', function(cb) {
 });
 
 gulp.task('configuration-load', function(cb) {
-	var renamed = '.config.json';
 	config = require('./'+renamed);		// load in the external config file
 	//config = fs.readFile('./'+renamed, 'utf-8', func);
 	
@@ -270,8 +268,9 @@ gulp.task('configuration', function(callback) {
 });
 
 // The task to load in our settings file
-gulp.task('config' , 	[ 'configuration' ] );
+gulp.task('conf' , [ 'configuration' ] );
 gulp.task('configure' , [ 'configuration' ] );
+
 
 ///////////////////////////////////////////////////////////////////////////////////
 //
@@ -281,11 +280,15 @@ gulp.task('configure' , [ 'configuration' ] );
 ///////////////////////////////////////////////////////////////////////////////////
 gulp.task('clean', function(cb) {
 	// You can use multiple globbing patterns as you would with `gulp.src`
-	del([BUILD_FOLDER,DISTRIBUTION_FOLDER,RELEASE_FOLDER], cb);
+	del( [
+			BUILD_FOLDER,
+		 	DISTRIBUTION_FOLDER,
+			RELEASE_FOLDER
+		], cb);
 });
 
-// Template ===========================================================================
 
+// Template ===========================================================================
 ///////////////////////////////////////////////////////////////////////////////////
 //
 // TASK 	: Templates
@@ -299,7 +302,7 @@ gulp.task('jade-create', function() {
 	// 2. copy the example but swap out the top line with one of
 	// mpu.base.jade / leaderboard.base.jade / skyscraper.base.jade
 	var folder = SOURCE_FOLDER+'jade/';
-	var source = folder+TEMPLATE_HOME;
+	var source = folder+'partials/template.jade';
 	var merged = merge();
 	var varientsLength = varietiesToPackage.length;
 	for (var t = 0, e=types.length; t < e; t++)
@@ -340,7 +343,7 @@ gulp.task('templates', function(callback) {
 });
 gulp.task('manifest', 	[ 'create-manifests' ] );
 
-// This is the task that clones and creates the manifest.js files PER size
+
 gulp.task('clone-manifests', function() {
 	
 	var folder = SOURCE_FOLDER+'scripts/';
@@ -396,11 +399,10 @@ gulp.task('jade', function() {
 
 gulp.task('jade-release', function() {
 	var htmlmin = require('gulp-htmlmin');			// squish html
-
 	return 	gulp.src( source.jade )
 			// ugly code but smaller
 			.pipe( jade( { pretty:false, debug:false, compileDebug:false } ) )
-			.pipe( htmlmin( htmlSquishOptions ) )
+			.pipe( htmlmin(htmlSquishOptions) )
 			.pipe( gulp.dest( distribution.html ) );
 });
 
@@ -631,7 +633,7 @@ gulp.task('package',function(){
 			.pipe( gulp.dest( folder + 'js' ));
 
 			// manifest
-			if ( config.manifests.enabled )
+			if ( config.manifests.enabled != 'false' )
 			{
 				var 
 					manifestFiles = [],
@@ -725,7 +727,7 @@ gulp.task('zip', function (cb) {
 		{
 			var model = varietiesToPackage[i];
 			var folder = release.html + type + '.'+model + '/';
-			var fileName = getFileName( config.brand , type, model, ".zip" );
+			var fileName = getFileName( config.brand , type, model, ".zip", config.version );
 			
 			// NB. FlashTalking does *not* allow periods and such... so config.version is a no go
 			//console.log(i + '. Zipping "'+fileName +'" from ' +folder);
@@ -799,6 +801,10 @@ gulp.task('server', function() {
 
 
 
+
+
+
+console.clear();
 
 
 ///////////////////////////////////////////////////////////////////////////////////
@@ -895,5 +901,3 @@ gulp.task('help' , function(callback) {
 	
     callback();
 } );
-
-
