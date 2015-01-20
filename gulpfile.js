@@ -15,16 +15,16 @@ http://gruntjs.com/configuring-tasks#globbing-patterns
 
 // choice of tween engines either TweenMax or TweenLite
 var tweenEngine = 'tweenlite'.toLowerCase();
-var squish = true;
 
-// Maximum file sizes for stuff...
-var MAX_SIZE_JPEG = 30;
+
+var squish = false;
 
 // Set up paths here (for this boilerplate, you should not have to alter these)
 var SOURCE_FOLDER 			= 'src/';									// Source files Root
 var BUILD_FOLDER 			= 'build/';									// Where the initial build occurs (debugable)
 var DISTRIBUTION_FOLDER 	= 'dist/';									// Once debugging is complete, copy to server ready files here
 var RELEASE_FOLDER 			= squish ? 'release/' : 'uncompressed/';	// Convert to distributable zips
+
 
 // Default variations for templating
 var defaultTypes =
@@ -40,6 +40,7 @@ var source = {
 	scripts : [ 
 		SOURCE_FOLDER+'scripts/vendor/'+tweenEngine+'/**/*.js', 
 		SOURCE_FOLDER+'scripts/vendor/trmix*.js', 
+		SOURCE_FOLDER+'scripts/vendor/fontscaler.js', 
 		SOURCE_FOLDER+'scripts/!(*manifest|flashtrack)*.js', 
 		SOURCE_FOLDER+'scripts/flashtrack.js' 
 	],
@@ -53,33 +54,37 @@ var source = {
 	fonts	: SOURCE_FOLDER+'fonts/**/*.+(svg|eot|woff|ttf|otf)'
 };
 
+
 // Where shall we compile them to?
-var destination = {
-	scripts : BUILD_FOLDER+'js',
-	styles 	: BUILD_FOLDER+'css',
-	html 	: BUILD_FOLDER,
-	images	: BUILD_FOLDER+'img',
-	fonts	: BUILD_FOLDER+'fonts'
+var structure = {
+	scripts : 'js',
+	styles 	: 'css',
+	html 	: '',
+	images	: 'img',
+	fonts	: 'fonts'
 };
+
+
+// Where shall we compile them to?
+var getDestinations = function( dir ) {
+	return {
+		scripts : dir + structure.scripts,
+		styles 	: dir + structure.styles,
+		html 	: dir + structure.html,
+		images	: dir + structure.images,
+		fonts	: dir + structure.fonts
+	};
+};
+
+// Where shall we compile them to?
+var destination = getDestinations( BUILD_FOLDER );
 
 // Where shall we create the final output?
-var distribution = {
-	scripts : DISTRIBUTION_FOLDER+'js',
-	styles 	: DISTRIBUTION_FOLDER+'css',
-	html 	: DISTRIBUTION_FOLDER,
-	images	: DISTRIBUTION_FOLDER+'img',
-	fonts	: DISTRIBUTION_FOLDER+'fonts'
-};
+var distribution = getDestinations( DISTRIBUTION_FOLDER );
 
 // Where shall we create the final output?
-var release = {
-	scripts : RELEASE_FOLDER+'js',
-	styles 	: RELEASE_FOLDER+'css',
-	html 	: RELEASE_FOLDER,
-	images	: RELEASE_FOLDER+'img',
-	fonts	: RELEASE_FOLDER+'fonts'
-};
-
+var release = getDestinations( RELEASE_FOLDER );
+	
 // Files and folders to watch for changes in...
 var watch = {
 	scripts : SOURCE_FOLDER+'scripts/*.js',
@@ -138,7 +143,6 @@ var gulp = require('gulp');
 var concat = require('gulp-concat');			// combine files
 var packageJson = require("./package.json");	// read in package.json!
 
-
 // Image Plugins
 var imagemin = require('gulp-imagemin');		// squish images
 var pngquant = require('imagemin-pngquant');	// png squisher
@@ -177,7 +181,13 @@ var types = defaultTypes;						// mpu / skyscraper / leaderboard etc
 var variants = [];								// campaign variants such as "a","b","c","d" or "1","2","3","4"
 var varietiesToPackage = variants;				// extensions for varieties such as A, B, C etc.
 
+var settings = 'config.json';
+var renamed = '.config.json';
+
 var config;										// loaded in from an external config file
+
+
+if ( !fs.existsSync( settings ) ) console.error( "No Config Found" );
 
 // How much to squish images by :
 /* 
@@ -234,8 +244,6 @@ var htmlSquishOptions = {
 // ACTION 	: Deletes all files and folders specified in the arguments
 //
 ///////////////////////////////////////////////////////////////////////////////////
-var settings = 'config.json';
-var renamed = '.config.json';
 
 gulp.task('configuration-save', function(cb) {
 	return gulp.src( settings )
@@ -341,11 +349,10 @@ gulp.task('manifest', 	[ 'create-manifests' ] );
 
 
 gulp.task('clone-manifests', function() {
-	
+	// check config file...
 	var folder = SOURCE_FOLDER+'scripts/';
 	var source = folder+'manifest.js';
 	var merged = merge();
-	var varientsLength = varietiesToPackage.length;
 	for (var t = 0, e=types.length; t < e; t++)
 	{
 		var type = types[t];
@@ -368,7 +375,54 @@ gulp.task('clone-manifests', function() {
 	}
 	return merged;
 });
+
+
+gulp.task('clone-manifest-variants', function() {
+	// check config file...
+	var folder = SOURCE_FOLDER+'scripts/';
+	var source = folder+'manifest.js';
+	var merged = merge();
+	var varientsLength = varietiesToPackage.length;
+
+    // Loop through TYPES
+    for (var t = 0, e=types.length; t < e; ++t)
+    {
+        var type = types[t];
+        var size = config.sizes[ type ];
+
+        // Loop through VARIANTS
+        for (var v=0; v < varientsLength; ++v)
+        {
+            var variant = varietiesToPackage[ v ];
+            var filename = type+'.manifest.'+variant+'.js';
+            var manifest = gulp.src( [source] )
+                .pipe( replace(/"width":300/, '"width":'+size.w ) )
+                .pipe( replace(/"height":250/, '"height":'+size.h ) )
+                .pipe( replace(/#{title}/gi, config.brand) )
+                .pipe( replace(/#{version}/gi, config.version) )
+                .pipe( replace(/#{variant}/gi, type) )
+                .pipe( replace(/#{type}/gi, type.toLowerCase() ) )
+                .pipe( replace(/#{width}/gi, size.w) )
+                .pipe( replace(/#{height}/gi, size.h) )
+                .pipe( rename( filename ) )
+                .pipe( gulp.dest( folder ) );	// <- save back into source!
+
+            console.log('\t'+t+'. Creating '+type+' Template as '+folder+filename );
+            merged.add( manifest );
+        }
+    }
+    
+	return merged;
+});
+
+
 // The task to create the debuggable versions
+gulp.task('create-manifests-variants', function(callback) {
+	sequencer(
+		'configure',
+		'clone-manifest-variants',
+    callback);
+});// The task to create the debuggable versions
 gulp.task('create-manifests', function(callback) {
 	sequencer(
 		'configure',
@@ -399,8 +453,7 @@ gulp.task('jade', function() {
 gulp.task('jade-release', function() {
 	var htmlmin = require('gulp-htmlmin');			// squish html
 	return 	gulp.src( source.jade )
-			.pipe( gulpif( squish, jade( { pretty:false, debug:false, compileDebug:false } ) ) )
-			.pipe( gulpif( !squish, jade( { pretty:true, debug:false, compileDebug:false } ) ) )
+			.pipe( gulpif( squish, jade( { pretty:false, debug:false, compileDebug:false } ), jade( { pretty:true, debug:false, compileDebug:false } ) ) )
 			.pipe( gulpif( squish, htmlmin(htmlSquishOptions)) )	// ugly code but smaller
 			.pipe( gulp.dest( distribution.html ) );
 });
@@ -424,30 +477,13 @@ gulp.task('images', function() {
 gulp.task('images-release', function() {
 	return 	gulp.src( source.images)
 			//.pipe( newer(distribution.images) )
-			//.pipe( imagemin( imageCrunchOptions ) )
+			.pipe( imagemin( imageCrunchOptions ) )
 			.pipe( pngquant({optimizationLevel: 3})() )
 			//.pipe( jpegoptim({ size:MAX_SIZE_JPEG })() )
 			.pipe( gulp.dest( distribution.images ) );
 			//.pipe( expect( source.images ) );
 });
 
-/*
-// Copy all static images & squish
-// DOES NOT WORK! results in filesize 0k...
-// Be more pragmatic whilst creating your assets!
-gulp.task('images-jpegs', function() {
-	//return 	gulp.src( SOURCE_FOLDER+'images/jpg/*.+(jpg|jpeg)' )
-	var test = [ SOURCE_FOLDER+'images/jpg/bg_mpu*.jpg', SOURCE_FOLDER+'images/jpg/bg_wideskyscraper*.+(jpg|jpeg)' ];
-	//var test = [ SOURCE_FOLDER+'images/jpg/bg_halfpage*.jpg', SOURCE_FOLDER+'images/jpg/bg_leaderboard*.+(jpg|jpeg)', distribution.images+'/jpg/bg_mpu*.jpg', distribution.images+'/jpg/bg_wideskyscraper*.+(jpg|jpeg)' ];
-	//var test = [ distribution.images+'/jpg/bg_wideskyscraper*.+(jpg|jpeg)' ];
-	return 	gulp.src( test )
-	//return 	gulp.src( SOURCE_FOLDER+'images/jpg/*.jpg' )
-			.pipe( jpegoptim({ size:MAX_SIZE_JPEG })() )
-			.pipe( expect( test ) )
-			.pipe( gulp.dest( distribution.images+'/jpg' ) );
-});
-
-*/
 
 // Cascading Style Sheets =========================================================
 ///////////////////////////////////////////////////////////////////////////////////
@@ -468,8 +504,7 @@ gulp.task('less', function() {
 gulp.task('less-release', function() {
 	return 	gulp.src( source.styles )
 			.pipe( newer( distribution.styles ) )
-			.pipe( gulpif( squish, less( {strictMath: false, compress: true }) ))	// ugly code but smaller
-			.pipe( gulpif( !squish, less( {strictMath: false, compress: false }) ))
+			.pipe( gulpif( squish, less( {strictMath: false, compress: true }), less( {strictMath: false, compress: false }) ))	// ugly code but smaller
 			.pipe( prefixer() )
             .pipe( gulp.dest( distribution.styles ) );
 });
@@ -516,8 +551,7 @@ gulp.task('copy-manifest',function(){
 gulp.task('scripts-lint', function() {
     // Minify and copy all JavaScript (except vendor scripts)
     // with sourcemaps all the way down
-	var uglify = require('gulp-uglify');            // squash files
-	 var jshint = require('gulp-jshint');			// lint!
+	var jshint = require('gulp-jshint');			// lint!
 	return  gulp.src([ SOURCE_FOLDER+'scripts/*.js' ] )
             //.pipe( uglify() )
 			.pipe( jshint('.jshintrc'))
@@ -610,6 +644,9 @@ gulp.task('package',function(){
 			var folder = release.html + type + '.'+model + '/';
 			var size = config.sizes[ type ];
 
+            console.log('' );
+            console.info('Creating : '+fileName+'____________________________' );
+            
 			// create release folder
 			var htmlStream = gulp.src( html )
 			.pipe( rename( 'index.html' ))
@@ -636,21 +673,35 @@ gulp.task('package',function(){
 			if ( config.manifests.enabled )
 			{
 				var 
+                    extension = '.js',
 					manifestFiles = [],
-					manifestFile = 'manifest.js',
+					manifestFile = 'manifest',
 					manifestFolder = SOURCE_FOLDER+'scripts/',
-					manifest = manifestFolder+type+'.'+manifestFile;
+					manifestVariant = manifestFolder+type+'.'+manifestFile+'.'+model + extension,
+					manifest = manifestFolder+type+'.'+manifestFile + extension;
 
-				// This first checks to see if the manifest for this file exists...
-				if( fs.existsSync( manifest ) )
+				// This first check is to see if the manifest for this specific vafriant exists,
+                // for exmple this could be a language specific version of the manifest
+				if( fs.existsSync( manifestVariant ) )
 				{
-					// Use custom Manifest file
+					// Use custom Manifest file per variant...
+                    // NB. Needs to be in the format, type.manifest.model.js
+                    // EG. manifest.hk.js -> manifest when copied into the folder
+					manifestFiles.push( manifestVariant );
+					console.info('Custom Manifest FOUND! at : '+manifestVariant );
+                    
+				}else if( fs.existsSync( manifest ) )
+				{
+					// Use size Manifest file
 					manifestFiles.push( manifest );
-					//console.error('Custom Manifest FOUND! at : '+manifest );
+					//console.error('Custom Manifest NOT FOUND! at : '+manifestVariant );
+                    console.log('Variant Manifest FOUND! at : '+manifest );
+                    
 				} else {
+                    
 					// Use default Manifest file
 					manifestFiles.push( manifestFolder+'manifest.js' );
-					console.error('Manifest missing for size '+type+' \n\t Please create the file : '+manifest );
+					console.error('Manifest missing for size '+type+' \n\t Please create the file : '+manifest+' else we will use the default');
 				}
 
 				var manifestStream = gulp.src( manifestFiles )
@@ -659,13 +710,12 @@ gulp.task('package',function(){
 				//.pipe( replace(/"height":250/, '"height":'+size.h ) )
 				// and save into the correct distribution folder...
 				.pipe( expect( manifestFiles ) )
-				.pipe( rename( manifestFile ) )
+				.pipe( rename( manifestFile + extension ) )
 				.pipe( gulp.dest( release.html + type + '.'+model ));
 			}
 			
 			
 			// css
-			
 			var styleStream = gulp.src( distribution.styles +'/*.css' )
 			.pipe( gulp.dest( folder + 'css' ));
 
