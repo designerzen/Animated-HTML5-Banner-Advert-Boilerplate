@@ -2,8 +2,8 @@
 	/*  
 	Campaign Options
 	*/
-	"brand": "British Airways",
-	"version": "0.0.2",
+	"brand": "Generic Advert",
+	"version": "0.0.0",
 	"description": "Web animated banner adverts",
   
 	
@@ -18,7 +18,10 @@
 	],
 	
 	
-	// How many variants of *each* type are there?
+	/* 
+    How many variants of *each* type are there?
+        Useful for dictating for example language variations
+    */
 	"variants": [
 		"en",
 		"kr",
@@ -34,8 +37,8 @@
 		It traditionally contains dimensions, click tags and dynamic strings
 	*/
 	"manifests": {
-		"enabled":true,
-		"flashTalking" : true
+		"enabled"                     : true,
+		"flashTalking"                : true
 	},
 	
 	
@@ -45,11 +48,11 @@
 	*/
 	"imageCrunchOptions" : {
 		// Select an optimization level between 0 and 7
-		"optimizationLevel": 3,
+		"optimizationLevel"           : 3,
 		// Lossless conversion to progressive
-		"progressive": false,
+		"progressive"                 : false,
 		// Interlace gif for progressive rendering.
-		"interlaced" : false
+		"interlaced"                  : false
 	},
 
 	

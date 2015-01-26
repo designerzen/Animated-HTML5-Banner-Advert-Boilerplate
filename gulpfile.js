@@ -17,14 +17,13 @@ http://gruntjs.com/configuring-tasks#globbing-patterns
 var tweenEngine = 'tweenlite'.toLowerCase();
 
 
-var squish = false;
+var squish                  = false;
 
 // Set up paths here (for this boilerplate, you should not have to alter these)
 var SOURCE_FOLDER 			= 'src/';									// Source files Root
 var BUILD_FOLDER 			= 'build/';									// Where the initial build occurs (debugable)
 var DISTRIBUTION_FOLDER 	= 'dist/';									// Once debugging is complete, copy to server ready files here
 var RELEASE_FOLDER 			= squish ? 'release/' : 'uncompressed/';	// Convert to distributable zips
-
 
 // Default variations for templating
 var defaultTypes =
@@ -33,6 +32,15 @@ var defaultTypes =
   "leaderboard",
   "skyscraper"
 ];
+
+// Files and folders to watch for changes in...
+var watch = {
+	scripts : SOURCE_FOLDER+'scripts/*.js',
+	styles 	: SOURCE_FOLDER+'less/*.less',
+	jade 	: SOURCE_FOLDER+'jade/*.jade',
+	images	: SOURCE_FOLDER+'images/**/*',
+	fonts	: SOURCE_FOLDER+'fonts/**/*'
+};
 
 // Where do our source files live?
 var source = {
@@ -54,7 +62,6 @@ var source = {
 	fonts	: SOURCE_FOLDER+'fonts/**/*.+(svg|eot|woff|ttf|otf)'
 };
 
-
 // Where shall we compile them to?
 var structure = {
 	scripts : 'js',
@@ -63,7 +70,6 @@ var structure = {
 	images	: 'img',
 	fonts	: 'fonts'
 };
-
 
 // Where shall we compile them to?
 var getDestinations = function( dir ) {
@@ -76,23 +82,21 @@ var getDestinations = function( dir ) {
 	};
 };
 
+
 // Where shall we compile them to?
-var destination = getDestinations( BUILD_FOLDER );
+var 
+    destination = getDestinations( BUILD_FOLDER ),          // Where shall we create the building / debug versions
+    distribution = getDestinations( DISTRIBUTION_FOLDER ),  // Where shall we create the final output
+    release = getDestinations( RELEASE_FOLDER );            // Where shall we create the zips?
 
-// Where shall we create the final output?
-var distribution = getDestinations( DISTRIBUTION_FOLDER );
 
-// Where shall we create the final output?
-var release = getDestinations( RELEASE_FOLDER );
-	
-// Files and folders to watch for changes in...
-var watch = {
-	scripts : SOURCE_FOLDER+'scripts/*.js',
-	styles 	: SOURCE_FOLDER+'less/*.less',
-	jade 	: SOURCE_FOLDER+'jade/*.jade',
-	images	: SOURCE_FOLDER+'images/**/*',
-	fonts	: SOURCE_FOLDER+'fonts/**/*'
-};
+
+// Flip flop between dirs...
+var workingDir = destination;
+//var workingDir = distribution;
+//var workingDir = release;
+
+
 
 ///////////////////////////////////////////////////////////////////////////////////
 // File name format for creating distributions
@@ -187,54 +191,10 @@ var renamed = '.config.json';
 var config;										// loaded in from an external config file
 
 
+// ===== ERROR CHECKING --------------------------------------------------------
 if ( !fs.existsSync( settings ) ) console.error( "No Config Found" );
 
-// How much to squish images by :
-/* 
-The optimization level 0 enables a set of optimization operations that require minimal effort. 
-There will be no changes to image attributes like bit depth or color type, and no recompression of existing IDAT datastreams. 
-The optimization level 1 enables a single IDAT compression trial. 
-The trial chosen is what. OptiPNG thinks it’s probably the most effective. 
-The optimization levels 2 and higher enable multiple IDAT compression trials; the higher the level, the more trials.
 
-Level and trials:
-
-    1 trial
-    8 trials
-    16 trials
-    24 trials
-    48 trials
-    120 trials
-    240 trials,
-	// Additional plugins to use with imagemin.{ size:MAX_SIZE_JPEG }
-	use: [jpegoptim()]
-*/
-
-var imageCrunchOptions = {
-	// Select an optimization level between 0 and 7
-	optimizationLevel: 3,
-	// Lossless conversion to progressive
-	progressive: false,
-	// Interlace gif for progressive rendering.
-	interlaced : false
-};
-
-
-// How much to squish HTML
-// All options : https://github.com/kangax/html-minifier
-var htmlSquishOptions = {
-	removeComments     			: true,
-	removeIgnored				: true,
-	removeEmptyElements			: false,
-	removeOptionalTags			: false,
-	removeEmptyAttributes		: true,
-	removeRedundantAttributes	: true,
-	removeOptionalTags			: true,
-	collapseWhitespace 			: true,
-	minifyJS          			: true,
-	keepClosingSlash   			: true
-	//lint						: true
-};
 
 // =======================---------------- TASK DEFINITIONS --------------------
 
@@ -255,6 +215,7 @@ gulp.task('configuration-save', function(cb) {
 });
 
 gulp.task('configuration-load', function(cb) {
+
 	config = require('./'+renamed);		// load in the external config file
 	//config = fs.readFile('./'+renamed, 'utf-8', func);
 	
@@ -264,8 +225,8 @@ gulp.task('configuration-load', function(cb) {
 	varietiesToPackage = config.variants;
 	
 	console.info( 'Loading : '+settings + ' for Brand : '+config.brand +' version '+config.version );
-	console.info( 'Variants : '+config.variants );
-	console.info( 'Types : '+config.types );
+	console.table( 'Variants : ', config.variants );
+	console.table( 'Types : ',  config.types );
 	
 	cb();
 });
@@ -281,6 +242,9 @@ gulp.task('configuration', function(callback) {
 gulp.task('conf' , [ 'configuration' ] );
 gulp.task('configure' , [ 'configuration' ] );
 
+//require('./tasks/configurate.js')(gulp);
+
+
 ///////////////////////////////////////////////////////////////////////////////////
 //
 // TASK 	: Clean
@@ -292,6 +256,7 @@ gulp.task('clean', function(cb) {
 	del([BUILD_FOLDER,DISTRIBUTION_FOLDER,RELEASE_FOLDER], cb);//.on('error', function() { console.error('Could not delete the folder :('); });
 });
 
+
 // Template ===========================================================================
 ///////////////////////////////////////////////////////////////////////////////////
 //
@@ -299,7 +264,6 @@ gulp.task('clean', function(cb) {
 // ACTION 	: Cretes template JADE files and javascript MANIFEST files
 //
 ///////////////////////////////////////////////////////////////////////////////////
-
 gulp.task('jade-create', function() {
 	// Create our source files based on the variations tag in package.json
 	// 1. determine filename of the new template file using varietiesToPackage
@@ -338,6 +302,7 @@ gulp.task('jade-create', function() {
 	}
 	return merged;
 });
+
 // The task to create the debuggable versions
 gulp.task('templates', function(callback) {
 	sequencer(
@@ -348,6 +313,7 @@ gulp.task('templates', function(callback) {
 gulp.task('manifest', 	[ 'create-manifests' ] );
 
 
+// Create Manifest files for each SIZE
 gulp.task('clone-manifests', function() {
 	// check config file...
 	var folder = SOURCE_FOLDER+'scripts/';
@@ -376,7 +342,7 @@ gulp.task('clone-manifests', function() {
 	return merged;
 });
 
-
+// Create Manidest files for each VARIANT
 gulp.task('clone-manifest-variants', function() {
 	// check config file...
 	var folder = SOURCE_FOLDER+'scripts/';
@@ -415,14 +381,15 @@ gulp.task('clone-manifest-variants', function() {
 	return merged;
 });
 
-
 // The task to create the debuggable versions
 gulp.task('create-manifests-variants', function(callback) {
 	sequencer(
 		'configure',
 		'clone-manifest-variants',
     callback);
-});// The task to create the debuggable versions
+});
+
+// The task to create the debuggable versions
 gulp.task('create-manifests', function(callback) {
 	sequencer(
 		'configure',
@@ -430,6 +397,8 @@ gulp.task('create-manifests', function(callback) {
     callback);
 });
 gulp.task('manifest', 	[ 'create-manifests' ] );
+
+
 
 
 // Jade ===========================================================================
@@ -449,12 +418,11 @@ gulp.task('jade', function() {
 
 
 // here we use the config file to determine how to output the html
-
 gulp.task('jade-release', function() {
 	var htmlmin = require('gulp-htmlmin');			// squish html
 	return 	gulp.src( source.jade )
-			.pipe( gulpif( squish, jade( { pretty:false, debug:false, compileDebug:false } ), jade( { pretty:true, debug:false, compileDebug:false } ) ) )
-			.pipe( gulpif( squish, htmlmin(htmlSquishOptions)) )	// ugly code but smaller
+			.pipe( jade( { pretty:!squish, debug:false, compileDebug:false } ) )
+			.pipe( gulpif( squish, htmlmin( config.htmlSquishOptions )) )	                // ugly code but smaller
 			.pipe( gulp.dest( distribution.html ) );
 });
 
@@ -473,15 +441,15 @@ gulp.task('images', function() {
 			.pipe( gulp.dest( destination.images ) );
 });
 
+
 // Copy all static images & squish
 gulp.task('images-release', function() {
 	return 	gulp.src( source.images)
 			//.pipe( newer(distribution.images) )
-			.pipe( imagemin( imageCrunchOptions ) )
-			.pipe( pngquant({optimizationLevel: 3})() )
+			.pipe( imagemin( config.imageCrunchOptions ) )
+			//.pipe( pngquant({optimizationLevel: 3})() )
 			//.pipe( jpegoptim({ size:MAX_SIZE_JPEG })() )
 			.pipe( gulp.dest( distribution.images ) );
-			//.pipe( expect( source.images ) );
 });
 
 
