@@ -59,7 +59,7 @@ var source = {
 		'!'+SOURCE_FOLDER+'jade/partials/**)' 
 	],
 	images	: SOURCE_FOLDER+'images/**/*.+(png|jpg|jpeg|gif|webp|svg)',
-	fonts	: SOURCE_FOLDER+'fonts/**/*.+(svg|eot|woff|ttf|otf)'
+	fonts	: SOURCE_FOLDER+'fonts/**/*.+(svg|eot|woff|woff2|ttf|otf)'
 };
 
 // Where shall we compile them to?

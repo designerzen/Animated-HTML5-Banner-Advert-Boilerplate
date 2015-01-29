@@ -38,7 +38,8 @@
 	*/
 	"manifests": {
 		"enabled"                     : true,
-		"flashTalking"                : true
+		"flashTalking"                : true,
+        "perVariant"                  : false
 	},
 	
 	
