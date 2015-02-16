@@ -259,7 +259,8 @@ var merge = require('merge-stream');			// combine multiple streams!
 var filesize = require('gulp-size');  			// measure the size of the project (useful if a limit is set!)
 var expect = require('gulp-expect-file');		// expect a certain file (more for debugging)
 
-var connect = require('gulp-connect');			// live reload capable server for files
+var browserSync = require('browser-sync');      // live reloading server
+
 var console = require('better-console');		// sexy console output
 
 
@@ -548,7 +549,8 @@ gulp.task('less', function() {
 	return 	gulp.src( source.styles )
 			.pipe( less( {strictMath: false, compress: false }) )
 			.pipe( prefixer() )
-            .pipe( gulp.dest( destination.styles ) );
+            .pipe( gulp.dest( destination.styles ) )
+            .pipe( browserSync.reload({stream:true}) );
 });
 
 gulp.task('less-release', function() {
@@ -556,7 +558,8 @@ gulp.task('less-release', function() {
 			.pipe( newer( distribution.styles ) )
 			.pipe( less( {strictMath: false, compress: squish } ) )
 			.pipe( prefixer() )
-            .pipe( gulp.dest( distribution.styles ) );
+            .pipe( gulp.dest( distribution.styles ) )
+            .pipe( browserSync.reload({stream:true}) );
 });
 
 
@@ -653,6 +656,8 @@ gulp.task('scripts-release', function() {
 // Create dist/folder
 // Copy images/
 // Copy fonts/
+// Copy scripts/
+// Copy html/
 //
 ///////////////////////////////////////////////////////////////////////////////////
 gulp.task('package',function(){
@@ -687,40 +692,41 @@ gulp.task('package',function(){
 		// loop through varieties
 		for (var i = 0, l=varietiesToPackage.length; i < l; i++)
 		{
-			var model = varietiesToPackage[i];
-			//var html = distribution.html + '*.'+model+'.html';
-			var title = config.brand+' ' + type;
-			
-			var fileName = sanitisedFileName( config.brand , type, model, ".html" );
-			
-			var html = distribution.html + fileName;
-			var folder = release.html + type + '.'+model + '/';
-			var size = config.sizes[ type ];
+			var model    = varietiesToPackage[i];
+			var title    = config.brand+' ' + type;
+			var fileName = sanitisedFileName( config.brand, type, model, ".html" );
+			var html     = distribution.html + fileName;
+			var folder   = release.html + type + '.'+model + '/';
+			var size     = config.sizes[ type ];
 
             console.log('' );
             console.info('Creating : '+fileName+'____________________________' );
             
 			// create release folder
 			var htmlStream = gulp.src( html )
-			.pipe( rename( 'index.html' ))
-			.pipe( replace(/<title>(.*)<\/title>/i, '<title>'+title+'</title>' ) )
-			.pipe( gulp.dest( folder ));
+                .pipe( rename( 'index.html' ))
+                .pipe( replace(/<title>(.*)<\/title>/i, '<title>'+title+'</title>' ) )
+                .pipe( gulp.dest( folder ));
 
 			// all except specific images
 			var imageStream = gulp.src( imageGlob )
-			.pipe( gulp.dest( folder + 'img' ));
+                .pipe( gulp.dest( folder + 'img' ));
 
-			// target specific
+			// target specific eg. mpu.jpg will also be copied for mpu sizes
 			var variantStream = gulp.src( distribution.images +'/*.'+model+'.*' )
-			.pipe( gulp.dest( folder + 'img' ));
+                .pipe( gulp.dest( folder + 'img' ));
 			
 			// fonts
 			var fontStream = gulp.src( distribution.fonts +'/*.*' )
-			.pipe( gulp.dest( folder + 'fonts' ));
+                .pipe( gulp.dest( folder + 'fonts' ));
 
 			// js
 			var scriptStream = gulp.src( distribution.scripts +'/*.js' )
-			.pipe( gulp.dest( folder + 'js' ));
+                .pipe( gulp.dest( folder + 'js' ));
+
+			// css
+			var styleStream = gulp.src( distribution.styles +'/*.css' )
+                .pipe( gulp.dest( folder + 'css' ));
 
 			// manifest
 			if ( config.manifests.enabled )
@@ -754,26 +760,22 @@ gulp.task('package',function(){
                     
 					// Use default Manifest file
 					manifestFiles.push( manifestFolder+'manifest.js' );
-					console.error('Manifest missing for size '+type+' \n\t Please create the file : '+manifest+' else we will use the default');
 				}
-
-				var manifestStream = gulp.src( manifestFiles )
-				// automatically update sizes within
-				//.pipe( replace(/"width":300/, '"width":'+size.w ) )
-				//.pipe( replace(/"height":250/, '"height":'+size.h ) )
-				// and save into the correct distribution folder...
-				.pipe( expect( manifestFiles ) )
-                // remove JSON comments
-                .pipe( replace( REGEX_COMMENTS , '' ) )
-				.pipe( rename( manifestFile + extension ) )
-				.pipe( gulp.dest( release.html + type + '.'+model ));
+                
+                // Merge the streams if multiple files are available
+                if ( manifestFiles.length > 0 )
+                {
+                    var manifestStream = gulp.src( manifestFiles )
+                    // save into the correct distribution folder...
+                    .pipe( expect( manifestFiles ) )
+                    // remove JSON comments
+                    .pipe( replace( REGEX_COMMENTS , '' ) )
+                    .pipe( rename( manifestFile + extension ) )
+                    .pipe( gulp.dest( release.html + type + '.'+model ));
+                }else{
+                    console.error('Manifest missing for size '+type+' \n\t Please create the file : '+manifest+' else we will use the default');
+                }
 			}
-			
-			
-			// css
-			var styleStream = gulp.src( distribution.styles +'/*.css' )
-			.pipe( gulp.dest( folder + 'css' ));
-
 			
 			// add to merge
 			merged.add( htmlStream );
@@ -864,15 +866,12 @@ gulp.task('zip', function (cb) {
 gulp.task('watch', function() {
 	
 	// Watch any files in build/, reload on change
-	gulp.watch( watch.scripts	, ['scripts'] ).on('change', function(event) { 	changeEvent(event); } );
-	gulp.watch( watch.styles 	, ['less'] ).on('change', function(event) { 	changeEvent(event); } );
-	gulp.watch( watch.jade  	, ['jade'] ).on('change', function(event) { 	changeEvent(event); } );
-	gulp.watch( watch.images 	, ['images'] ).on('change', function(event) { 	changeEvent(event); } );
-	gulp.watch( watch.fonts  	, ['copy'] ).on('change', function(event) { 	changeEvent(event); } );
-
-	//gulp.watch( [ BUILD_FOLDER+'**/*' ] ).on('change', function (file) {
-    	//gulp.src( file.path ).pipe( connect.reload() );
-	//});
+	gulp.watch( watch.scripts	, ['scripts', browserSync.reload] ).on('change', changeEvent );
+	gulp.watch( watch.jade  	, ['jade',    browserSync.reload] ).on('change', changeEvent );
+	gulp.watch( watch.images 	, ['images',  browserSync.reload] ).on('change', changeEvent );
+	gulp.watch( watch.fonts  	, ['copy',    browserSync.reload] ).on('change', changeEvent );
+    // has internal reloading
+    gulp.watch( watch.styles 	, ['less'] ).on('change', changeEvent );
 });
 
 
@@ -888,16 +887,16 @@ gulp.task('watch', function() {
 //
 ///////////////////////////////////////////////////////////////////////////////////
 gulp.task('refresh', function() {
-	return gulp.src( BUILD_FOLDER+'*.html' )
-		.pipe(connect.reload());
+	return browserSync.reload({stream:true});
 });
 
 gulp.task('server', function() {
-  	connect.server({
-		root: 'build',
-		port:8080,
-		livereload: true
-  	});
+    browserSync({
+		server: {
+			// Serve up our build folder - problems with manifest though
+			baseDir: BUILD_FOLDER
+		}
+	});
 });
 
 
