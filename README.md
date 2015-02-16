@@ -10,7 +10,7 @@ It uses the [Gulp](www.github.com) infrastructure to build and create templates 
 
 Contains full versions of [Type Rendering Mix](http://typerendering.com/)
 
-This is a fully working version that has been used in many campaigns already! 
+This is a fully working version that has been used in over 250 campaigns already! 
 
 
 ##Requirements##
@@ -46,8 +46,8 @@ And add as many variants as you wish (these are the duplicate templates named ac
 
 Types are the required sizes for the campaign. You can use any of the following :
 
-```
 ##Generic##
+```
 "banner", 
 "halfBanner", 
 "halfPage", 
@@ -56,13 +56,17 @@ Types are the required sizes for the campaign. You can use any of the following 
 "skyscraper", 
 "verticalBanner", 
 "wideSkyscraper
+```
 
 ##Mobiles##
+```
 "mobileBanner",
 "mobileMpu",
 "mobileLeaderboard",
+```
 
 ##Expandables##
+```
 "expandableLeaderboard",
 "expandableMpu",
 "expandableSkyscraper",
@@ -78,7 +82,7 @@ Types are the required sizes for the campaign. You can use any of the following 
 
 Variants can be anything you want but primarily are useful for creating language variants
 
-eg. 'en', 'th', 'hk', 'de'
+> eg. 'en', 'th', 'hk', 'de'
 
 If you have common elements on all of your pages, you can edit the **template.jade partial** as these will be cloned into your templates. 
 
@@ -116,7 +120,9 @@ For example, you may set in your config file
 
 > variants : [ 'en', 'th', 'hk', 'de' ]
 
-The scaffold task would then create Jade files for each language and size. You can then open the hk variant for example, and update the copy to the Chinese language. 
+The scaffold task would then create Jade files for each language and size. 
+You can then open the hk variant for example, and update the copy to the Chinese language. 
+
 
 #####Less#####
 ```
@@ -142,6 +148,7 @@ There are a few helper mixins in the src/less/helpers.less file such as
 
 .clearfix() 				inserts the clear-fix hack for clearing floating elements
 ```
+
 
 #####Jade####
 ```
@@ -173,10 +180,10 @@ src/javascript/vendors/tweenlite/		One of two potential rendering engines - this
 src/javascript/vendors/tweenmax/		This one is much bigger but is more feature rich
 ```
 
-#utils.js#
+######utils.js######
 ```
-UTIL.addClass( element, className )
-UTIL.removeClass( element, className )
+UTIL.addClass( element, className )     Add a class to a named element
+UTIL.removeClass( element, className )  Remove a class (if it exists) from a named element
 ```
 
 ###To Build For _Testing_###
@@ -212,7 +219,8 @@ Uploading your advert to agencies usually requires a zip file with the campaign 
 ###Troubleshooting###
 **Q.** There are no html files in my build or dist folders!
 
-**A.** Be sure to have run the templater with gulp taemplate first, or at least create jade files in the jade folder that extends the base.jade partial
+**A.** Be sure to have run the templater with ```gulp template first```, or at least create jade files in the jade folder that extends the base.jade partial with the same name as your campaign
+
 
 
 **Q.** Config task seems to be failing... it can't find the config.json file?
@@ -220,9 +228,11 @@ Uploading your advert to agencies usually requires a zip file with the campaign 
 **A.** Delete the node_modules folder and then run npm install again. This sometimes happens if the dependencies have not fully resolved, yet no error message may be shown.
 
 
+
 **Q.** Getting errors about things not being found when running node
 
 **A.** Weirdness in that the modules do not get added to dependencies so run, so delete node_modules folder then re-run installation steps.
+
 
 
 **Q.** Error while running **distribute**
