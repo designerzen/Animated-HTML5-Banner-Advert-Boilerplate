@@ -76,6 +76,20 @@
 @width-half-page:			300px;
 @height-half-page: 			600px;
 
+
+// Mobile Variants --------------------------------------------
+
+@width-mobile-banner:	    640px;
+@height-mobile-banner: 	    100px;
+
+@width-mobile-mpu:	        600px;
+@height-mobile-mpu: 	    500px;
+
+@width-mobile-leaderboard:	1456px;
+@height-mobile-leaderboard: 180px;
+
+
+
 // Import our other css files directly into this one
 @import "helpers";
 @import "reset";
@@ -144,6 +158,23 @@
 		height:@height-wide-skyscraper;
 	}
 	
+    
+    // Mobile Variants --------------------------------------------
+
+	.mobile.mpu{
+		width:@width-mobile-mpu;
+		height:@height-mobile-mpu;
+    }	
+    
+    .mobile.banner{
+		width:@width-mobile-banner;
+		height:@height-mobile-banner;
+    }	
+    
+    .mobile.leaderboard{
+		width:@width-mobile-leaderboard;
+		height:@height-mobile-leaderboard ;
+    }
 	// Bordered
 	/*
 	.banner{
@@ -186,6 +217,27 @@
 		height:(@height-wide-skyscraper - @border-thickness * 2);
 		border: @col-border @border-thickness solid;
 	}
+    
+    
+    // Mobile Variants --------------------------------------------
+
+	.mobile.mpu{
+		width:(@width-mobile-mpu - @border-thickness * 2);
+		height:(@height-mobile-mpu - @border-thickness * 2);
+		border: @col-border @border-thickness solid; 
+    }	
+    
+    .mobile.banner{
+		width:(@width-mobile-banner - @border-thickness * 2);
+		height:(@height-mobile-banner - @border-thickness * 2);
+		border: @col-border @border-thickness solid;  
+    }	
+    
+    .mobile.leaderboard{
+		width:(@width-mobile-leaderboard - @border-thickness * 2);
+		height:(@height-mobile-leaderboard - @border-thickness * 2);
+		border: @col-border @border-thickness solid;
+    }
 	*/
 }
 

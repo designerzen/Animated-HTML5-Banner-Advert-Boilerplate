@@ -15,6 +15,10 @@ var Animations = (function(){
 
 	'use strict';
 
+    var getElementById = function( id ){
+        return document.getElementById(id);
+    };
+    
 	var
 		timeline,		// Main Animation that hold the child animations
 		variant,		// style... mpu / leaderboard etc
@@ -29,15 +33,15 @@ var Animations = (function(){
     // This creates all of our animation elements
     Animations.prototype.assign = function()
     {
-        variant 			= document.getElementById('variant').className || 'unknown';
-		elements.content	= document.getElementById('content');
-		elements.first 		= document.getElementById('first');
-		elements.second 	= document.getElementById('second');
-		elements.third 		= document.getElementById('third');
-		elements.fourth 	= document.getElementById('fourth');
-		elements.fifth 		= document.getElementById('fifth');
-		elements.cta 		= document.getElementById('cta');
-		elements.logo 		= document.getElementById('logo');
+        variant 			= getElementById('variant').className || 'unknown';
+		elements.content	= getElementById('content');
+		elements.first 		= getElementById('first');
+		elements.second 	= getElementById('second');
+		elements.third 		= getElementById('third');
+		elements.fourth 	= getElementById('fourth');
+		elements.fifth 		= getElementById('fifth');
+		elements.cta 		= getElementById('cta');
+		elements.logo 		= getElementById('logo');
 
         this.construct();
     };
@@ -81,7 +85,7 @@ var Animations = (function(){
 	{
         // hide loader!
         // remove loading class from #content
-       	elements.content.className = '';
+       	UTIL.removeClass( elements.content , 'loading' );
         timeline.play();
 	};
 

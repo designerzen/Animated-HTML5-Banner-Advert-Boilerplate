@@ -93,8 +93,8 @@ var FontScale = (function(){
 	
 	// Get the Height of an element
 	var getHeight = function (element ){
-		if (element.clientWidth) return element.clientHeight;
-		if (element.offsetWidth) return element.offsetHeight;
+		if (element.clientHeight) return element.clientHeight;
+		if (element.offsetHeight) return element.offsetHeight;
 		return element.getBoundingClientRect().height;
 	};
 

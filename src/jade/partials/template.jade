@@ -4,28 +4,20 @@
 //- Variant 		#{variant}
 //- Width			#{width}
 //- Height			#{height}
+
 extends partials/base.jade
-
-//- This file is editable and all changes will get copied into your template files when gulp template is run
 block main
+    h1#heading <strong>Shop Online Now</strong> for a great deal on snacks
+    h1#subheading The Freshest <strong>Best Quality Products</strong> for your order
 
-	//-
-		Please check out the Jade Language References at the following URL
-		http://jade-lang.com/reference/doctype/
-		Tabs are important in Jade
-		
-	#first
-		h1
-		h2
-		img#bg( src="img/jpg/bg_#{type}.png", width="#{width}", height="#{height}" )
-		img#logo( src="img/png/logo_#{type}.png" )
-		
-	#second
+    #awning
+        img#logo( src="img/svg/logo.svg" )
+        img.triangle( src="img/svg/awning.green.border.svg" )
 
-	#third
+    #product
+        img#packshot( src="img/jpg/#{type}.product.jpg" )
+        //- img.triangle( src="img/svg/awning.white.thin.svg" )
+        img.triangle( src="img/svg/triangles.green.svg" )
 
-	#fourth
-
-	#fifth
-		#cta
-			a#button( title="Go", href='#' ) Call To Action
+    #cta
+        a#button( title="Shop Now", href='#' ) Shop Now

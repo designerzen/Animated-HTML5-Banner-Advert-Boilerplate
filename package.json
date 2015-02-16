@@ -3,6 +3,7 @@
   "version": "0.0.1",
   "description": "Gulp Based html5 Animated Banner Creator",
   "dependencies": {
+    "imagemin-gifsicle": "^4.0.0",
     "imagemin-jpegoptim": "^4.0.0",
     "imagemin-pngquant": "^4.0.0"
   },
@@ -47,6 +48,7 @@
     "gulp-zip": "^2.0.2",
     "merge-stream": "^0.1.6",
     "orchestrator": "^0.3.7",
+    "require-dir": "^0.1.0",
     "run-sequence": "^1.0.1",
     "vinyl-fs": "^0.3.13"
   }

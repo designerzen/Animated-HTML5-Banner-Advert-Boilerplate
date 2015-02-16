@@ -1,3 +1,5 @@
+.DS_Store
+.sass-cache
 node_modules
 dev
 build
@@ -9,4 +11,4 @@ release
 .config.json
 Thumbs.db
 bower_components
-*.DS_Store
+Desktop.ini

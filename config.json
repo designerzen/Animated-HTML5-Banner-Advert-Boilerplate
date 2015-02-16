@@ -10,11 +10,45 @@
 	/* 
 	Sizes needed in Campaign
 		What different sizes need to be created
-		"banner", "halfBanner", "halfPage", "leaderboard", "mpu", "skyscraper", "verticalBanner", "wideSkyscraper
+      
+        // Generics ---
+		"banner", 
+        "halfBanner", 
+        "halfPage", 
+        "leaderboard", 
+        "mpu", 
+        "skyscraper", 
+        "verticalBanner", 
+        "wideSkyscraper
+        
+        // Mobiles ---
+        "mobileBanner",
+        "mobileMpu",
+        "mobileLeaderboard",
+        
+        // Expandables ---
+        "expandableLeaderboard",
+        "expandableMpu",
+        "expandableSkyscraper",
+        "expandableWideSkyscraper",
+        "expandableHalfPage",
+        "expandableBanner",
+        "expandableVerticalBanner",
+        "expandableHalfBanner",
+        "expandableBanner",
+        "expandableMpu",
+        "expandableLeaderboard"
+        
 	*/
 	"types": [
 		"mpu",
-		"leaderboard"
+        "halfPage",
+		"leaderboard", 
+        "skyscraper",
+        "wideSkyscraper",
+        "mobileBanner",
+        "mobileMpu",
+        "mobileLeaderboard"
 	],
 	
 	
@@ -84,6 +118,8 @@
 	*/
 	"sizes" : {
 		
+        // Regular Sizes ===============================================
+        
 		// Wide and short advert
 		"leaderboard" : {
 			"w":728,
@@ -130,7 +166,66 @@
 		"halfBanner" : {
 			"w": 234,
 			"h": 60
+		},
+        
+        // Mobile Sizes =================================================
+        
+        "mobileBanner" :{
+            "w": 640,
+			"h": 100
+        },
+        
+        "mobileMpu" :{
+            "w": 600,
+			"h": 500
+        },
+        
+        "mobileLeaderboard" :{
+            "w": 1456,
+			"h": 180
+        },
+        
+        // Expandable Sizes ============================================
+        
+        // Wide and short advert
+		"expandableLeaderboard" : {
+			"w":728,
+			"h":90,
+            "expanded":{
+                "w:":728,
+                "h":300
+            }
+		},
+
+		// Square advert
+		"expandableMpu" : {
+			"w":300,
+			"h":250,
+            "expanded":{
+                "w:":500,
+                "h":300
+            }
+		},
+
+		// Tall and thin advert
+		"expandableSkyscraper" : {
+			"w":120,
+			"h":600,
+            "expanded":{
+                "w:":728,
+                "h":300
+            }
+		},
+        
+		// Regular sized banner
+		"expandableBanner" : {
+			"w":320,
+			"h":50,
+            "expanded":{
+                "w:":320,
+                "h":350
+            }
 		}
-		
+        
 	}
 }

@@ -5,18 +5,18 @@ This handles the compilation of the source elements :
 Less 			-> 		CSS 3
 Jade 			-> 		HTML 5
 JavaScript		-> 		JS ( Squished, uglified, concatanated )
+Images          ->      Optimised and Squished
 
-For help with Globbing Patterns (the defaults should be fine!) check out :
+For help with Globbing Patterns (the defaults should be fine) check out :
 http://gruntjs.com/configuring-tasks#globbing-patterns
 
 */
 
 // =======================---------------- CONFIGURATION --------------------
 
+// TODO : Move these two variables into the config file
 // choice of tween engines either TweenMax or TweenLite
-var tweenEngine = 'tweenlite'.toLowerCase();
-
-
+var tweenEngine             = 'tweenlite'.toLowerCase();
 var squish                  = false;
 
 // Set up paths here (for this boilerplate, you should not have to alter these)
@@ -25,13 +25,18 @@ var BUILD_FOLDER 			= 'build/';									// Where the initial build occurs (debug
 var DISTRIBUTION_FOLDER 	= 'dist/';									// Once debugging is complete, copy to server ready files here
 var RELEASE_FOLDER 			= squish ? 'release/' : 'uncompressed/';	// Convert to distributable zips
 
-// Default variations for templating
+// Default variations for templating, overwritten by the setup in the config file
 var defaultTypes =
 [
   "mpu",
   "leaderboard",
   "skyscraper"
 ];
+
+var fileTypes = {
+	images:'png|jpg|jpeg|gif|webp|svg',
+	fonts:'svg|eot|woff|woff2|ttf|otf'
+};
 
 // Files and folders to watch for changes in...
 var watch = {
@@ -49,6 +54,7 @@ var source = {
 		SOURCE_FOLDER+'scripts/vendor/'+tweenEngine+'/**/*.js', 
 		SOURCE_FOLDER+'scripts/vendor/trmix*.js', 
 		SOURCE_FOLDER+'scripts/vendor/fontscaler.js', 
+		SOURCE_FOLDER+'scripts/utils.js', 
 		SOURCE_FOLDER+'scripts/!(*manifest|flashtrack)*.js', 
 		SOURCE_FOLDER+'scripts/flashtrack.js' 
 	],
@@ -58,8 +64,8 @@ var source = {
 		'!'+SOURCE_FOLDER+'jade/*.base.jade',  
 		'!'+SOURCE_FOLDER+'jade/partials/**)' 
 	],
-	images	: SOURCE_FOLDER+'images/**/*.+(png|jpg|jpeg|gif|webp|svg)',
-	fonts	: SOURCE_FOLDER+'fonts/**/*.+(svg|eot|woff|woff2|ttf|otf)'
+	images	: SOURCE_FOLDER+'images/**/*.+('+fileTypes.images+')',
+	fonts	: SOURCE_FOLDER+'fonts/**/*.+('+fileTypes.fonts+')'
 };
 
 // Where shall we compile them to?
@@ -82,14 +88,11 @@ var getDestinations = function( dir ) {
 	};
 };
 
-
 // Where shall we compile them to?
 var 
     destination = getDestinations( BUILD_FOLDER ),          // Where shall we create the building / debug versions
     distribution = getDestinations( DISTRIBUTION_FOLDER ),  // Where shall we create the final output
     release = getDestinations( RELEASE_FOLDER );            // Where shall we create the zips?
-
-
 
 // Flip flop between dirs...
 var workingDir = destination;
@@ -97,6 +100,33 @@ var workingDir = destination;
 //var workingDir = release;
 
 
+// Private Methods =================================================================
+
+// This is used for stripping out the comments from JSON files
+// and converts them to VALID JSON files.
+// Useful for having commented config files and then copying them clean
+var REGEX_COMMENTS = /(?:\/\*(?:[\s\S]*?)\*\/)|(?:([\s;])+\/\/(?:.*)$)/gm ;
+
+///////////////////////////////////////////////////////////////////////////////////
+// Make a filename ftp friendly by removing any unwanted characters and illegal
+// glyphs. Remove Brackets will delete the contents of any brackets AS WELL as the 
+// brackets themselves. You should use this when generating filenames
+///////////////////////////////////////////////////////////////////////////////////
+var sanitise = function( name, removeBrackets )
+{
+    if (removeBrackets) name = name.replace(/\s*\(.*?\)\s*/g, '');
+    // remove spaces and replace with underscores
+	name = name.replace(/ +?/g, '_');
+	// swap out full stops for hyphens (mainly for versioning)
+	name = name.replace(/\./g, "-");
+    // replace ampersand with AND
+	name = name.replace(/\&/g, "and");
+    // remove certain characters
+	name = name.replace(/[\'\!\"\#\$\%\(\)\*\+\,]/g, "");
+	// remove not allowed characters and replace with an underscore...
+	name = name.replace(/[\u2000-\u206F\u2E00-\u2E7F\/:;<=>\?@\[\]\^_`\{\|\}~]/g, "_");
+	return name.toLowerCase();    
+};
 
 ///////////////////////////////////////////////////////////////////////////////////
 // File name format for creating distributions
@@ -131,6 +161,58 @@ var sanitisedFileName = function( brand, type, variant, suffix ){
 	// make sure we have a suffix if needed
 	if (suffix) name += suffix;
 	return name.toLowerCase();
+};
+
+///////////////////////////////////////////////////////////////////////////////////
+// Determine the string for this dimension from the type of the advert
+// eg. convertToSize( 'mpu' ) -> '300x250'
+///////////////////////////////////////////////////////////////////////////////////
+var convertToSize = function( size ){
+    
+    // If we have a config file with custom sizes set up
+    var configSize = config.sizes[ size ];
+    if (configSize) return configSize.w + 'x' + configSize.h;
+    
+    // return the string of the sizes based on the type variant
+    // for if the config file is corrupt or not set up correctly
+    switch ( size.toLowerCase() )
+    {
+        case "mpu":                 return "300x250";
+        case "halfpage":            return "300x600";
+		case "leaderboard":         return "728x90";
+        case "skyscraper":          return "120x600";
+        case "wideskyscraper":      return "160x600";
+        case "mobilebanner":        return "320x50";
+        case "mobilempu":           return "300x250";
+        case "mobileleaderboard":   return "728x90";
+    }
+};
+
+///////////////////////////////////////////////////////////////////////////////////
+// Determine if this is a mobile advert or a desktop one
+// eg. convertToDevice( 'mpu' ) -> 'desktop'
+///////////////////////////////////////////////////////////////////////////////////
+var convertToDevice = function( size ){
+    size = size.toLowerCase();
+    if ( size.indexOf('mobile') )
+    {
+        return "mobile";
+    }
+    
+    switch (size )
+    {
+        case "mpu": 
+        case "halfpage": 
+		case "leaderboard":
+        case "skyscraper":
+        case "wideskyscraper":      
+            return "desktop";
+            
+        case "mobilebanner":
+        case "mobilempu":
+        case "mobileleaderboard":
+            return "mobile";
+    }
 };
 
 ///////////////////////////////////////////////////////////////////////////////////
@@ -209,7 +291,7 @@ gulp.task('configuration-save', function(cb) {
 	return gulp.src( settings )
 		.pipe( expect( settings ) )
 		.on( 'error', function (err) { console.error(err); } )
-		.pipe( replace( /(?:\/\*(?:[\s\S]*?)\*\/)|(?:([\s;])+\/\/(?:.*)$)/gm , '' ) )
+		.pipe( replace( REGEX_COMMENTS , '' ) )
 		.pipe( rename( renamed ) )
 		.pipe( gulp.dest( '' ) );
 });
@@ -503,6 +585,7 @@ gulp.task('copy-manifest',function(){
 	.pipe( replace(/"width":300/, '"width":300' ) )
 	.pipe( replace(/"height":250/, '"height":250' ) )
 	.pipe( replace(/#{type}/gi, 'mpu' ) )
+    .pipe( replace( REGEX_COMMENTS , '' ) )
 	.pipe( gulp.dest( destination.html ))
 	.pipe( gulp.dest( distribution.html ));
 });
@@ -678,6 +761,8 @@ gulp.task('package',function(){
 				//.pipe( replace(/"height":250/, '"height":'+size.h ) )
 				// and save into the correct distribution folder...
 				.pipe( expect( manifestFiles ) )
+                // remove JSON comments
+                .pipe( replace( REGEX_COMMENTS , '' ) )
 				.pipe( rename( manifestFile + extension ) )
 				.pipe( gulp.dest( release.html + type + '.'+model ));
 			}
