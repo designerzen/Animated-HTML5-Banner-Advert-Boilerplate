@@ -14,16 +14,12 @@ This is a fully working version that has been used in many campaigns already!
 
 
 ##Requirements##
-The only requirement is [NodeJS](http://nodejs.org/) and about 100mb of free space on your machine.
+The only requirement is [NodeJS](http://nodejs.org/) and about _100mb of free space_ on your machine.
 
 
 ##Installation##
 After installing NodeJS on your machine,
-In a Command Prompt (if you do not have gulp already globally installed) :
-
-> sudo npm install -g gulp
-
-then
+In a Command Prompt :
 
 > sudo npm install
 
@@ -39,6 +35,7 @@ Which should bring up a little help message with the available options.
 
 _If you cannot see this_, try doing a **fresh clone of this repo** and retrying the installation steps.
 
+Also, you may find an answer to your problems in the **FAQ** below.
 
 ###To Create templates###
 You should really start here, with the built in template system. This creates a series of Jade files that just require personalisation of content - ready for adding in your animated elements.
@@ -49,15 +46,44 @@ And add as many variants as you wish (these are the duplicate templates named ac
 
 Types are the required sizes for the campaign. You can use any of the following :
 
-**"banner", "halfBanner", "halfPage", "leaderboard", "mpu", "skyscraper", "verticalBanner", "wideSkyscraper"**
+**
+// Generic ---
+"banner", 
+"halfBanner", 
+"halfPage", 
+"leaderboard", 
+"mpu", 
+"skyscraper", 
+"verticalBanner", 
+"wideSkyscraper
+
+// Mobiles ---
+"mobileBanner",
+"mobileMpu",
+"mobileLeaderboard",
+
+// Expandables ---
+"expandableLeaderboard",
+"expandableMpu",
+"expandableSkyscraper",
+"expandableWideSkyscraper",
+"expandableHalfPage",
+"expandableBanner",
+"expandableVerticalBanner",
+"expandableHalfBanner",
+"expandableBanner",
+"expandableMpu",
+"expandableLeaderboard"
+**
 
 Variants can be anything you want but primarily are useful for creating language variants
+
 eg. 'en', 'th', 'hk', 'de'
 
 If you have common elements on all of your pages, you can edit the **template.jade partial** as these will be cloned into your templates. 
 
-You can use the shortcut #{type} wherever you want to have type specific elements (mpu/skyscraper/banner etc).
-The shortcuts #{width} and #{height} are also available if you wish to use them!
+You can use the shortcut **#{type}** wherever you want to have type specific elements (mpu/skyscraper/banner etc).
+The shortcuts **#{width}** and **#{height}** are also available if you wish to use them!
 
 Then run :
 
