@@ -528,7 +528,7 @@ gulp.task('images', function() {
 gulp.task('images-release', function() {
 	return 	gulp.src( source.images)
 			//.pipe( newer(distribution.images) )
-			.pipe( imagemin( config.imageCrunchOptions ) )
+			.pipe( gulpif( squish, imagemin( config.imageCrunchOptions ) ) )
 			//.pipe( pngquant({optimizationLevel: 3})() )
 			//.pipe( jpegoptim({ size:MAX_SIZE_JPEG })() )
 			.pipe( gulp.dest( distribution.images ) );
@@ -554,7 +554,7 @@ gulp.task('less', function() {
 gulp.task('less-release', function() {
 	return 	gulp.src( source.styles )
 			.pipe( newer( distribution.styles ) )
-			.pipe( gulpif( squish, less( {strictMath: false, compress: true }), less( {strictMath: false, compress: false }) ))	// ugly code but smaller
+			.pipe( less( {strictMath: false, compress: squish } ) )
 			.pipe( prefixer() )
             .pipe( gulp.dest( distribution.styles ) );
 });
@@ -613,8 +613,9 @@ gulp.task('scripts-lint', function() {
 gulp.task('scripts', function() {
     // Minify and copy all JavaScript (except vendor scripts)
     // with sourcemaps all the way down
-   var uglify = require('gulp-uglify');            // squash files
-	 var jshint = require('gulp-jshint');			// lint!
+    var uglify = require('gulp-uglify'),             // squash files
+	    jshint = require('gulp-jshint');			// lint!
+    
 	return  gulp.src( source.scripts )
             .pipe( sourcemaps.init() )
             // combine multiple files into one!
@@ -630,8 +631,9 @@ gulp.task('scripts', function() {
 gulp.task('scripts-release', function() {
     // Minify and copy all JavaScript (except vendor scripts)
     // with sourcemaps all the way down
-    var uglify = require('gulp-uglify');            // squash files
-	var jshint = require('gulp-jshint');			// lint!
+    var uglify = require('gulp-uglify'),            // squash files
+	    jshint = require('gulp-jshint');			// lint!
+    
 	return  gulp.src( source.scripts )
             .pipe( concat('main.min.js') )
     		.pipe( gulpif( squish, uglify() ) )
