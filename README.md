@@ -46,8 +46,8 @@ And add as many variants as you wish (these are the duplicate templates named ac
 
 Types are the required sizes for the campaign. You can use any of the following :
 
-**
-// Generic ---
+```
+##Generic##
 "banner", 
 "halfBanner", 
 "halfPage", 
@@ -57,12 +57,12 @@ Types are the required sizes for the campaign. You can use any of the following 
 "verticalBanner", 
 "wideSkyscraper
 
-// Mobiles ---
+##Mobiles##
 "mobileBanner",
 "mobileMpu",
 "mobileLeaderboard",
 
-// Expandables ---
+##Expandables##
 "expandableLeaderboard",
 "expandableMpu",
 "expandableSkyscraper",
@@ -74,7 +74,7 @@ Types are the required sizes for the campaign. You can use any of the following 
 "expandableBanner",
 "expandableMpu",
 "expandableLeaderboard"
-**
+```
 
 Variants can be anything you want but primarily are useful for creating language variants
 
@@ -163,6 +163,7 @@ The Animation file is boilerplate code for writing your own timeline based anima
 ```
 src/javascript/							Home for your own scripts
 src/javascript/animation.js				The script that conatins your time line and associated animations
+src/javascript/utils.js				    Some cross-browser classes that are very useful
 src/javascript/manifest.js				FlashTalking manifest template
 src/javascript/flashtrack.js			FlashTalking API code
 src/javascript/vendors/					Home for any libraries you want transcluded in your main.js file
@@ -172,6 +173,11 @@ src/javascript/vendors/tweenlite/		One of two potential rendering engines - this
 src/javascript/vendors/tweenmax/		This one is much bigger but is more feature rich
 ```
 
+#utils.js#
+```
+UTIL.addClass( element, className )
+UTIL.removeClass( element, className )
+```
 
 ###To Build For _Testing_###
 
