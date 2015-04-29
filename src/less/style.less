@@ -76,6 +76,8 @@
 @width-half-page:			300px;
 @height-half-page: 			600px;
 
+@width-billboard:           970px;
+@height-billboard:          250px;
 
 // Mobile Variants --------------------------------------------
 
@@ -111,6 +113,7 @@
 	position:relative;		// ensure it inherits the size of it's parent
 	
 	// set up main frame
+    .billboard,
 	.banner,
 	.vertical-banner,
 	.half-banner,
@@ -157,7 +160,11 @@
 		width:@width-wide-skyscraper;
 		height:@height-wide-skyscraper;
 	}
-	
+	.billboard {
+		width:@width-billboard;
+		height:@height-billboard;
+    }
+        
     
     // Mobile Variants --------------------------------------------
 
@@ -215,6 +222,11 @@
 	.wide-skyscraper{
 		width:(@width-wide-skyscraper - @border-thickness * 2);
 		height:(@height-wide-skyscraper - @border-thickness * 2);
+		border: @col-border @border-thickness solid;
+	}
+    .billboard{
+		width:(@width-billboard - @border-thickness * 2);
+		height:(@height-billboard - @border-thickness * 2);
 		border: @col-border @border-thickness solid;
 	}
     

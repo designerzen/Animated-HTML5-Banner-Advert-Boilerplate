@@ -12,6 +12,7 @@
 		What different sizes need to be created
       
         // Generics ---
+        "billboard",
 		"banner", 
         "halfBanner", 
         "halfPage", 
@@ -119,6 +120,10 @@
 	"sizes" : {
 		
         // Regular Sizes ===============================================
+        "billboard" : {
+            "w":970,
+			"h":250
+        },
         
 		// Wide and short advert
 		"leaderboard" : {

@@ -25,7 +25,7 @@ var FlashTrack = (function(){
     /////////////////////////////////////////////////////////////////
 	function FlashTrack()
     {
-		if (FT)
+		if (typeof FT == 'function')
 		{
 			ft = new FT();
 			this.available = true;
