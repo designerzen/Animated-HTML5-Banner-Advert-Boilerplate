@@ -9,37 +9,45 @@
 	
 	/* 
 	Sizes needed in Campaign
-		What different sizes need to be created
+	
+		
       
         // Generics ---
-        "billboard",
-		"banner", 
-        "halfBanner", 
-        "halfPage", 
-        "leaderboard", 
-        "mpu", 
-        "skyscraper", 
-        "verticalBanner", 
-        "wideSkyscraper
+		
+		"billboard",					// 970 x 250
+        "banner", 						// 468 x 60
+        "halfBanner", 					// 234 x 60
+        "leaderboard", 					// 728 x 90
+        "mpu", 							// 300 x 250
+        "halfPage", 					// 300 x 600
+        "skyscraper", 					// 120 x 600
+        "wideSkyscraper					// 160 x 600
+        "verticalBanner", 				// 120 x 240
         
         // Mobiles ---
-        "mobileBanner",
-        "mobileMpu",
-        "mobileLeaderboard",
+        "mobileBanner",					// 640 x 100
+        "mobileMpu",					// 600 x 500
+        "mobileLeaderboard",			// 1456 x 180
         
         // Expandables ---
-        "expandableLeaderboard",
-        "expandableMpu",
-        "expandableSkyscraper",
-        "expandableWideSkyscraper",
-        "expandableHalfPage",
-        "expandableBanner",
-        "expandableVerticalBanner",
-        "expandableHalfBanner",
-        "expandableBanner",
-        "expandableMpu",
-        "expandableLeaderboard"
+        "expandableLeaderboard",		// 728 x 90		-> 728 x 300
+        "expandableMpu",				// 300 x 250	-> 500 x 300
+        "expandableSkyscraper",			// 120 x 600 	-> 728 x 300
+        "expandableBanner",				// 320 x 50		-> 320 x 350
         
+		// TODO : Make these sizes...
+		"expandableWideSkyscraper",		// 
+        "expandableHalfPage",			// 
+        "expandableBanner",				// 
+        "expandableVerticalBanner",		// 
+        "expandableHalfBanner",			// 
+        "expandableMpu",				// 
+        "expandableLeaderboard"			// 
+        
+	*/
+	
+	/* 
+	What different sizes need to be created? 
 	*/
 	"types": [
 		"mpu",
@@ -56,6 +64,7 @@
 	/* 
     How many variants of *each* type are there?
         Useful for dictating for example language variations
+		Or similar sized but different visuals
     */
 	"variants": [
 		"en",
@@ -113,7 +122,11 @@
 	
 	
 	/* 
+	
+	--------------------------------- 8< -------------------------------
+	
 	Default dimensions for banner adverts
+	Chosen above for this campaign
 		from http://notwothesame.com/banner-sizes.htm
 		nb. feel free to resize these for your projects
 	*/
@@ -149,6 +162,7 @@
 			"h":600
 		},
 
+		// * Also known as Double MPU
 		// Half a page advert
 		"halfPage" : {
 			"w":300,

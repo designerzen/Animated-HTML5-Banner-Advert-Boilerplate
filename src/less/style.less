@@ -111,7 +111,7 @@
     height:100%;
     background:@col-bg url( '@{path-png}wall.png' ) repeat-x;
 	position:relative;		// ensure it inherits the size of it's parent
-	
+
 	// set up main frame
     .billboard,
 	.banner,
@@ -126,7 +126,7 @@
         position:relative;
 		overflow:hidden;    // make sure that the elements can fall outside this
 	}
-	
+
 	// Resize
 	.banner{
 		width:@width-banner;
@@ -164,20 +164,20 @@
 		width:@width-billboard;
 		height:@height-billboard;
     }
-        
-    
+
+
     // Mobile Variants --------------------------------------------
 
 	.mobile.mpu{
 		width:@width-mobile-mpu;
 		height:@height-mobile-mpu;
-    }	
-    
+    }
+
     .mobile.banner{
 		width:@width-mobile-banner;
 		height:@height-mobile-banner;
-    }	
-    
+    }
+
     .mobile.leaderboard{
 		width:@width-mobile-leaderboard;
 		height:@height-mobile-leaderboard ;
@@ -229,22 +229,22 @@
 		height:(@height-billboard - @border-thickness * 2);
 		border: @col-border @border-thickness solid;
 	}
-    
-    
+
+
     // Mobile Variants --------------------------------------------
 
 	.mobile.mpu{
 		width:(@width-mobile-mpu - @border-thickness * 2);
 		height:(@height-mobile-mpu - @border-thickness * 2);
-		border: @col-border @border-thickness solid; 
-    }	
-    
+		border: @col-border @border-thickness solid;
+    }
+
     .mobile.banner{
 		width:(@width-mobile-banner - @border-thickness * 2);
 		height:(@height-mobile-banner - @border-thickness * 2);
-		border: @col-border @border-thickness solid;  
-    }	
-    
+		border: @col-border @border-thickness solid;
+    }
+
     .mobile.leaderboard{
 		width:(@width-mobile-leaderboard - @border-thickness * 2);
 		height:(@height-mobile-leaderboard - @border-thickness * 2);
