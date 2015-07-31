@@ -31,7 +31,7 @@ gulp.task('manifest', function() {
 	
 	// Requested variations in these languages...
 	// NB. If this is empty, we do not create those templates
-	var languages 	= options.languages;
+	var languages 	= options.languages.length ? options.languages : [''];
 	var language 	= '';
 	
 	// Requested variations in these campaigns...

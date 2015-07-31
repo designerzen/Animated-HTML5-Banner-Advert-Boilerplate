@@ -1,3 +1,31 @@
+var appendTo = function( copy, data, seperator, seperate ){
+	
+	seperator = seperator || "-";
+	
+	if (data && data.length) 
+	{
+		// check to see if we have a trailing seperator...
+		// we DO NOT, so let us add one before our new copy
+		if (seperate != false) if ( copy.slice(-1) != seperator ) copy += seperator;
+		// add the data as it is NOT empty
+		copy += data;
+	}
+	return copy;
+};
+
+var sanitiseName = function( unsanitised )
+{
+	// remove spaces and replace with underscores
+	unsanitised = unsanitised.replace(/ +?/g, '_');
+	// swap out full stops for hyphens (mainly for versioning)
+	unsanitised = unsanitised.replace(/\./g, "-");
+	// remove not allowed characters...
+	unsanitised = unsanitised.replace(/[\u2000-\u206F\u2E00-\u2E7F\\'!"#\$%&\(\)\*\+,\/:;<=>\?@\[\]\^_`\{\|\}~]/g, "_");
+	// sent it out
+	return unsanitised;
+};
+
+
 var getTemplate = function( type, variant, language, suffix, seperator )
 {
 	var file = type;
@@ -13,17 +41,6 @@ var getTemplate = function( type, variant, language, suffix, seperator )
 	return file;
 };
 
-var sanitiseName = function( unsanitised )
-{
-	// remove spaces and replace with underscores
-	unsanitised = unsanitised.replace(/ +?/g, '_');
-	// swap out full stops for hyphens (mainly for versioning)
-	unsanitised = unsanitised.replace(/\./g, "-");
-	// remove not allowed characters...
-	unsanitised = unsanitised.replace(/[\u2000-\u206F\u2E00-\u2E7F\\'!"#\$%&\(\)\*\+,\/:;<=>\?@\[\]\^_`\{\|\}~]/g, "_");
-	// sent it out
-	return unsanitised;
-};
 
 ///////////////////////////////////////////////////////////////////////////////////
 // File name format for creating distributions
@@ -36,28 +53,24 @@ var sanitiseName = function( unsanitised )
 var getName = function( brand, type, variant, language, prefix, suffix, extension, seperator )
 {
 	var file = '';
-	
-	// optionals
-	brand = brand || "";
-	variant = variant || "";
-	language = language || "";
-	prefix = prefix || "";
-	suffix = suffix || "";
-	extension = extension || "";
-	seperator = seperator || "-";
-	
+
 	// Prefix!
-	if (prefix.length) file += prefix + seperator;
+	file = appendTo( file, prefix, seperator, false  );
+	
 	// If we have a variant, add it here
-	if (brand.length) file += brand + seperator;
+	file = appendTo( file, brand, seperator );
+	
 	// add type
-	if (type.length) file += type + seperator;
+	file = appendTo( file, type, seperator );
+	
 	// same with the language suffix
-	if (language.length) file += language + seperator;
+	file = appendTo( file, language, seperator );
+	
 	// If we have a variant, add it here
-	if (variant.length) file += variant + seperator;
+	file = appendTo( file, variant, seperator );
+	
 	// Suffix endings
-	if (suffix.length) file += suffix;
+	file = appendTo( file, suffix, seperator );
 	
 	// sanitise all but extension...
 	file = sanitiseName( file );
@@ -67,6 +80,7 @@ var getName = function( brand, type, variant, language, prefix, suffix, extensio
 	
 	return file.toLowerCase();
 };
+
 ///////////////////////////////////////////////////////////////////////////////////
 // File name format for creating distributions
 // You can set this to however your campaign needs
@@ -79,26 +93,23 @@ var getFolder = function( brand, type, variant, language, prefix, suffix, sepera
 {
 	var folder = '';
 	
-	// optionals
-	brand = brand || "";
-	variant = variant || "";
-	language = language || "";
-	prefix = prefix || "";
-	suffix = suffix || "";
-	seperator = seperator || "-";
-	
 	// Prefix!
-	if (prefix.length) folder += prefix + seperator;
+	folder = appendTo( folder, prefix, seperator, false  );
+	
 	// If we have a variant, add it here
-	if (brand.length) folder += brand + seperator;
+	folder = appendTo( folder, brand, seperator  );
+	
 	// add type
-	if (type.length) folder += type + seperator;
+	folder = appendTo( folder, type, seperator  );
+	
 	// same with the language suffix
-	if (language.length) folder += language + seperator;
+	folder = appendTo( folder, language, seperator  );
+
 	// If we have a variant, add it here
-	if (variant.length) folder += variant + seperator;
+	folder = appendTo( folder, variant, seperator  );
+	
 	// Suffix endings
-	if (suffix.length) folder += suffix;
+	folder = appendTo( folder, suffix, seperator  );
 	
 	// sanitise all but extension...
 	folder = sanitiseName( folder );

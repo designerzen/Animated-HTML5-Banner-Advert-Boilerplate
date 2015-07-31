@@ -18,7 +18,7 @@ gulp.task('package', function(cb) {
 	
 	// Requested variations in the languages.
 	// NB. If this is empty, we do not create those templates
-	var languages 		= options.languages;
+	var languages 	= options.languages.length ? options.languages : [''];
 	// default language if there is not one specified in the options
 	var language 		= '';
 	
@@ -118,7 +118,6 @@ gulp.task('package', function(cb) {
 				console.log( 'PACKAGE > '+(t+1)+'/'+types.length+'. Packaging type : '+type   );
 				
 				
-				
 				// Compile JADE FRESHLY! ---------------------------------------------------------
 				// Get JADE source file name
 				var srcJade = sourceFolders.root + '/' + sourceFolders.html + '/' + sanitise.getTemplate( type, variant, language,'.jade', names.seperator );
@@ -132,8 +131,6 @@ gulp.task('package', function(cb) {
 								
 				merged.add( taskJade );
 				console.log( 'PACKAGE > Packaging JADE : '+srcJade+' -> '+destinationJade );
-				//console.log( options );
-				
 				
 				
 				// Styles ----------------------------------------------------------------
@@ -152,8 +149,6 @@ gulp.task('package', function(cb) {
 								
 				merged.add( taskLess );
 				console.log( 'PACKAGE > Packaging LESS : '+srcLess+' -> '+destinationLess );
-				//console.log('');
-				
 				
 				
 				// Scripts ---------------------------------------------------------------
@@ -169,6 +164,7 @@ gulp.task('package', function(cb) {
 				
 				merged.add( taskScripts );
 				console.log( 'PACKAGE > Packaging JS : '+srcScripts+' -> '+destinationScripts );
+				
 				
 				// Manifests -------------------------------------------------------------
 				
@@ -190,7 +186,6 @@ gulp.task('package', function(cb) {
 					
 				merged.add( taskManifests );
 				console.log( 'PACKAGE > Packaging Manifests : '+srcManifest+' -> '+destinationManifest );
-				
 				
 				
 				// Images ----------------------------------------------------------------
@@ -228,7 +223,6 @@ gulp.task('package', function(cb) {
 				console.log( 'PACKAGE > Packaging Images : '+imageGlob+' -> '+destinationImages );
 				
 				
-				
 				// Icons -----------------------------------------------------------------
 				var destinationIcons = folderLocation + '/' + structure.icons;
 				var taskIcons = gulp.src( source.icons )
@@ -247,6 +241,8 @@ gulp.task('package', function(cb) {
 				merged.add( taskFonts );
 				console.log( 'PACKAGE > Packaging Fonts : '+source.fonts+' -> '+destinationFonts );
 				
+				
+				console.log('');
 			}
 			//
 		}

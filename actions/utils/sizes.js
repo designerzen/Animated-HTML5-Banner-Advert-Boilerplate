@@ -1,4 +1,8 @@
 
+// load in options and determine the sizes...
+var options 	= require('./options.js');
+var config     	= require('../config');
+
 ///////////////////////////////////////////////////////////////////////////////////
 // Determine the string for this dimension from the type of the advert
 // eg. convertToSize( 'mpu' ) -> '300x250'
@@ -38,17 +42,13 @@ var convertToDevice = function( size ){
     
     switch (size )
     {
-        case "mpu": 
-        case "halfpage": 
-		case "leaderboard":
-        case "skyscraper":
-        case "wideskyscraper":      
-            return "desktop";
-            
         case "mobilebanner":
         case "mobilempu":
         case "mobileleaderboard":
             return "mobile";
+			
+		default:     
+            return "desktop";
     }
 };
 

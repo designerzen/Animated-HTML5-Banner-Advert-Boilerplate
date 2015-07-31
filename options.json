@@ -255,6 +255,19 @@ Chosen above for this campaign
 			"w:":320,
 			"h":350
 		}
+	},
+	
+	// RARE!
+	
+	"noneExpandableBanner" :{
+		"w": 320,
+		"h": 60
+	},
+	
+	"halfMobileBanner" :{
+		"w": 320,
+		"h": 100
 	}
+
 	
 }

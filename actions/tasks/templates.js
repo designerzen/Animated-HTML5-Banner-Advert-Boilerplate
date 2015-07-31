@@ -39,7 +39,7 @@ gulp.task('templates', function () {
 	
 	// Requested variations in the languages.
 	// NB. If this is empty, we do not create those templates
-	var languages 	= options.languages;
+	var languages 	= options.languages.length ? options.languages : [''];
 	// default language if there is not one specified in the options
 	var language 	= '';
 	
@@ -58,14 +58,14 @@ gulp.task('templates', function () {
 	for ( var v=0, a=variants.length; v < a; v++)
 	{
 		variant = variants[v];
-		console.log( 'TEMPLATE > Creating JS for Variant '+(v+1)+' / '+a+' '+variant.toUpperCase() );
+		console.log( 'TEMPLATE > Creating JADE Template for Variant '+(v+1)+' / '+a+' : '+variant.toUpperCase() );
 		console.log('=======================================================');
 		
 		// Loop through languages
 		for ( var l=0, q=languages.length; l < q; l++)
 		{
 			language = languages[l];
-			console.log( 'TEMPLATE > Creating JS for Language : '+language.toUpperCase() );
+			console.log( 'TEMPLATE > Creating JADE Template for Language : '+language.toUpperCase() );
 			
 			// Loop through Types (MPU/Leaderboard/Skyscraper)
 			for (var t = 0, e=types.length; t < e; t++)
@@ -86,7 +86,7 @@ gulp.task('templates', function () {
 						.pipe( rename( file ) )
 						.pipe( gulp.dest( destination ) );
 				
-				console.log( 'TEMPLATE > '+(t+1)+' Creating in '+language+' : '+file );
+				console.log( 'TEMPLATE > '+(t+1)+' Created in '+destination+' : '+file );
 				merged.add( jade );
 			}
 			console.log( '' );
