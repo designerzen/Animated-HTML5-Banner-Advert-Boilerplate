@@ -1,0 +1,57 @@
+Firstly _ensure that you have editted the config.json_ with your appropriate settings.
+Pay close attention to types (remove any that don't apply) and variants...
+And add as many variants as you wish (these are the duplicate templates named accordingly)
+
+Types are the required sizes for the campaign. You can use any of the following :
+
+
+Variants can be anything you want but primarily are useful for creating language variants
+
+> eg. 'en', 'th', 'hk', 'de'
+
+If you have common elements on all of your pages, you can edit the **template.jade partial** as these will be cloned into your templates. 
+
+You can use the shortcut **#{type}** wherever you want to have type specific elements (mpu/skyscraper/banner etc).
+The shortcuts **#{width}** and **#{height}** are also available if you wish to use them!
+
+Then run :
+
+> gulp scaffold
+
+to create both jade template files for adding in your content, and a project manifest for each size.
+
+NB. if you just want jade (templates) or javascript manifests
+
+> gulp templates
+
+> gulp manifest
+
+
+###To Build For _Testing_###
+
+> gulp build
+
+
+###To Compile For Release to _Creatives_###
+
+This creates a minified version that allows creatives to test the varieties easily while retaining a single folder structure
+
+> gulp compile
+
+
+###To Compile For _Distribution_###
+
+Compiling creates a **Release** folder that contains X folders _(per campaign)_
+  
+> gulp distribute
+    
+As well as **one ZIP file that represents one release folder** in the format
+The filesize is displayed in the console when run.
+
+release / **Name-Type-Variant.zip**
+
+Where **Name**, **Type** and **Variant**  are read in from the **package.json** file
+
+_eg. Kittens-mpu-a.zip_
+
+Uploading your advert to agencies usually requires a zip file with the campaign inside - these are those files.
