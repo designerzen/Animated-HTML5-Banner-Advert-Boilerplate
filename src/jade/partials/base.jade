@@ -1,16 +1,18 @@
 doctype html
 html(class='no-js')
-    head
-        meta(charset='utf-8')
-        meta(http-equiv='X-UA-Compatible', content='IE=edge')
-        title Asda
-        meta(name="description", content="Asda Advert")
-        meta(name="viewport", content="width=device-width, initial-scale=1")
-        link(rel="stylesheet", href="css/style.css")
-        
-    body
-        #content.loading
-            block content
-        #clicktagholder
-        script(src='http://cdn.flashtalking.com/frameworks/js/api/2/6/html5API.js')
-        script(src='js/main.min.js')
+	head
+		meta(charset='utf-8')
+		meta(http-equiv='X-UA-Compatible', content='IE=edge')
+		title= title
+		meta(name="description", content="")
+		meta(name="viewport", content="width=device-width, initial-scale=1")
+		link(rel="stylesheet", href="css/style.css")
+	body
+		#content.loading
+			block content
+			
+		block scripts
+			//- These defaults should be fine for most campaigns
+			//- but if you are using ther APIs add them here in your template
+			
+		script(src='js/main.js')

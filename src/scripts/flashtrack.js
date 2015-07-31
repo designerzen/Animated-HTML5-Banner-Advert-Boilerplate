@@ -17,8 +17,7 @@ var FlashTrack = (function(){
         EVENT_EXPANDED = "expanded",
         EVENT_CONTRACTED = "contract",
         EVENT_INSTANT_ADS = "instantads",
-        ft, 
-        clickCounter = 0;
+        ft;
     
     /////////////////////////////////////////////////////////////////
 	// Construct
@@ -96,17 +95,6 @@ var FlashTrack = (function(){
         ft.applyClickTag(expanded);
     };
     
-    /////////////////////////////////////////////////////////////////
-	// Sets FlashTalking Click Tags and Click Throughs
-    /////////////////////////////////////////////////////////////////
-    FlashTrack.prototype.setClickTags = function ( id , uniqueNumber )
-    {
-        var n = uniqueNumber ? uniqueNumber : clickCounter++,
-            clicker = FT.query(id);
-        
-		ft.applyClickTag( clicker, n );
-    };
-	
 	return FlashTrack;
    
 })();
