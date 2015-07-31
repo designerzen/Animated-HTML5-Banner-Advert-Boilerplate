@@ -1,0 +1,56 @@
+button,
+.button {
+    display: inline-block;
+    *display: inline; /*IE 6/7*/
+    zoom: 1;
+    line-height: normal;
+    white-space: nowrap;
+    vertical-align: baseline;
+    text-align: center;
+    cursor: pointer;
+    user-select: none;
+    font-family: inherit;
+    text-decoration: none;
+
+    &:active{
+
+    }
+
+    &:focus{
+        outline: 0;
+    }
+
+    &:hover, &:focus{
+
+    }
+}
+
+// Firefox Fix : Get rid of the inner focus border
+.button::-moz-focus-inner {
+    padding: 0;
+    border: 0;
+}
+
+// This is the Call To Action Button
+#cta{
+	display:block;
+	
+    a{
+        position:relative;
+		text-align:center;
+		padding:4px;
+		margin:auto;
+    }
+}
+
+#clicktagholder{
+    background:url(data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7) repeat top left;
+    position:absolute;
+    top:0;
+    right:0;
+    left:0;
+    bottom:0;
+    width:100%;
+    height:100%;
+    z-index:9999;
+}

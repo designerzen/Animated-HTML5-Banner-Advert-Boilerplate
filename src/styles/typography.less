@@ -1,0 +1,93 @@
+@font-regular:	'Helvetica-Neue';
+@font-size-base: 16px;
+
+@import "fonts";
+
+// From @import
+// Mixin for font sizing...
+// With aded in fudge factor to accomodate
+// Photoshop file point mis-matching
+// (1 ÷ parent font-size × required pixel value = em value)
+.fontScale( @points:18 )
+{
+	// as a percentage of scale...
+	font-size:( @points + 0px );						// Fallback
+	font-size:( @points / @font-size-base ) * 100%;		// Set in EMS so that they can be scaled relative to their parent
+}
+
+html, body{
+	font-family: @font-regular, "Helvetica-Neue", "Helvetica", Arial, sans-serif;
+	font-size: @font-size-base;		// EXPLICITLY set the font size to a pixel height here to override user's own custom browser settings
+	line-height: 1.5;
+}
+
+html{
+    font-size:100%;
+    line-height:18px;
+}
+
+h1,h2,h3,h4,h5,h6,p{
+    color:@col-light;
+    user-select: none;
+}
+
+h1{
+	.fontScale( 19 );
+}
+
+h2{
+	.fontScale( 18 );
+}
+
+h3{
+	.fontScale( 17 );
+}
+
+h4{
+	.fontScale( 16 );
+}
+
+h5{
+	.fontScale( 15 );
+}
+
+h6 {
+	.fontScale( 14 );
+}
+
+p{
+	.fontScale( 14 );
+}
+
+// Simple links
+a{
+    color:@col-dark;
+
+    &:hover{
+        text-decoration: none;
+        color:darken( @col-dark, 10% );
+    }
+
+    &:active, &:visitied{
+        text-decoration: none;
+    }
+}
+
+sub, sup {
+    font-size: 75%;         // Specified in % so that the sup/sup is the right size relative to the surrounding text
+    line-height: 0;         // Zero out the line-height so that it doesn't interfere with the positioning that follows
+    position: relative;     // Where the magic happens: makes all browsers position the sup/sup properly, relative to the surrounding text
+}
+
+sup {
+    top: -0.5em;            // Move the superscripted text up
+}
+
+sub {
+    bottom: -0.25em;        // Move the subscripted text down, but only half as far down as the superscript moved up
+}
+
+
+// Non-English Typefaces
+@import "i18n";
+@import "typography-antialiasing";

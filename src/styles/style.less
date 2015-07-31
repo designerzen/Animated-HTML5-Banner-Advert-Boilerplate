@@ -1,0 +1,284 @@
+// Helpers.less for useful shortcuts!
+
+// Colours
+@col-main:      	#071039;
+@col-light:    	 	#fff;
+@col-dark:      	#000;
+@col-accent:    	#32a3a3;
+
+@col-border:		@col-light;
+@col-bg:			@col-dark;
+
+@col-font:			@col-light;
+@col-h1:			@col-light;
+@col-h2:			@col-light;
+@col-h3:			@col-light;
+@col-h4:			@col-light;
+@col-h5:			@col-light;
+@col-h6:			@col-light;
+@col-p:				@col-light;
+
+
+// Paths
+@path-images:   	"../img/";
+@path-svg:   		"@{path-images}svg/";
+@path-png:   		"@{path-images}png/";
+@path-jpg:   		"@{path-images}jpg/";
+@path-gif:   		"@{path-images}gif/";
+
+// Paddings and margins for project
+@margin-top:   		20px;
+@margin-left:   	20px;
+@margin-right:   	20px;
+@margin-bottom:   	20px;
+
+
+@padding-top:   	20px;
+@padding-left:  	20px;
+@padding-right: 	20px;
+@padding-bottom: 	20px;
+
+// If you want a frame around the whole ad
+@border-thickness:	1px;
+
+// Classic formats for dimensions
+
+// Square M.P.U.
+@width-mpu:         		300px;
+@height-mpu:        		250px;
+
+
+// Wide Leaderboard
+@width-leaderboard:			728px;
+@height-leaderboard: 		90px;
+
+
+// Tall Skyscraper
+@width-skyscraper:			120px;
+@height-skyscraper: 		600px;
+
+@width-wide-skyscraper:		160px;
+@height-wide-skyscraper: 	@height-skyscraper;
+
+
+// Standard Banner
+@width-banner:				468px;
+@height-banner: 			60px;
+
+@width-half-banner:			234px;
+@height-half-banner: 		@height-banner;
+
+@width-vertical-banner:		120px;
+@height-vertical-banner: 	240px;
+
+
+// Half a page Advert
+@width-half-page:			300px;
+@height-half-page: 			600px;
+
+@width-billboard:           970px;
+@height-billboard:          250px;
+
+// Mobile Variants --------------------------------------------
+
+@width-mobile-banner:	    640px;
+@height-mobile-banner: 	    100px;
+
+@width-mobile-mpu:	        600px;
+@height-mobile-mpu: 	    500px;
+
+@width-mobile-leaderboard:	1456px;
+@height-mobile-leaderboard: 180px;
+
+
+
+// Import our other css files directly into this one
+@import "helpers";
+@import "reset";
+@import "typography";
+@import "buttons";
+
+
+// Loading animation - removed almost immediately
+#content.loading{
+	// background:@col-bg url( '@{path-gif}spinner.gif' ) no-repeat center center;
+}
+
+// Main Container (should be set to the size of the MPU)
+#content{
+
+	width:100%;
+    height:100%;
+    background:@col-bg url( '@{path-png}wall.png' ) repeat-x;
+	position:relative;		// ensure it inherits the size of it's parent
+}
+// set up main frame
+#variant {
+	display:block;
+	position:relative;
+	overflow:hidden;    // make sure that the elements can fall outside this
+}
+
+// Resize
+.banner{
+	width:@width-banner;
+	height:@height-banner;
+}
+.vertical-banner{
+	width:@width-vertical-banner;
+	height:@height-vertical-banner;
+}
+.half-banner{
+	width:@width-half-banner;
+	height:@height-half-banner;
+}
+.mpu{
+	width:@width-mpu;
+	height:@height-mpu;
+}
+.skyscraper{
+	width:@width-skyscraper;
+	height:@height-skyscraper;
+}
+.leaderboard{
+	width:@width-leaderboard;
+	height:@height-leaderboard;
+}
+.half-page{
+	width:@width-half-page;
+	height:@height-half-page;
+}
+.wide-skyscraper{
+	width:@width-wide-skyscraper;
+	height:@height-wide-skyscraper;
+}
+.billboard {
+	width:@width-billboard;
+	height:@height-billboard;
+}
+
+
+// Mobile Variants --------------------------------------------
+
+.mobile.mpu{
+	width:@width-mobile-mpu;
+	height:@height-mobile-mpu;
+}
+
+.mobile.banner{
+	width:@width-mobile-banner;
+	height:@height-mobile-banner;
+}
+
+.mobile.leaderboard{
+	width:@width-mobile-leaderboard;
+	height:@height-mobile-leaderboard ;
+}
+// Bordered
+/*
+.banner{
+	width:(@width-banner - @border-thickness * 2);
+	height:(@height-banner - @border-thickness * 2);
+	border: @col-border @border-thickness solid;
+}
+.vertical-banner{
+	width:(@width-vertical-banner - @border-thickness * 2);
+	height:(@height-vertical-banner - @border-thickness * 2);
+	border: @col-border @border-thickness solid;
+}
+.half-banner{
+	width:(@width-half-banner - @border-thickness * 2);
+	height:(@height-half-banner - @border-thickness * 2);
+	border: @col-border @border-thickness solid;
+}
+.mpu{
+	width:(@width-mpu - @border-thickness * 2);
+	height:(@height-mpu - @border-thickness * 2);
+	border: @col-border @border-thickness solid;
+}
+.skyscraper{
+	width:(@width-skyscraper - @border-thickness * 2);
+	height:(@height-skyscraper - @border-thickness * 2);
+	border: @col-border @border-thickness solid;
+}
+.leaderboard{
+	width:(@width-leaderboard - @border-thickness * 2);
+	height:(@height-leaderboard - @border-thickness * 2);
+	border: @col-border @border-thickness solid;
+}
+.half-page{
+	width:(@width-half-page - @border-thickness * 2);
+	height:(@height-half-page - @border-thickness * 2);
+	border: @col-border @border-thickness solid;
+}
+.wide-skyscraper{
+	width:(@width-wide-skyscraper - @border-thickness * 2);
+	height:(@height-wide-skyscraper - @border-thickness * 2);
+	border: @col-border @border-thickness solid;
+}
+.billboard{
+	width:(@width-billboard - @border-thickness * 2);
+	height:(@height-billboard - @border-thickness * 2);
+	border: @col-border @border-thickness solid;
+}
+
+
+// Mobile Variants --------------------------------------------
+
+.mobile.mpu{
+	width:(@width-mobile-mpu - @border-thickness * 2);
+	height:(@height-mobile-mpu - @border-thickness * 2);
+	border: @col-border @border-thickness solid;
+}
+
+.mobile.banner{
+	width:(@width-mobile-banner - @border-thickness * 2);
+	height:(@height-mobile-banner - @border-thickness * 2);
+	border: @col-border @border-thickness solid;
+}
+
+.mobile.leaderboard{
+	width:(@width-mobile-leaderboard - @border-thickness * 2);
+	height:(@height-mobile-leaderboard - @border-thickness * 2);
+	border: @col-border @border-thickness solid;
+}
+*/
+
+// Convert an element into a full sized border
+.border{
+	width:(@width-mpu - (@border-thickness * 2));
+    height:(@height-mpu - (@border-thickness * 2));
+	border: @col-border @border-thickness solid;
+}
+
+// Scenes -----------------------------------------------
+
+.frame,
+#cta{
+    width:100%;
+    height:100%;
+    visibility: hidden;
+	position:absolute;
+	overflow:hidden;
+}
+
+#first{
+    z-index:1;
+}
+
+#second{
+    z-index:2;
+}
+
+#third{
+    z-index:3;
+}
+
+
+#fourth{
+    z-index:4;
+}
+
+#fifth{
+    z-index:5;
+}
