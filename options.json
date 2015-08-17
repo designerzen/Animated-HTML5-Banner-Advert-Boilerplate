@@ -1,8 +1,12 @@
 /*
 
+=========================================================================== 
+
 USER CONFIG :
 
-Go nuts!
+Go nuts! You can changes anything in here that is relevant to your campaign
+
+===========================================================================
 
 */
 
@@ -11,18 +15,24 @@ Go nuts!
 // Name of the brand
 "brand": "Brand",
 
-// HTML title (can be left blank)
+// HTML title (can be left blank but appears in the html title element)
 "title": "Title",
 
-// Features in the Meta description (can be left blank)
-"description": "",
+// Features in the Meta description (can be left blank if SEO is not important)
+"description": "Description",
 
 // Version number that helps prevent version clashes
 // If I was you I would increment this every time changes are made
 // These do get reflected in the eventual file names for the zip files
 "version": "0.0.0",
 
-/* 
+
+/*
+
+SIZES ====================================================================
+What different sizes need to be created? Pick from the list below
+eg. "types": [	"mpu",	"halfPage",	"leaderboard", 	"skyscraper" ]
+ 
 Sizes needed in Campaign
 
 // Generics ---
@@ -31,10 +41,11 @@ Sizes needed in Campaign
 "halfBanner", 					// 234 x 60
 "leaderboard", 					// 728 x 90
 "mpu", 							// 300 x 250
-"halfPage", 					// 300 x 600
+"halfPage", 					// 300 x 600 - AKA Double MPU
 "skyscraper", 					// 120 x 600
-"wideSkyscraper					// 160 x 600
+"wideSkyscraper",				// 160 x 600
 "verticalBanner", 				// 120 x 240
+"bellyband",					// 900 x 250
 
 // Mobiles ---
 "mobileBanner",					// 640 x 100
@@ -53,38 +64,40 @@ Sizes needed in Campaign
 "expandableBanner",				// 
 "expandableVerticalBanner",		// 
 "expandableHalfBanner",			// 
-"expandableMpu",				// 
-"expandableLeaderboard"			// 
 	
 */
 
-// What different sizes need to be created? 
-// Pick from the list above
 "types": [
-	"mpu",
-	"halfPage",
-	"leaderboard", 
-	"skyscraper",
-	"wideSkyscraper"
+
 ],
 
 
-// How many variants of *each* type are there?
-// Or similar sized but different visuals
-// You can leave this empty if you please
+
+/*
+
+VARIANTS =================================================================
+How many variants of *each* type are there?
+Or similar sized but different visuals
+NB. You can leave this empty if you please
+
+*/
 "variants": [
-	"offer"
+
 ],
 
-// If your leave this empty, no extra language 
-// templates will be created
+
+
+/*
+
+LANGUAGES ===============================================================
+NB. If your leave this empty, no extra language templates will be created
+eg. "languages": [ "en","kr","th","hk","jp" ]
+*/
 "languages": [
-	"en",
-	"kr",
-	"th",
-	"hk",
-	"jp"
+
 ],
+
+// -------------------- >8 ----------------------------
 
 
 /* 
@@ -99,38 +112,53 @@ Ad Servering options -
 
 
 /*
-Image Squishing Options -
-	How much to squish the Images for the release build
+
+COMPRESSION ============================================================
+When we finally have finished designing and developing our adverts,
+and we are ready to package them for release, do we want to compress
+certain aspects such as minifying the CSS, uglifying the Javascript
+and removing redundant whitespace in the html?
+
 */
-"imageCrunchOptions" : {
-	// Select an optimization level between 0 and 7
-	"optimizationLevel"           : 3,
-	// Lossless conversion to progressive
-	"progressive"                 : false,
-	// Interlace gif for progressive rendering.
-	"interlaced"                  : false
+"compress":{
+	
+	// Compress and Uglify the Cascading Style Sheer
+	"css"		:true,
+	// Shrink and minify the HTML
+	"html"		:true,
+	// Optimise and improve Image sizes & compression
+	"images"	:true,
+	// Minify, Uglify and Compress the Javascripts
+	"js"		:true,
+	
+	// Image Squishing Options - How much to squish the Images for the release build
+	"imageOptions" : {
+		// Select an optimization level between 0 and 7
+		"optimizationLevel"           : 3,
+		// Lossless conversion to progressive
+		"progressive"                 : false,
+		// Interlace gif for progressive rendering.
+		"interlaced"                  : false
+	},
+
+	// HTML Minification Options - How much to squish the HTML for the release build
+	// NB. All options : https://github.com/kangax/html-minifier
+	"htmlOptions" : {
+		"removeComments"    		: true,
+		"removeIgnored"				: true,
+		"removeEmptyElements"		: false,
+		"removeOptionalTags"		: false,
+		"removeEmptyAttributes"		: true,
+		"removeRedundantAttributes"	: true,
+		"removeOptionalTags"		: true,
+		"collapseWhitespace" 		: true,
+		"minifyJS"          		: true,
+		"keepClosingSlash"   		: true,
+		"lint"						: false
+	}
+
+	
 },
-
-
-/*
-HTML Minification Options -
-	How much to squish the HTML for the release build
-	All options : https://github.com/kangax/html-minifier
-*/
-"htmlSquishOptions" : {
-	"removeComments"    		: true,
-	"removeIgnored"				: true,
-	"removeEmptyElements"		: false,
-	"removeOptionalTags"		: false,
-	"removeEmptyAttributes"		: true,
-	"removeRedundantAttributes"	: true,
-	"removeOptionalTags"		: true,
-	"collapseWhitespace" 		: true,
-	"minifyJS"          		: true,
-	"keepClosingSlash"   		: true,
-	"lint"						: false
-},
-
 
 /* 
 
@@ -196,6 +224,12 @@ Chosen above for this campaign
 	"halfBanner" : {
 		"w": 234,
 		"h": 60
+	},
+	
+	// Wide & Tall
+	"bellyband" : {
+		"w": 900,
+		"h": 250
 	},
 	
 	// Mobile Sizes =================================================

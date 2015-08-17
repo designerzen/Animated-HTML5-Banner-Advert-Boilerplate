@@ -17,6 +17,7 @@ var FlashTrack = (function(){
         EVENT_EXPANDED = "expanded",
         EVENT_CONTRACTED = "contract",
         EVENT_INSTANT_ADS = "instantads",
+		clickCounter = 0,
         ft;
     
     /////////////////////////////////////////////////////////////////
@@ -55,6 +56,16 @@ var FlashTrack = (function(){
 			// begin animating...
 			anim.begin();
 		});
+    };
+	/////////////////////////////////////////////////////////////////
+	// Sets FlashTalking Click Tags and Click Throughs
+    /////////////////////////////////////////////////////////////////
+    FlashTrack.prototype.setClickTags = function ( id , uniqueNumber )
+    {
+        var n = uniqueNumber ? uniqueNumber : clickCounter++,
+            clicker = FT.query(id);
+        
+		ft.applyClickTag( clicker, n );
     };
 	
     /////////////////////////////////////////////////////////////////
@@ -99,19 +110,3 @@ var FlashTrack = (function(){
    
 })();
 
-
-// Config, Set up and Tests --------------------------------
-var ft = new FlashTrack();
-if (ft.available)
-{
-	// Flash Talking is available :)
-	ft.loadDynamicContent();
-    // If it is an expandable advert
-	ft.setAsExpandable();
-    // Set up click tags for divs :
-	ft.setClickTags( '#clicktagholder' );
-}else{
-	// Failed to load Flash Talking API
-	// Append failed class to body tag
-	document.body.className += " failed";
-}

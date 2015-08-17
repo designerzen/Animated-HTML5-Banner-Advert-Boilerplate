@@ -15,15 +15,21 @@ var Animations = (function(){
 
 	'use strict';
 
-    var getElementById = function( id ){
-        return document.getElementById(id);
-    };
+   // minifiable shortcuts
+    var 
+		getElementById = function( id ){
+			return document.getElementById(id);
+		},
+		getElementByClass = function( id, index ){
+			return document.getElementsByClassName(id)[ index || 0];
+		};
     
 	var
-		timeline,		// Main Animation that hold the child animations
-		variant,		// style... mpu / leaderboard etc
-		elements = {}; 	// Home of all of the DOM Node Elements
-
+		timeline,			// Main Animation that hold the child animations
+		variant,			// style... mpu / leaderboard etc
+		elements = {}, 		// Home of all of the DOM Node Elements
+		backgrounds = {};	// Just another handy container
+		
 	// Construct
 	function Animations()
     {
@@ -57,6 +63,40 @@ var Animations = (function(){
   		// create our INTRO scene
   		var sceneIntro = new TimelineLite();
 
+		
+		// Frame # 1 -------------------------------------------------------------------------
+		// Fade in 
+		sceneIntro.fromTo( elements.first, 1, { autoAlpha:0 }, { autoAlpha:1 }, 'logo' );
+		// now grow the background Image...
+		sceneIntro.fromTo( elements.logo, 1, { autoAlpha:0 }, { autoAlpha:1 }, 'logo' );
+		// Fade out (if neccessary)
+		sceneIntro.to( elements.first, 1, { autoAlpha:0 }, '+='+pauseDuration );
+		
+		
+		// Frame # 2 -------------------------------------------------------------------------
+		// Fade in 
+		sceneIntro.fromTo( elements.second, 1, { autoAlpha:0 }, { autoAlpha:1 } );
+		// Fade out (if neccessary)
+		sceneIntro.to( elements.second, 1, { autoAlpha:0 } , '+='+pauseDuration );
+		
+		
+		// Frame # 3 -------------------------------------------------------------------------
+		// Fade in 
+		sceneIntro.fromTo( elements.third, 1, { autoAlpha:0 }, { autoAlpha:1 } );
+		// Fade out (if neccessary)
+		sceneIntro.to( elements.third, 1, { autoAlpha:0 }, '+='+pauseDuration );
+		
+		
+		// Frame # 4 -------------------------------------------------------------------------
+		// Fade in 
+		sceneIntro.fromTo( elements.fourth, 1, { autoAlpha:0 }, { autoAlpha:1 } );
+		// Call to Action
+		sceneIntro.fromTo( elements.cta, 1, { autoAlpha:0 }, { autoAlpha:1 } );
+		// Fade out (if neccessary)
+		//sceneIntro.to( elements.fourth, 1, { autoAlpha:0 }, '+='+pauseDuration );
+		
+		
+		
         // TRANSITION ========================================================================
 		// create our TRANSITION scene
   		var sceneTransition = new TimelineLite();
@@ -92,10 +132,3 @@ var Animations = (function(){
 	return Animations;
 
 })();
-
-var anim = new Animations();
-anim.assign();
-
-// begin animating...
-// defer animation
-// anim.begin();

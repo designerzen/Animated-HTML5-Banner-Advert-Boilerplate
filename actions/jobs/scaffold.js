@@ -1,8 +1,13 @@
+/*
+
+This is a JOB that creates our 
+
+JADE templates files and our
+
+JAVASCRIPT manifest files (if requested)
+
+*/
 var gulp = require('gulp');
 
-gulp.task( 'scaffold', function(callback) {
-	
-	var runSequence = require('run-sequence');
-	
-	runSequence([ 'manifest', 'templates' ], callback);
-});
+// Run in parallel
+gulp.task( 'scaffold', [ 'manifest', 'templates' ] );

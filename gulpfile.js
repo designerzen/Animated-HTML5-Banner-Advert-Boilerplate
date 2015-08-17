@@ -19,9 +19,10 @@
 
 */
 
-var TASKS 		= 'tasks',
-	JOBS 		= 'jobs',
-	COMMANDS 	= './actions/';
+var TASKS 			= 'tasks',
+	JOBS 			= 'jobs',
+	CONSTRUCTORS 	= 'construct',
+	COMMANDS 		= './actions/';
 
 var requireDir 	= require('require-dir');
 
@@ -31,3 +32,4 @@ var config     	= require( COMMANDS + 'config');
 // Require all tasks in gulp/tasks, including subfolders
 requireDir( COMMANDS + JOBS, { recurse: false } );
 requireDir( COMMANDS + TASKS, { recurse: false } );
+requireDir( COMMANDS + CONSTRUCTORS, { recurse: false } );

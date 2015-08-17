@@ -16,6 +16,9 @@ FT.manifest({
     "width":#{width},
     "height":#{height},
     "clickTagCount":1,
+	// If using SVGs... uncomment
+	"hideBrowsers":["ie6" , "ie7" ,"ie8" ],
+	
 	"instantAds":[
 
 		{"name":"textVariable", "type":"text", "default":"This is dynamic text. The image to the left is a dynamic image. These can be updated using the creative interface to make new versions of this ad."},

@@ -1,9 +1,9 @@
 // Specify where your fonts directory lives in respect to the outputted css
-@path-fonts: 	'../fonts/';
-
+@path-fonts				: '../fonts/';
 // Specify what font-face name and filename should be
-@font-regular:	'frutiger_rg';
-@font-filename:	'frutivccp55rm-webfont';
+@font-regular-name		: 'fontfamily';
+// exclude the extensions
+@font-regular-filename	: 'webfont';
 
 
 // Font-Face :
@@ -14,15 +14,16 @@
 // SVG can be replaced right after the EOT 
 // NB. (old IE needs EOT first or will break)
 @font-face {
-	font-family: @font-regular;
-	src: url( '@{path-fonts}/@{font-filename}.eot');
-	src: url( '@{path-fonts}/@{font-filename}.eot?#iefix') format('embedded-opentype'),
-	url( ~'@{path-fonts}@{font-filename}.woff') format('woff'),
-	url( ~'@{path-fonts}@{font-filename}.ttf') format('truetype'),
-	url( ~'@{path-fonts}@{font-filename}.svg#@{font-filename}') format('svg');
+	font-family: @font-regular-name;
+	src: url( '@{path-fonts}/@{font-regular-filename}.eot');
+	src: url( '@{path-fonts}/@{font-regular-filename}.eot?#iefix') format('embedded-opentype'),
+	url( ~'@{path-fonts}@{font-regular-filename}.woff') format('woff'),
+	url( ~'@{path-fonts}@{font-regular-filename}.ttf') format('truetype'),
+	url( ~'@{path-fonts}@{font-regular-filename}.svg#@{font-regular-filename}') format('svg');
 	font-weight: normal;
 	font-style: normal;
 }
+
 
 // Force SVG font on webit browsers :
 // If you can afford the SVG font face, uncomment the following if you want

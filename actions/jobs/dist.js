@@ -25,7 +25,6 @@ gulp.task( 'dist', function(callback) {
 
 	runSequence( 'clean',
 					//[ 'jade', 'less', 'images', 'fonts','icons','scripts' ],
-					'package',
 					//'zip',
 					callback);
 });

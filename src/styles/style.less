@@ -1,4 +1,3 @@
-// Helpers.less for useful shortcuts!
 
 // Colours
 @col-main:      	#071039;
@@ -93,8 +92,8 @@
 
 
 // Import our other css files directly into this one
-@import "helpers";
-@import "reset";
+@import "helpers";			// Helpers.less for useful shortcuts!
+@import "reset";			// Reset all browsers to zero styles
 @import "typography";
 @import "buttons";
 
@@ -106,17 +105,17 @@
 
 // Main Container (should be set to the size of the MPU)
 #content{
-
 	width:100%;
     height:100%;
-    background:@col-bg url( '@{path-png}wall.png' ) repeat-x;
-	position:relative;		// ensure it inherits the size of it's parent
+    position:relative;		// ensure it inherits the size of it's parent
 }
+
 // set up main frame
 #variant {
 	display:block;
 	position:relative;
 	overflow:hidden;    // make sure that the elements can fall outside this
+	background:@col-bg url( '@{path-png}wall.png' ) repeat-x;
 }
 
 // Resize
@@ -245,23 +244,28 @@
 */
 
 // Convert an element into a full sized border
-.border{
-	width:(@width-mpu - (@border-thickness * 2));
-    height:(@height-mpu - (@border-thickness * 2));
-	border: @col-border @border-thickness solid;
+.border( @width; @height; @colour ){
+	width:(@width - (@border-thickness * 2));
+    height:(@height - (@border-thickness * 2));
+	border: @colour @border-thickness solid;
 }
 
 // Scenes -----------------------------------------------
 
-.frame,
-#cta{
+.cta{
     width:100%;
     height:100%;
-    visibility: hidden;
+	position:absolute;
+}
+
+// Full sized frames
+.frame{
+	width:100%;
+    height:100%;
+    //visibility: hidden;
 	position:absolute;
 	overflow:hidden;
 }
-
 #first{
     z-index:1;
 }

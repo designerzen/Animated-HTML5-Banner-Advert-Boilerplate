@@ -27,7 +27,7 @@ gulp.task( 'debug', function(callback) {
 	console.log( destination );
 	
 	runSequence( 
-					[ 'jade', 'less', 'images', 'fonts','icons','scripts' ],
+					[ 'jade', 'less', 'images', 'fonts','icons','scripts','manifests' ],
 					'watch',
 					callback);
 });

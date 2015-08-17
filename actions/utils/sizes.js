@@ -1,22 +1,22 @@
 
 // load in options and determine the sizes...
 var options 	= require('./options.js');
-var config     	= require('../config');
+//var config     	= require('../config');
 
 ///////////////////////////////////////////////////////////////////////////////////
 // Determine the string for this dimension from the type of the advert
 // eg. convertToSize( 'mpu' ) -> '300x250'
 ///////////////////////////////////////////////////////////////////////////////////
-var convertToSize = function( size, seperator ){
+var convertTypeToSize = function( type, seperator ){
     
 	seperator = seperator || 'x';
     // If we have a config file with custom sizes set up
-    var configSize = config.sizes[ size ];
+    var configSize = options.sizes[ type ];
     if (configSize) return configSize.w + seperator + configSize.h;
     
     // return the string of the sizes based on the type variant
     // for if the config file is corrupt or not set up correctly
-    switch ( size.toLowerCase() )
+    switch ( type.toLowerCase() )
     {
         case "mpu":                 return "300"+seperator+"250";
         case "halfpage":            return "300"+seperator+"600";
@@ -53,6 +53,6 @@ var convertToDevice = function( size ){
 };
 
 module.exports = {
-	toSize:convertToSize,
+	toSize:convertTypeToSize,
 	toType:convertToDevice
 };

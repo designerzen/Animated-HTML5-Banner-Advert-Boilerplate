@@ -1,5 +1,8 @@
-var appendTo = function( copy, data, seperator, seperate ){
-	
+///////////////////////////////////////////////////////////////////////////////////
+// add Text to a string if conditions are met
+///////////////////////////////////////////////////////////////////////////////////
+var appendTo = function( copy, data, seperator, seperate )
+{
 	seperator = seperator || "-";
 	
 	if (data && data.length) 
@@ -13,6 +16,10 @@ var appendTo = function( copy, data, seperator, seperate ){
 	return copy;
 };
 
+///////////////////////////////////////////////////////////////////////////////////
+// Take out all characters that are not allowed in the API
+// This includes dots and spaces and uppercase things too I guess
+///////////////////////////////////////////////////////////////////////////////////
 var sanitiseName = function( unsanitised )
 {
 	// remove spaces and replace with underscores
@@ -25,7 +32,9 @@ var sanitiseName = function( unsanitised )
 	return unsanitised;
 };
 
-
+///////////////////////////////////////////////////////////////////////////////////
+//
+///////////////////////////////////////////////////////////////////////////////////
 var getTemplate = function( type, variant, language, suffix, seperator )
 {
 	var file = type;
@@ -39,6 +48,45 @@ var getTemplate = function( type, variant, language, suffix, seperator )
 	// add extra bits onto the end based on whether flags exist
 	file += suffix;
 	return file;
+};
+
+///////////////////////////////////////////////////////////////////////////////////
+// This is the final zip output file.
+// Best served in the format :
+// width x height _ variant _ year
+// options.brand, type, variant, language, options.version, "", ".zip",  options.seperator );
+///////////////////////////////////////////////////////////////////////////////////
+var getZip = function( brand, type, variant, language, version, prefix,suffix, seperator )
+{
+	var file = '';
+
+	// Prefix!
+	file = appendTo( file, prefix, seperator, false  );
+	
+	// If we have a variant, add it here
+	//file = appendTo( file, brand, seperator );
+	
+	// add type
+	//file = appendTo( file, type, seperator );
+	
+	// If we have a variant, add it here
+	file = appendTo( file, variant, seperator );
+	
+	// same with the language suffix
+	file = appendTo( file, language, seperator );
+	
+	// Suffix endings
+	file = appendTo( file, suffix, seperator );
+	
+	file = appendTo( file, version, seperator );
+	
+	// sanitise all but extension...
+	file = sanitiseName( file );
+	
+	// make sure we have an extension and append
+	file += '.zip';
+	
+	return file.toLowerCase();
 };
 
 
@@ -117,6 +165,41 @@ var getFolder = function( brand, type, variant, language, prefix, suffix, sepera
 	return folder.toLowerCase();
 };
 
+
+///////////////////////////////////////////////////////////////////////////////////
+// Fetch an ARRAY of all destinations root folders such as destinations/mpu/ etc.
+///////////////////////////////////////////////////////////////////////////////////
+
+var gulp = require('gulp');
+var getDestinations = function( brand, types, variants, languages, prefix, suffix, seperator, subFolder, parent )
+{
+	var destinations = [];
+	
+	// Variants :
+	// loop through variants Array and create our subFolder list
+	for ( var v=0, l=variants.length; v < l; ++v)
+	{
+		var variant = variants[v];
+		var language = '';
+		// languages :
+		
+		// Types : 
+		// loop through types Array and create our subFolder list
+		for ( var t=0, q=types.length; t < q; ++t)
+		{
+			var type = types[t];
+			// ( brand, type, variant, language, prefix, suffix, seperator )
+			var destination = parent + '/' + getFolder( brand, type, variant, language, prefix, suffix, seperator ) + '/' + subFolder;
+			var glob = gulp.dest( destination ) ;
+			destinations.push( glob );
+		}
+		
+	}
+	
+	return destinations;
+};
+
+
 ///////////////////////////////////////////////////////////////////////////////////
 // File name format for creating templates
 ///////////////////////////////////////////////////////////////////////////////////
@@ -134,6 +217,8 @@ var sanitisedFileName = function( brand, type, variant, suffix ){
 module.exports = {
 	getName:getName,
 	getFolder:getFolder,
+	getDestinations:getDestinations,
 	getTemplate:getTemplate,
+	getZip:getZip,
 	sanitise:sanitisedFileName
 };

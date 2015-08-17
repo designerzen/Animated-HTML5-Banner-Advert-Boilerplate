@@ -3,7 +3,7 @@
 //- Please check out the Jade Language References at the following URL
 //- http://jade-lang.com/reference/doctype/
 //- Tabs are very important in Jade! 
-//- If your editor has a 'view special characters' option - enabkle it!
+//- If your editor has a 'view special characters' option - enable it!
 
 //- The following are replaced in your actual templates
 
@@ -21,10 +21,11 @@ block content
 	#variant.#{variant}
 	
 		#first.frame
-			h1
-			h2
+			header
+				h1
+				h2
 			//- You can omit the src parameter if the asset is going to be dynamically added
-			img#bg( src="img/jpg/bg_#{type}.png", width="#{width}", height="#{height}" )
+			img.bg( src="img/jpg/bg_#{type}.png", width="#{width}", height="#{height}" )
 			img#logo( src="img/png/logo_#{type}.png" )
 			
 		#second.frame
