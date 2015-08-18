@@ -1,12 +1,13 @@
-// This uses GreenSocks TweenMax and TimeLine Classes for all the animated parts
-// Rather than using CANVAS that will break earlier browsers, instead we animate
-// DOM elements in realtime using JavaScript.
-// As the script is loaded AFTER the content, we can use onLoad :)
-
 /*
 
 Motion Sequence
 ---------------
+
+This uses GreenSocks TweenMax and TimeLine Classes for all the animated parts
+Rather than using CANVAS that will break earlier browsers, instead we animate
+DOM elements in realtime using JavaScript.
+
+As the script is loaded AFTER the content, we can use onLoad :)
 
 */
 
@@ -17,11 +18,12 @@ var Animations = (function(){
 
    // minifiable shortcuts
     var 
-		getElementById = function( id ){
+		getElementById = function( id, element ){
+			element = element || document;
 			return document.getElementById(id);
 		},
 		getElementByClass = function( id, index ){
-			return document.getElementsByClassName(id)[ index || 0];
+			return document.getElementsByClassName(id)[ index || 0 ];
 		};
     
 	var
@@ -55,6 +57,12 @@ var Animations = (function(){
     // This creates all of our animation elements
     Animations.prototype.construct = function()
     {
+		var 
+			durationZoomIn 		= 1,
+			durationZoomOut 	= 1,
+			durationFadeIn 		= 1,
+			durationFadeOut 	= 1;
+			
 		// create a home for our animations
  		// timeline = new TimelineLite( {onComplete:this.onFinish, onCompleteParams:["test1", "test2"], onCompleteScope:this } );
  		timeline = new TimelineLite();
@@ -66,32 +74,32 @@ var Animations = (function(){
 		
 		// Frame # 1 -------------------------------------------------------------------------
 		// Fade in 
-		sceneIntro.fromTo( elements.first, 1, { autoAlpha:0 }, { autoAlpha:1 }, 'logo' );
+		sceneIntro.fromTo( elements.first, durationFadeIn, { autoAlpha:0 }, { autoAlpha:1 }, 'logo' );
 		// now grow the background Image...
 		sceneIntro.fromTo( elements.logo, 1, { autoAlpha:0 }, { autoAlpha:1 }, 'logo' );
 		// Fade out (if neccessary)
-		sceneIntro.to( elements.first, 1, { autoAlpha:0 }, '+='+pauseDuration );
+		sceneIntro.to( elements.first, durationFadeOut, { autoAlpha:0 }, '+='+pauseDuration );
 		
 		
 		// Frame # 2 -------------------------------------------------------------------------
 		// Fade in 
-		sceneIntro.fromTo( elements.second, 1, { autoAlpha:0 }, { autoAlpha:1 } );
+		sceneIntro.fromTo( elements.second, durationFadeIn, { autoAlpha:0 }, { autoAlpha:1 } );
 		// Fade out (if neccessary)
-		sceneIntro.to( elements.second, 1, { autoAlpha:0 } , '+='+pauseDuration );
+		sceneIntro.to( elements.second, durationFadeOut, { autoAlpha:0 } , '+='+pauseDuration );
 		
 		
 		// Frame # 3 -------------------------------------------------------------------------
 		// Fade in 
-		sceneIntro.fromTo( elements.third, 1, { autoAlpha:0 }, { autoAlpha:1 } );
+		sceneIntro.fromTo( elements.third, durationFadeIn, { autoAlpha:0 }, { autoAlpha:1 } );
 		// Fade out (if neccessary)
-		sceneIntro.to( elements.third, 1, { autoAlpha:0 }, '+='+pauseDuration );
+		sceneIntro.to( elements.third, durationFadeOut, { autoAlpha:0 }, '+='+pauseDuration );
 		
 		
 		// Frame # 4 -------------------------------------------------------------------------
 		// Fade in 
-		sceneIntro.fromTo( elements.fourth, 1, { autoAlpha:0 }, { autoAlpha:1 } );
+		sceneIntro.fromTo( elements.fourth, durationFadeIn, { autoAlpha:0 }, { autoAlpha:1 } );
 		// Call to Action
-		sceneIntro.fromTo( elements.cta, 1, { autoAlpha:0 }, { autoAlpha:1 } );
+		sceneIntro.fromTo( elements.cta, durationFadeOut, { autoAlpha:0 }, { autoAlpha:1 } );
 		// Fade out (if neccessary)
 		//sceneIntro.to( elements.fourth, 1, { autoAlpha:0 }, '+='+pauseDuration );
 		

@@ -68,6 +68,8 @@ var FlashTrack = (function(){
 		ft.applyClickTag( clicker, n );
     };
 	
+	/*  */
+	
     /////////////////////////////////////////////////////////////////
     // This is where we expand the advert into new sizes
     // Expand and Contract
