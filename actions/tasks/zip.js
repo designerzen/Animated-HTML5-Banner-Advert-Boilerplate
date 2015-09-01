@@ -32,9 +32,9 @@ gulp.task('zip', function(cb) {
 	var destination = config.destinations[ setup.destination ];
 	
 	// These are set from options
-	var types 		= options.types;
-	var variants	= options.variants;
 	var languages 	= options.languages.length ? options.languages : [''];
+	var types 		= options.types;
+	var variants	= options.variants.length ? options.variants : [''];
 	var names 		= config.names;
 	
 	var type 		= types[0];
@@ -75,16 +75,16 @@ gulp.task('zip', function(cb) {
 				
 				var dimensions = size.toSize( type );
 				
-				var fileName = sanitise.getZip( options.brand, type, variant, language, options.version, dimensions, "",  options.seperator );
+				var fileName = sanitise.getZip( options.brand, type, variant, language, options.version, 'Online_Bnr_'+dimensions, "dynamic_1D_4S",  options.seperator );
 				
 				
-				var imageGlob = folderLocation + glob;
+				var filesGlob = folderLocation + glob;
 				
 				// showFiles : Displays the size of every file instead of just the total size.
 				var sizer = filesize( {title: destination.root + '/' + fileName, showFiles:true } );
 				
 				// Create a ZIP of ALL RELEVANT FILES in FOLDER
-				var zipStream = gulp.src( imageGlob )
+				var zipStream = gulp.src( filesGlob )
 					.pipe( zip(fileName) )
 					// console.log the filesize! :P
 					.pipe( sizer )

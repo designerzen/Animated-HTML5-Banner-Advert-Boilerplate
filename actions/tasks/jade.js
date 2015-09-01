@@ -14,8 +14,9 @@ gulp.task('jade', function () {
 	var path 			= require('path');
 	var fs   			= require('fs');
 	var gulpif 			= require('gulp-if');				// conditional compiles
-
+	
 	var setup 			= config.build;
+	
 	var source 			= config.source;
 	var destination 	= config.destinations[ setup.destination ];
 	var names 			= config.names;
@@ -23,21 +24,25 @@ gulp.task('jade', function () {
 	var sourceFolders 	= config.sourceFolders;
 	var fileTypes		= config.fileTypes;
 	
+	var variants		= options.variants;
+	
 	return 	gulp.src( source.jade )
 			.pipe(tap(function (file,t) {
 				
 				// extrapolate the file name from the glob
-				var filename 		= path.basename(file.path);
-				var parts 			= filename.split('-');
-				
-				var type 			= parts[ 0 ];
-				var variant 		= options.variants ? options.variants[0] : '';
-				var language 		= '';
+				// this replace simply removes the file extension
+				var filePath 	= path.basename(file.path);
+				var fileData 	= sanitise.determineDataFromFilename( filePath, options, names.seperator );
 				
 				// ( brand, type, variant, language, prefix, suffix, seperator )
-				var folderName = sanitise.getFolder( options.brand, type, variant, language, options.version, '', names.seperator );
+				var folderName = sanitise.getFolder( options.brand, fileData.type, fileData.variant, fileData.language, options.version, '', names.seperator );
 				var folderLocation = destination.root + '/'+ folderName;
 				var destinationJade = folderLocation + structure.html;
+				
+				
+				//console.log( options.brand, fileData.type, fileData.variant, fileData.language, options.version, '', names.seperator );
+				console.log( fileData );
+				console.log( folderName );
 				
 				// now we have determined the file name, we can do something
 				// special with the destinations...

@@ -41,18 +41,26 @@ gulp.task('templates', function () {
 	// NB. If this is empty, we do not create those templates
 	var languages 	= options.languages.length ? options.languages : [''];
 	// default language if there is not one specified in the options
-	var language 	= '';
+	var language 	= languages[0];
 	
 	// sizes for the adverts
 	var sizes 		= options.sizes;
 	var names 		= config.names;
 	
 	// Requested variations in these campaigns...
-	var variants	= options.variants;
-	var variant		= '';
+	var variants	= options.variants.length ? options.variants : [''];
+	var variant		= variants[0];
 	
 	// a way of doing multiple gulp streams simultaneously
 	var merged 		= merge();
+	
+	// check to see if variants is empty and if so trip error
+	if ( variants.length < 1 )
+	{
+		console.error("Campaign does not feature variance");
+		return merged;
+	}
+	
 	
 	// Loop through variants
 	for ( var v=0, a=variants.length; v < a; v++)
@@ -74,12 +82,18 @@ gulp.task('templates', function () {
 				var size = sizes[ type ];
 				var file = sanitise.getTemplate( type, variant, language,'.jade', names.seperator );
 
+				var variation = variant || 'unknown';
+				
 				//file = file.replace('template.jade', type+'.jade');
 				var jade = gulp.src( template )
 						.pipe( replace(/#{title}/gi, options.title) )
 						.pipe( replace(/#{version}/, options.version) )
 						.pipe( replace(/#{type}/gi, type ) )
-						.pipe( replace(/#{variant}/gi, variant ) )
+						.pipe( replace(/#{typeLowercase}/gi, type.toLowerCase() ) )
+						
+						// we need to make sure that the variant is 
+						.pipe( replace(/#{variant}/gi, variation ) )
+						
 						.pipe( replace(/#{width}/gi, size.w) )
 						.pipe( replace(/#{height}/gi, size.h) )
 						//.pipe( replace(/base.jade/, type+'.base.jade') )

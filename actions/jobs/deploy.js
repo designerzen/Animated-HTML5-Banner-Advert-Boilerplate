@@ -15,7 +15,7 @@ gulp.task( 'deploy', function(callback) {
 	var setup 			= config.build;
 	
 	// overwrite settings here...
-	setup.sourceMaps 	= true;
+	setup.sourceMaps 	= false;
 	setup.compress 		= false;
 	//setup.destination 	= 'dist';
 	

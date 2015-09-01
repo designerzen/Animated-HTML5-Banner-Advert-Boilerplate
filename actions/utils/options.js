@@ -20,7 +20,7 @@ if ( !fs.existsSync( fileName ) )
 
 // use fs to load in the options with comments
 var options = fs.readFileSync(fileName, 'utf-8');
-var optionsFiltered = stripJsonComments( options )
+var optionsFiltered = stripJsonComments( options );
 
 // Export
 module.exports = JSON.parse( '{' + optionsFiltered + '}' );

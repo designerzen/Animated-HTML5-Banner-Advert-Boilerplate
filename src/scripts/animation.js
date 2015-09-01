@@ -61,7 +61,8 @@ var Animations = (function(){
 			durationZoomIn 		= 1,
 			durationZoomOut 	= 1,
 			durationFadeIn 		= 1,
-			durationFadeOut 	= 1;
+			durationFadeOut 	= 1,
+			pauseDuration 		= 2;
 			
 		// create a home for our animations
  		// timeline = new TimelineLite( {onComplete:this.onFinish, onCompleteParams:["test1", "test2"], onCompleteScope:this } );

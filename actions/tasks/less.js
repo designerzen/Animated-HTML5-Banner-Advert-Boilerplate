@@ -31,7 +31,7 @@ gulp.task('less', function() {
 	
 	var languages 		= options.languages.length ? options.languages : [''];
 	var types 			= options.types;
-	var variants		= options.variants;
+	var variants		= options.variants.length ? options.variants : [''];
 	
 	// add missing browser prefixes
 	var plugins 		= options.compress.css ? [ autoprefix, cleancss ] : [ autoprefix ];// [ autoprefix, cleancss ] ;
@@ -39,12 +39,10 @@ gulp.task('less', function() {
 	//var destinationsLess = destination.styles;	//folderLocation + '/' + structure.styles;
 	
 	// destination folders...
-	//var destinationsLess = sanitise.getDestinations( options.brand, types, structure.styles );	//folderLocation + '/' + structure.styles;
+	//var destinationsLess = sanitise.getDestinationGlobs( options.brand, types, structure.styles );	//folderLocation + '/' + structure.styles;
 	// options.brand, type, variant, language, options.version, '', names.seperator );
-	var destinationsLess = sanitise.getDestinations( options.brand, types, variants, languages, options.version, '', names.seperator, structure.styles, destination.root );	//folderLocation + '/' + structure.styles;
+	var destinationsLess = sanitise.getDestinationGlobs( options.brand, types, variants, languages, options.version, '', names.seperator, structure.styles, destination.root );	//folderLocation + '/' + structure.styles;
 
-	//console.log( destinationsLess );
-	
 	return 	gulp.src( source.less )
 			// only update changed styles
 			//.pipe( changed( destination.styles ) )

@@ -115,9 +115,9 @@
 	display:block;
 	position:relative;
 	overflow:hidden;    // make sure that the elements can fall outside this
-	background:@col-bg url( '@{path-png}wall.png' ) repeat-x;
+	background:@col-bg;
 }
-
+/*
 // Resize
 .banner{
 	width:@width-banner;
@@ -258,15 +258,17 @@
 	position:absolute;
 }
 
-// Full sized frames
+// set up main frame
 .frame{
-	width:100%;
+	display:block;
+    width:100%;
     height:100%;
-    //visibility: hidden;
+    visibility: hidden;
 	position:absolute;
-	overflow:hidden;
+	overflow:hidden;    // make sure that the elements can fall outside this
+	top:0;
+	left:0;
 }
-
 #first{
     z-index:1;
 }

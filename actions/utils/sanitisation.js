@@ -1,3 +1,6 @@
+var REMOVER = /\.[^/.]+$/;
+
+
 ///////////////////////////////////////////////////////////////////////////////////
 // add Text to a string if conditions are met
 ///////////////////////////////////////////////////////////////////////////////////
@@ -55,6 +58,8 @@ var getTemplate = function( type, variant, language, suffix, seperator )
 // Best served in the format :
 // width x height _ variant _ year
 // options.brand, type, variant, language, options.version, "", ".zip",  options.seperator );
+// Feel free to customize this however You feel Best appropriate
+// eg. Online_Bnr_300x250_dynamic_1D_4S_Captify_abz.swf
 ///////////////////////////////////////////////////////////////////////////////////
 var getZip = function( brand, type, variant, language, version, prefix,suffix, seperator )
 {
@@ -70,15 +75,15 @@ var getZip = function( brand, type, variant, language, version, prefix,suffix, s
 	//file = appendTo( file, type, seperator );
 	
 	// If we have a variant, add it here
-	file = appendTo( file, variant, seperator );
+	// file = appendTo( file, variant, seperator );
 	
 	// same with the language suffix
-	file = appendTo( file, language, seperator );
+	//file = appendTo( file, language, seperator );
 	
 	// Suffix endings
 	file = appendTo( file, suffix, seperator );
 	
-	file = appendTo( file, version, seperator );
+	// file = appendTo( file, version, seperator );
 	
 	// sanitise all but extension...
 	file = sanitiseName( file );
@@ -121,7 +126,7 @@ var getName = function( brand, type, variant, language, prefix, suffix, extensio
 	file = appendTo( file, suffix, seperator );
 	
 	// sanitise all but extension...
-	file = sanitiseName( file );
+	// file = sanitiseName( file );
 	
 	// make sure we have an extension and append
 	if (extension) file += extension;
@@ -137,10 +142,13 @@ var getName = function( brand, type, variant, language, prefix, suffix, extensio
 // and spaces are a no-go too...
 // and it turns out... dots too!
 ///////////////////////////////////////////////////////////////////////////////////
+var sizes     	= require('./sizes.js');
+	
 var getFolder = function( brand, type, variant, language, prefix, suffix, seperator )
 {
 	var folder = '';
-	
+	var dimensions = sizes.toSize( type );
+				
 	// Prefix!
 	folder = appendTo( folder, prefix, seperator, false  );
 	
@@ -162,7 +170,8 @@ var getFolder = function( brand, type, variant, language, prefix, suffix, sepera
 	// sanitise all but extension...
 	folder = sanitiseName( folder );
 
-	return folder.toLowerCase();
+	return "Online_Bnr_"+dimensions+"_dynamic_1D_4S";
+	//return folder.toLowerCase();
 };
 
 
@@ -171,34 +180,152 @@ var getFolder = function( brand, type, variant, language, prefix, suffix, sepera
 ///////////////////////////////////////////////////////////////////////////////////
 
 var gulp = require('gulp');
-var getDestinations = function( brand, types, variants, languages, prefix, suffix, seperator, subFolder, parent )
+var getDestinationGlobs = function( brand, types, variants, languages, prefix, suffix, seperator, subFolder, parent )
 {
 	var destinations = [];
-	
-	// Variants :
-	// loop through variants Array and create our subFolder list
-	for ( var v=0, l=variants.length; v < l; ++v)
+	if (!variants) variants = [];
+	if (!languages) languages = [];
+	// Languages!
+	for ( var z=0, p=languages.length; z < p; ++z)
 	{
-		var variant = variants[v];
-		var language = '';
-		// languages :
+		var language = languages[z];
 		
-		// Types : 
-		// loop through types Array and create our subFolder list
-		for ( var t=0, q=types.length; t < q; ++t)
+		// Variants :
+		// loop through variants Array and create our subFolder list
+		for ( var v=0, l=variants.length; v < l; ++v)
 		{
-			var type = types[t];
-			// ( brand, type, variant, language, prefix, suffix, seperator )
-			var destination = parent + '/' + getFolder( brand, type, variant, language, prefix, suffix, seperator ) + '/' + subFolder;
-			var glob = gulp.dest( destination ) ;
-			destinations.push( glob );
+			var variant = variants[v];
+			
+			
+			// Types : 
+			// loop through types Array and create our subFolder list
+			for ( var t=0, q=types.length; t < q; ++t)
+			{
+				var type = types[t];
+				// ( brand, type, variant, language, prefix, suffix, seperator )
+				var destination = parent + '/' + getFolder( brand, type, variant, language, prefix, suffix, seperator ) + '/' + subFolder;
+				var glob = gulp.dest( destination ) ;
+				destinations.push( glob );
+			}
+			
 		}
 		
+		
 	}
-	
 	return destinations;
 };
 
+///////////////////////////////////////////////////////////////////////////////////
+// Fetch an ARRAY of all destinations root folders such as destinations/mpu/ etc.
+///////////////////////////////////////////////////////////////////////////////////
+var getDestinationPaths = function( brand, types, variants, languages, prefix, suffix, seperator, subFolder, parent )
+{
+	var destinations = [];
+	if (!variants) variants = [];
+	if (!languages) languages = [];
+	// Languages!
+	for ( var z=0, p=languages.length; z < p; ++z)
+	{
+		var language = languages[z];
+		
+		// Variants :
+		// loop through variants Array and create our subFolder list
+		for ( var v=0, l=variants.length; v < l; ++v)
+		{
+			var variant = variants[v];
+			
+			
+			// Types : 
+			// loop through types Array and create our subFolder list
+			for ( var t=0, q=types.length; t < q; ++t)
+			{
+				var type = types[t];
+				// ( brand, type, variant, language, prefix, suffix, seperator )
+				var destination = parent.length ? parent + '/' : '';
+				destination += getFolder( brand, type, variant, language, prefix, suffix, seperator ) + '/' + subFolder;
+				
+				destinations.push( destination );
+			}
+			
+		}
+		
+		
+	}
+	return destinations;
+};
+
+///////////////////////////////////////////////////////////////////////////////////
+// Detemine the file 
+///////////////////////////////////////////////////////////////////////////////////
+var determineDataFromFilename = function( path, options, seperator )
+{
+	seperator = seperator || '-';
+	// extrapolate the file name from the glob
+	// this replace simply removes the file extension
+	var data = {};
+	var filename 		= path.replace(REMOVER, "");
+	var parts 			= filename.split( seperator );
+	var count 			= 0;
+	
+	data.type 			= parts[ count ];
+	
+	console.log( filename );
+	//console.log( options.languages );
+	//console.log( options.variants );
+	
+	// check to see if we have any language files specified...
+	if ( parts.length > 1 )
+	{
+		data.language = options.languages.length > 0 ? parts[ ++count ].replace(REMOVER, "") : '';
+		data.variant = options.variants.length > 0 ? parts[ ++count ] : '';
+	}else{
+		data.language = '';
+		data.variant = '';
+	}
+	
+	return data;
+};
+
+//
+// Feed this is a file name and it will return the type, variant and language as an object
+// IF it can work them out...
+// IF NOT, it will just return empty object entries
+var determineImageDestination = function( file, options )
+{
+	// then remove the file extension
+	var data 			= {};
+	data.name 			= file;
+	data.variant		= '';
+	data.language 		= '';
+	data.extension		= file.substr(file.lastIndexOf('.')+1);
+	
+	var sortedTypes = options.types.sort(function(a, b){
+	  return b.length - a.length; // ASC -> a - b; DESC -> b - a
+	});
+	
+	
+	// Only test for TYPE at this point...
+	var types = sortedTypes.join("|");
+	// We want it to consider the uppercase variants too
+	var regex = new RegExp(types,'ig');	// i for ignore case, g for global match
+	
+	var test = regex.test( file );
+	if ( test ) 
+	{
+		var match = file.match( regex );
+		// At least one match
+		//console.log( "MATCH " , match );
+		data.match = true;
+		// determine match...
+		data.type = match[0];
+	}else{
+		//console.log( "NON-MATCH " + file );
+		data.match = false;
+		data.type = 'unknown';
+	}
+	
+	return data;
+};
 
 ///////////////////////////////////////////////////////////////////////////////////
 // File name format for creating templates
@@ -213,11 +340,15 @@ var sanitisedFileName = function( brand, type, variant, suffix ){
 	return name.toLowerCase();
 };
 
+
 // Public
 module.exports = {
+	determineDataFromFilename:determineDataFromFilename,
+	determineImageDestination:determineImageDestination,
 	getName:getName,
 	getFolder:getFolder,
-	getDestinations:getDestinations,
+	getDestinationPaths:getDestinationPaths,
+	getDestinationGlobs:getDestinationGlobs,
 	getTemplate:getTemplate,
 	getZip:getZip,
 	sanitise:sanitisedFileName

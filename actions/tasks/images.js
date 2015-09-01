@@ -42,12 +42,13 @@ var createImageGlob = function( srcImages, filePart, variant, fileTypes, negate,
 	
 gulp.task('images', function() {
 	
+	var merge 			= require('merge-stream');			// combine multiple streams!
 	var imagemin   		= require('gulp-imagemin');
 	var browserSync 	= require('browser-sync');
-	var multistream 	= require('gulp-multistream');
 	var changed    		= require('gulp-changed');
 	var newer 			= require('gulp-newer');
 	var tap 			= require('gulp-tap');
+	var gulpif 			= require('gulp-if');				// conditional compiles
 	var path 			= require('path');
 	
 	var config      	= require('../config');
@@ -63,23 +64,93 @@ gulp.task('images', function() {
 	var fileTypes		= config.fileTypes;
 	
 	var languages 		= options.languages.length ? options.languages : [''];
-	var types 			= options.types;
-	var variants		= options.variants;
+	var types 			= options.types.length ? options.types : [''];
+	var variants		= options.variants.length ? options.variants : [''];
 	
-	var destinationsImages = sanitise.getDestinations( options.brand, types, variants, languages, options.version, '', names.seperator, structure.images, destination.root );	//folderLocation + '/' + structure.styles;
+	var destinationsImages = sanitise.getDestinationPaths( options.brand, types, variants, languages, options.version, '', names.seperator, structure.images, destination.root );	//folderLocation + '/' + structure.styles;
 	
-	console.log( source.images );
-	console.log( destinationsImages );
+	//console.log( source.images );
+	//console.log( destinationsImages );
 	
 	// Simple task that does nothing clever to the checked images
-	return gulp.src( source.images )
-				//.pipe( newer(destination.images) ) 					// Ignore unchanged files
-				.pipe( gulpif( !options.compress.images, imagemin() ) ) // optimise
-				//.pipe( gulp.dest(destination.images) )
-				.pipe( multistream.apply(undefined, destinationsImages) )
-				.pipe( browserSync.reload({stream:true}) );
-	
-	
+	return gulp.src( source.images, {base : '.'} )
+				//.pipe( newer(destination.images) ) 						// Ignore unchanged files
+				.pipe( tap(function (file,t) {
+					
+					// first of all fetch just the file name of the image
+					var fileName = path.basename(file.path);
+					var imageData = sanitise.determineImageDestination( fileName, options );
+					//console.log( file.path );
+					//console.log( file );
+					console.log( imageData );
+					//console.log( t );
+					
+					var destinations = [];
+					
+					// Does this image file name contain a type?
+					if ( imageData.match === true )
+					{
+						var matchedLanguages;
+						
+						// Loop through each language and create the relevant outputs if a language is NOT specified...
+						if ( imageData.language.length > 0 )
+						{
+							// we have a language specified in the image, so let us use only this one...
+							matchedLanguages = [ imageData.language ];
+						}else{
+							// we do not have a single language specified for THIS image, so let us assume this is multi-language image
+							matchedLanguages = languages;
+						}
+						
+						// loop through matched Languages and determine the detinations...
+						matchedLanguages.map(function( language ){
+							
+							// Yes it does, so let us use a solo destination
+							var folderName = sanitise.getFolder( options.brand, imageData.type, imageData.variant, language, options.version, '', names.seperator );
+							// If there are multiple languages, we must create thte folder here...
+							var dest = path.join( destination.root, folderName, structure.images );  // imageData.extension;
+							destinations.push( dest );
+						});
+						
+						
+					}else{
+						
+						// No it doesn't, so let's pipe it to all image folders.
+						destinations = destinationsImages;
+					}
+					
+					//console.log(destinationsImages);
+					
+					var tasks = destinations.map(function(element){
+						return gulp.src(file.path)
+							.pipe( gulpif( !options.compress.images, imagemin() ) )	// optimise
+							.pipe( gulp.dest(
+								function( file ) { 
+									// source path
+									var sourcePath = path.dirname(file.path); 
+									var sourceFolders = sourcePath.split(path.sep);
+									var sourceFolder = sourceFolders[ sourceFolders.length-1 ];
+									var output = path.join( element, sourceFolder ); 
+									
+									//console.log("Image cloning to type folder : "+element );
+									//console.log(' dir : '+dir );
+									//console.log(' ext : '+path.extname(file.path) );
+									//console.log(' element : '+element );
+									//console.log(' output : '+output );
+									//console.log(' sourceFolders : '+sourceFolder );
+									
+									return output;
+								}
+							
+							
+							) )
+							.pipe( browserSync.reload({stream:true}) );
+					});
+
+					return merge(tasks);
+				}));
+});
+
 	/*
 	return gulp.src( source.images )
 	
@@ -104,7 +175,7 @@ gulp.task('images', function() {
 				
 			
 		*/
-});
+
 
 //
 //var gulp = require('gulp');

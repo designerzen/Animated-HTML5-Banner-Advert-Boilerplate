@@ -22,9 +22,9 @@ gulp.task('fonts', function() {
 	
 	var languages 		= options.languages.length ? options.languages : [''];
 	var types 			= options.types;
-	var variants		= options.variants;
+	var variants		= options.variants.length ? options.variants : [''];
 	
-	var destinationsFonts = sanitise.getDestinations( options.brand, types, variants, languages, options.version, '', names.seperator, structure.fonts, destination.root );	//folderLocation + '/' + structure.styles;
+	var destinationsFonts = sanitise.getDestinationGlobs( options.brand, types, variants, languages, options.version, '', names.seperator, structure.fonts, destination.root );	//folderLocation + '/' + structure.styles;
 
 	return gulp.src( source.fonts )
 		//.pipe( newer(destination.fonts) ) // Ignore unchanged files

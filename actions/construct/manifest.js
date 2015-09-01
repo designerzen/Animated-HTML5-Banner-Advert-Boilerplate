@@ -35,9 +35,9 @@ gulp.task('manifest', function() {
 	var language 	= '';
 	
 	// Requested variations in these campaigns...
-	var variants	= options.variants;
-	var variant		= '';
-
+	var variants	= options.variants.length ? options.variants : [''];
+	var variant		= variants[0];
+	
 	// combine streams
 	var merged 		= merge();
 	

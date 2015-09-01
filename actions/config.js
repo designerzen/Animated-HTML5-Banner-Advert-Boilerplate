@@ -16,6 +16,7 @@ var
 	// Source files folder relative to the root
 	SOURCE_FOLDER 			= './src',
 	// Where the initial build occurs (debugable)
+	// can be either "./debug" "./build" "./distribution"
 	BUILD_FOLDER 			= './debug',
 	// Once debugging is complete, copy to server ready files here
 	DISTRIBUTION_FOLDER 	= './dist';		
@@ -111,6 +112,7 @@ module.exports =
 			//SOURCE_FOLDER+'/'+sourceFolders.scripts+'/vendor/fontscaler.js', 
 			SOURCE_FOLDER+'/'+sourceFolders.scripts+'/utils.js', 
 			SOURCE_FOLDER+'/'+sourceFolders.scripts+'/user/**/*.js', 
+			SOURCE_FOLDER+'/'+sourceFolders.scripts+'/aninmation.js', 
 			SOURCE_FOLDER+'/'+sourceFolders.scripts+'/!(*flashtrack)*.js', 
 			SOURCE_FOLDER+'/'+sourceFolders.scripts+'/flashtrack.js', 
 			SOURCE_FOLDER+'/'+sourceFolders.scripts+'/run.js' 
@@ -141,7 +143,8 @@ module.exports =
 		manifest:"manifest.js",
 		scripts:JAVASCRIPT_FILE_NAME,
 		template:SOURCE_FOLDER+'/'+sourceFolders.html+'/templates/template.jade',
-		seperator:'-'
+		demo:SOURCE_FOLDER+'/'+sourceFolders.html+'/templates/demo.jade',
+		seperator:'_'
 	},
 
 	browserSync: {

@@ -5,6 +5,7 @@ gulp.task('icons', function() {
 	var newer 			= require('gulp-newer');
 	var changed    		= require('gulp-changed');
 	var imagemin   		= require('gulp-imagemin');
+	var gulpif 			= require('gulp-if');				// conditional compiles
 	var browserSync 	= require('browser-sync');
 	var multistream 	= require('gulp-multistream');
 	
@@ -26,7 +27,7 @@ gulp.task('icons', function() {
 	var types 			= options.types;
 	var variants		= options.variants;
 	
-	var destinationsIcons = sanitise.getDestinations( options.brand, types, variants, languages, options.version, '', names.seperator, structure.icons, destination.root );	//folderLocation + '/' + structure.styles;
+	var destinationsIcons = sanitise.getDestinationGlobs( options.brand, types, variants, languages, options.version, '', names.seperator, structure.icons, destination.root );	//folderLocation + '/' + structure.styles;
 
 	return gulp.src( source.icons )
 			//.pipe( newer(destination.icons) ) 						// Only overwrite older files
