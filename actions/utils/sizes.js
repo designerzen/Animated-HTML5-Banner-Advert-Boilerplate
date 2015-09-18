@@ -1,4 +1,3 @@
-
 // load in options and determine the sizes...
 var options 	= require('./options.js');
 //var config     	= require('../config');
@@ -42,12 +41,7 @@ var convertToDevice = function( size ){
     
     switch (size )
     {
-        case "mobilebanner":
-        case "mobilempu":
-        case "mobileleaderboard":
-            return "mobile";
-			
-		default:     
+        default:     
             return "desktop";
     }
 };

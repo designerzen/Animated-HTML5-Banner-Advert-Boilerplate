@@ -46,7 +46,7 @@ gulp.task('manifests', function() {
 			
 				// extrapolate the file name from the glob
 				var filePath 		= path.basename(file.path);
-				var fileData 		= sanitise.determineDataFromFilename( filePath, options );
+				var fileData 		= sanitise.determineDataFromFilename( filePath, options, names.seperator );
 				
 				// ( brand, type, variant, language, prefix, suffix, seperator )
 				var folderName = sanitise.getFolder( options.brand, fileData.type, fileData.variant, fileData.language, options.version, '', names.seperator );
@@ -62,8 +62,8 @@ gulp.task('manifests', function() {
 				//console.log( parts );
 				//console.log( source.manifests );
 				//console.log( filename );
-				console.log( fileData );
-				console.log( folderName );
+				//console.log( fileData );
+				//console.log( folderName );
 				//console.log( folderLocation );
 				//console.log( destinationManifests );
 				//

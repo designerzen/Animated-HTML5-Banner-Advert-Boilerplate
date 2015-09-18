@@ -41,8 +41,8 @@ gulp.task('jade', function () {
 				
 				
 				//console.log( options.brand, fileData.type, fileData.variant, fileData.language, options.version, '', names.seperator );
-				console.log( fileData );
-				console.log( folderName );
+				//console.log( fileData );
+				//console.log( folderName );
 				
 				// now we have determined the file name, we can do something
 				// special with the destinations...
@@ -85,3 +85,4 @@ gulp.task('jade', function () {
 							.pipe(gulp.dest( destinationJade ))
 			}));
 });
+ 

@@ -69,21 +69,21 @@ var getZip = function( brand, type, variant, language, version, prefix,suffix, s
 	file = appendTo( file, prefix, seperator, false  );
 	
 	// If we have a variant, add it here
-	//file = appendTo( file, brand, seperator );
+	file = appendTo( file, brand, seperator );
 	
 	// add type
-	//file = appendTo( file, type, seperator );
+	file = appendTo( file, type, seperator );
 	
 	// If we have a variant, add it here
-	// file = appendTo( file, variant, seperator );
+	file = appendTo( file, variant, seperator );
 	
 	// same with the language suffix
-	//file = appendTo( file, language, seperator );
+	file = appendTo( file, language, seperator );
 	
 	// Suffix endings
 	file = appendTo( file, suffix, seperator );
 	
-	// file = appendTo( file, version, seperator );
+	file = appendTo( file, version, seperator );
 	
 	// sanitise all but extension...
 	file = sanitiseName( file );
@@ -260,7 +260,7 @@ var determineDataFromFilename = function( path, options, seperator )
 {
 	// let us split by multiple seperators including the user defined one...
 	//var seperators 		= [ '\.', '\-', '\_' ];//
-	var seperators 		= [ '.' ];//,'\\-'
+	var seperators 		= [ '.','\\-' ];//,'\\-'
 	
 	// check to see if seperator is specified and is not in our seperators....
 	if ( seperators.indexOf(seperator) === -1 ) seperators.push( seperator );
@@ -291,6 +291,7 @@ var determineDataFromFilename = function( path, options, seperator )
 	
 	return data;
 };
+
 
 //
 // Feed this is a file name and it will return the type, variant and language as an object

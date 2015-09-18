@@ -34,7 +34,7 @@ gulp.task('less', function() {
 	var variants		= options.variants.length ? options.variants : [''];
 	
 	// add missing browser prefixes
-	var plugins 		= options.compress.css ? [ autoprefix, cleancss ] : [ autoprefix ];// [ autoprefix, cleancss ] ;
+	var plugins 		= options.compress.css && setup.compress ? [ autoprefix, cleancss ] : [ autoprefix ];// [ autoprefix, cleancss ] ;
 	
 	//var destinationsLess = destination.styles;	//folderLocation + '/' + structure.styles;
 	
@@ -57,13 +57,10 @@ gulp.task('less', function() {
 			// any imports and mixins
 			.pipe( less(
 				{
-					compress:options.compress.css,
 					plugins:plugins
 				}
 			) )
-			.on('error', function(err) {
-                console.error( 'Error with LESS.js', err.message);
-            })
+			.on('error', console.error.bind(console) )
 			//.pipe( please({ minifier: options.compress }) )
 			.pipe( gulpif( setup.sourceMaps, sourcemaps.write( destination.maps ) ) )
 			

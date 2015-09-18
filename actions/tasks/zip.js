@@ -75,7 +75,7 @@ gulp.task('zip', function(cb) {
 				
 				var dimensions = size.toSize( type );
 				
-				var fileName = sanitise.getZip( options.brand, type, variant, language, options.version, 'Online_Bnr_'+dimensions, "dynamic_1D_4S",  options.seperator );
+				var fileName = sanitise.getZip( options.brand, type, variant, language, options.version, dimensions, "",  options.seperator );
 				
 				
 				var filesGlob = folderLocation + glob;
@@ -109,3 +109,4 @@ gulp.task('zip', function(cb) {
 	
 	return merged;
 });
+

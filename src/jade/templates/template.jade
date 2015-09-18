@@ -10,7 +10,9 @@
 //- Project 		#{title}
 //- Version 		#{version}
 //- Type 			#{type}
+//- Type 			#{typeLowercase}
 //- Variant 		#{variant}
+//- Language 		#{language}
 //- Width			#{width}
 //- Height			#{height}
 
@@ -24,6 +26,7 @@ block content
 			header
 				h1
 				h2
+				
 			//- You can omit the src parameter if the asset is going to be dynamically added
 			img.bg( src="img/jpg/bg_#{type}.png", width="#{width}", height="#{height}" )
 			img#logo( src="img/png/logo_#{type}.png" )
@@ -39,4 +42,4 @@ block content
 				a#button( title="Go", href='#' ) Call To Action
 				
 block scripts
-	script(src='http://cdn.flashtalking.com/frameworks/js/api/2/7/html5API.js')
+	script(src='http://cdn.flashtalking.com/frameworks/js/api/2/8/html5API.js')
