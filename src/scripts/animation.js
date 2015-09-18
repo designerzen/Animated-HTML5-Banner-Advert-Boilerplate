@@ -18,13 +18,14 @@ var Animations = (function(){
 
    // minifiable shortcuts
     var 
-		getElementById = function( id, element ){
-			element = element || document;
-			return document.getElementById(id);
-		},
-		getElementByClass = function( id, index ){
-			return document.getElementsByClassName(id)[ index || 0 ];
-		};
+
+       getById = function( id ){
+           return document.getElementById(id);
+       },
+       getByClass = function( id, index ){
+           var classes = document.getElementsByClassName(id);
+           return index ? classes[ index ] : classes;
+       };
     
 	var
 		timeline,			// Main Animation that hold the child animations
@@ -41,15 +42,15 @@ var Animations = (function(){
     // This creates all of our animation elements
     Animations.prototype.assign = function()
     {
-        variant 			= getElementById('variant').className || 'unknown';
-		elements.content	= getElementById('content');
-		elements.first 		= getElementById('first');
-		elements.second 	= getElementById('second');
-		elements.third 		= getElementById('third');
-		elements.fourth 	= getElementById('fourth');
-		elements.fifth 		= getElementById('fifth');
-		elements.cta 		= getElementById('cta');
-		elements.logo 		= getElementById('logo');
+        variant 			= getById('variant').className || 'unknown';
+		elements.content	= getById('content');
+		elements.first 		= getById('first');
+		elements.second 	= getById('second');
+		elements.third 		= getById('third');
+		elements.fourth 	= getById('fourth');
+		elements.fifth 		= getById('fifth');
+		elements.cta 		= getById('cta');
+		elements.logo 		= getById('logo');
 
         this.construct();
     };

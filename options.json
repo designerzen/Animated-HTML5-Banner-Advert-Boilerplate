@@ -131,17 +131,8 @@ and removing redundant whitespace in the html?
 	// Minify, Uglify and Compress the Javascripts
 	"js"		:true,
 	
-	// Image Squishing Options - How much to squish the Images for the release build
-	"imageOptions" : {
-		// Select an optimization level between 0 and 7
-		"optimizationLevel"           : 3,
-		// Lossless conversion to progressive
-		"progressive"                 : false,
-		// Interlace gif for progressive rendering.
-		"interlaced"                  : false
-	},
-
-	// HTML Minification Options - How much to squish the HTML for the release build
+	// HTML Minification Options - 
+	// How much to squish the HTML for the release build
 	// NB. All options : https://github.com/kangax/html-minifier
 	"htmlOptions" : {
 		"removeComments"    		: true,
@@ -155,9 +146,50 @@ and removing redundant whitespace in the html?
 		"minifyJS"          		: true,
 		"keepClosingSlash"   		: true,
 		"lint"						: false
-	}
+	},
 
+	// Image Squishing Options - 
+	// How much to squish the Images for the release build
+	"imageOptions" : {
+		// Select an optimization level between 0 and 7
+		"optimizationLevel"           : 4,
+		// Lossless conversion to progressive
+		"progressive"                 : false,
+		// Interlace gif for progressive rendering.
+		"interlaced"                  : false
+	},
+
+	// Javascript Squishing Options -
+	"jsOptions" : {
 	
+		// Pass false to skip mangling names.
+		"mangle" : true,
+		// Pass an object if you wish to specify additional output options. 
+		// The defaults are optimized for best compression.
+		// see : http://lisperator.net/uglifyjs/codegen
+		"output" : {
+			"indent_start"  : 0,     	// start indentation on every line (only when `beautify`)
+			"indent_level"  : 4,     	// indentation level (only when `beautify`)
+			"quote_keys"    : false, 	// quote all keys in object literals?
+			"space_colon"   : true,  	// add a space after colon signs?
+			"ascii_only"    : false, 	// output ASCII-safe? (encodes Unicode characters as ASCII)
+			"inline_script" : false, 	// escape "</script"?
+			"width"         : 80,    	// informative maximum line width (for beautified output)
+			"max_line_len"  : 32000, 	// maximum line length (for non-beautified output)
+			"ie_proof"      : true,  	// output IE-safe code?
+			"beautify"      : false, 	// beautify output?
+			"source_map"    : null,  	// output a source map
+			"bracketize"    : false, 	// use brackets every time?
+			"comments"      : false, 	// output comments?
+			"semicolons"    : true  	// use semicolons to separate statements? (otherwise, newlines)
+		}
+		// Pass an object to specify custom compressor options.
+		// Pass false to skip compression completely.
+		// compress
+		// A convenience option for options.output.comments. 
+		// Defaults to preserving no comments.
+		// "preserveComments" : "all", "license", "function"
+	}
 },
 
 /* 

@@ -18,6 +18,7 @@ gulp.task('scripts', function( cb ) {
 	var gulpif 			= require('gulp-if');
 	var concat 			= require('gulp-concat');
 	var multistream 	= require('gulp-multistream');
+	var stripDebug 		= require('gulp-strip-debug');
 	
 	var config     		= require('../config');
 	var options 		= require('../utils/options.js');
@@ -61,6 +62,9 @@ gulp.task('scripts', function( cb ) {
 				.pipe( concat( names.scripts ) )    
 				.pipe( gulpif( options.compress.js, uglify() ) )    
 				
+				// remove alerts() and console.logs
+				.pipe( gulpif( options.compress.js, stripDebug() ) )    
+
 				// save out
 				//.pipe( gulp.dest(destination.scripts) );
 				.pipe( multistream.apply(undefined, destinationsScripts) );

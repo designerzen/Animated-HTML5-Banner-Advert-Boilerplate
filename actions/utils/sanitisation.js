@@ -170,8 +170,7 @@ var getFolder = function( brand, type, variant, language, prefix, suffix, sepera
 	// sanitise all but extension...
 	folder = sanitiseName( folder );
 
-	return "Online_Bnr_"+dimensions+"_dynamic_1D_4S";
-	//return folder.toLowerCase();
+	return folder.toLowerCase();
 };
 
 
@@ -259,19 +258,26 @@ var getDestinationPaths = function( brand, types, variants, languages, prefix, s
 ///////////////////////////////////////////////////////////////////////////////////
 var determineDataFromFilename = function( path, options, seperator )
 {
-	seperator = seperator || '-';
+	// let us split by multiple seperators including the user defined one...
+	//var seperators 		= [ '\.', '\-', '\_' ];//
+	var seperators 		= [ '.' ];//,'\\-'
+	
+	// check to see if seperator is specified and is not in our seperators....
+	if ( seperators.indexOf(seperator) === -1 ) seperators.push( seperator );
+	
+	//var divider 		= "/(?:"+seperators+")+/";
+	//var divider 		= "(?:"+ seperators.join('|') +")+";
+	//var reg 			= new RegExp( seperators.join('|'), 'g' );
+	var reg 			= new RegExp('[' + seperators.join('') + ']+', 'g');
+	
 	// extrapolate the file name from the glob
 	// this replace simply removes the file extension
-	var data = {};
+	var data 			= {};
 	var filename 		= path.replace(REMOVER, "");
-	var parts 			= filename.split( seperator );
+	var parts 			= filename.split( reg );
 	var count 			= 0;
 	
 	data.type 			= parts[ count ];
-	
-	console.log( filename );
-	//console.log( options.languages );
-	//console.log( options.variants );
 	
 	// check to see if we have any language files specified...
 	if ( parts.length > 1 )
