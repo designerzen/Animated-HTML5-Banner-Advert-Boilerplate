@@ -8,15 +8,15 @@
 
 // Font-Face :
 // http://www.smashingmagazine.com/2013/02/14/setting-weights-and-styles-at-font-face-declaration/
-// Web pages that use style linking crash BlackBerry 9900 browsers on a regular basis. 
+// Web pages that use style linking crash BlackBerry 9900 browsers on a regular basis.
 // They also crash iPad 1 browsers 100% of the time.
-// Since Chrome-windows doesn't currently anti-alias WOFFs, 
-// SVG can be replaced right after the EOT 
+// Since Chrome-windows doesn't currently anti-alias WOFFs,
+// SVG can be replaced right after the EOT
 // NB. (old IE needs EOT first or will break)
 @font-face {
 	font-family: @font-regular-name;
-	src: url( '@{path-fonts}/@{font-regular-filename}.eot');
-	src: url( '@{path-fonts}/@{font-regular-filename}.eot?#iefix') format('embedded-opentype'),
+	src: url( '@{path-fonts}@{font-regular-filename}.eot');
+	src: url( '@{path-fonts}@{font-regular-filename}.eot?#iefix') format('embedded-opentype'),
 	url( ~'@{path-fonts}@{font-regular-filename}.woff') format('woff'),
 	url( ~'@{path-fonts}@{font-regular-filename}.ttf') format('truetype'),
 	url( ~'@{path-fonts}@{font-regular-filename}.svg#@{font-regular-filename}') format('svg');
@@ -41,7 +41,7 @@
 
 /* ///////////////////////////////////////////////////////////////////////////////////
 
-Multi-Language Pan-Asian Typefaces (One font to rule them all) 
+Multi-Language Pan-Asian Typefaces (One font to rule them all)
 
 Information gleamed from "List of typefaces included with Microsoft Windows"
 http://en.wikipedia.org/wiki/List_of_typefaces_included_with_Microsoft_Windows
@@ -80,7 +80,7 @@ http://www.google.com/fonts/earlyaccess
 	font-family: @family;
 }
 
-/* 
+/*
 
 Simplified Chinese (GB2312)
 -------------------------------
@@ -88,8 +88,8 @@ Country Codes : HK / CH
 
 Windows: Microsoft YaHei / SimHei / SimSun
 
-NB. Mainland Chinese internet users are no longer able to connect to the Google Font API since the government blocked access to Google. 
-Having a Google webfont on your Chinese website basically hangs the loading process for ages for users based in China as the site tries to render the font. 
+NB. Mainland Chinese internet users are no longer able to connect to the Google Font API since the government blocked access to Google.
+Having a Google webfont on your Chinese website basically hangs the loading process for ages for users based in China as the site tries to render the font.
 Sometimes it works, mostly it fails.
 
 from http://www.kendraschaefer.com/2012/06/chinese-standard-web-fonts-the-ultimate-guide-to-css-font-family-declarations-for-web-design-in-simplified-chinese/
@@ -149,7 +149,7 @@ serif: Thonburi
 sans-serif: Thonburi
 monospace: Ayuthaya
 
- 
+
 */
 
 // Sans Serif
