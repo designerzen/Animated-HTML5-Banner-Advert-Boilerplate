@@ -107,13 +107,13 @@ module.exports =
 		icons:		SOURCE_FOLDER+'/'+sourceFolders.icons+'/**/*.+('+fileTypes.icons+')',
 		fonts:		SOURCE_FOLDER+'/'+sourceFolders.fonts+'/**/*.+('+fileTypes.fonts+')',
 		scripts:	[
-			SOURCE_FOLDER+'/'+sourceFolders.scripts+'/vendor/'+tweenEngine+'/**/*.js', 
+			//SOURCE_FOLDER+'/'+sourceFolders.scripts+'/vendor/'+tweenEngine+'/**/*.js', 
 			//SOURCE_FOLDER+'/'+sourceFolders.scripts+'/vendor/trmix*.js', 
 			//SOURCE_FOLDER+'/'+sourceFolders.scripts+'/vendor/fontscaler.js', 
 			SOURCE_FOLDER+'/'+sourceFolders.scripts+'/utils.js', 
 			SOURCE_FOLDER+'/'+sourceFolders.scripts+'/user/**/*.js', 
-			SOURCE_FOLDER+'/'+sourceFolders.scripts+'/aninmation.js', 
-			SOURCE_FOLDER+'/'+sourceFolders.scripts+'/!(*flashtrack)*.js', 
+			SOURCE_FOLDER+'/'+sourceFolders.scripts+'/animation.js', 
+			//SOURCE_FOLDER+'/'+sourceFolders.scripts+'/!(*flashtrack)*.js', 
 			SOURCE_FOLDER+'/'+sourceFolders.scripts+'/flashtrack.js', 
 			SOURCE_FOLDER+'/'+sourceFolders.scripts+'/run.js' 
 		],
