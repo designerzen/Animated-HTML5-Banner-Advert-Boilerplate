@@ -1,4 +1,5 @@
-@font-regular:	'Helvetica-Neue';
+// This gets overwritten in fonts.less by the font you specify
+@font-regular-name:	'Helvetica-Neue';
 @font-size-base: 16px;
 
 @import "fonts";
@@ -16,7 +17,7 @@
 }
 
 html, body{
-	font-family: @font-regular, "Helvetica-Neue", "Helvetica", Arial, sans-serif;
+	font-family: @font-regular-name, "Helvetica-Neue", "Helvetica", Arial, sans-serif;
 	font-size: @font-size-base;		// EXPLICITLY set the font size to a pixel height here to override user's own custom browser settings
 	line-height: 1.5;
 }

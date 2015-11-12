@@ -1,5 +1,5 @@
 var REMOVER = /\.[^/.]+$/;
-
+var UNKNOWN = "unknown";
 
 ///////////////////////////////////////////////////////////////////////////////////
 // add Text to a string if conditions are met
@@ -7,8 +7,8 @@ var REMOVER = /\.[^/.]+$/;
 var appendTo = function( copy, data, seperator, seperate )
 {
 	seperator = seperator || "-";
-	
-	if (data && data.length) 
+
+	if (data && data.length && data != UNKNOWN )
 	{
 		// check to see if we have a trailing seperator...
 		// we DO NOT, so let us add one before our new copy
@@ -47,7 +47,7 @@ var getTemplate = function( type, variant, language, suffix, seperator )
 	// same with the language suffix
 	if (language.length) file += seperator + language;
 	// and add our manifest title
-	
+
 	// add extra bits onto the end based on whether flags exist
 	file += suffix;
 	return file;
@@ -67,30 +67,30 @@ var getZip = function( brand, type, variant, language, version, prefix,suffix, s
 
 	// Prefix!
 	file = appendTo( file, prefix, seperator, false  );
-	
+
 	// If we have a variant, add it here
 	file = appendTo( file, brand, seperator );
-	
+
 	// add type
 	file = appendTo( file, type, seperator );
-	
+
 	// If we have a variant, add it here
 	file = appendTo( file, variant, seperator );
-	
+
 	// same with the language suffix
 	file = appendTo( file, language, seperator );
-	
+
 	// Suffix endings
 	file = appendTo( file, suffix, seperator );
-	
+
 	file = appendTo( file, version, seperator );
-	
+
 	// sanitise all but extension...
 	file = sanitiseName( file );
-	
+
 	// make sure we have an extension and append
 	file += '.zip';
-	
+
 	return file.toLowerCase();
 };
 
@@ -109,28 +109,28 @@ var getName = function( brand, type, variant, language, prefix, suffix, extensio
 
 	// Prefix!
 	file = appendTo( file, prefix, seperator, false  );
-	
+
 	// If we have a variant, add it here
 	file = appendTo( file, brand, seperator );
-	
+
 	// add type
 	file = appendTo( file, type, seperator );
-	
+
 	// same with the language suffix
 	file = appendTo( file, language, seperator );
-	
+
 	// If we have a variant, add it here
 	file = appendTo( file, variant, seperator );
-	
+
 	// Suffix endings
 	file = appendTo( file, suffix, seperator );
-	
+
 	// sanitise all but extension...
 	// file = sanitiseName( file );
-	
+
 	// make sure we have an extension and append
 	if (extension) file += extension;
-	
+
 	return file.toLowerCase();
 };
 
@@ -143,30 +143,30 @@ var getName = function( brand, type, variant, language, prefix, suffix, extensio
 // and it turns out... dots too!
 ///////////////////////////////////////////////////////////////////////////////////
 var sizes     	= require('./sizes.js');
-	
+
 var getFolder = function( brand, type, variant, language, prefix, suffix, seperator )
 {
 	var folder = '';
 	var dimensions = sizes.toSize( type );
-				
+
 	// Prefix!
 	folder = appendTo( folder, prefix, seperator, false  );
-	
+
 	// If we have a variant, add it here
 	folder = appendTo( folder, brand, seperator  );
-	
+
 	// add type
 	folder = appendTo( folder, type, seperator  );
-	
+
 	// same with the language suffix
 	folder = appendTo( folder, language, seperator  );
 
 	// If we have a variant, add it here
 	folder = appendTo( folder, variant, seperator  );
-	
+
 	// Suffix endings
 	folder = appendTo( folder, suffix, seperator  );
-	
+
 	// sanitise all but extension...
 	folder = sanitiseName( folder );
 
@@ -188,15 +188,15 @@ var getDestinationGlobs = function( brand, types, variants, languages, prefix, s
 	for ( var z=0, p=languages.length; z < p; ++z)
 	{
 		var language = languages[z];
-		
+
 		// Variants :
 		// loop through variants Array and create our subFolder list
 		for ( var v=0, l=variants.length; v < l; ++v)
 		{
 			var variant = variants[v];
-			
-			
-			// Types : 
+
+
+			// Types :
 			// loop through types Array and create our subFolder list
 			for ( var t=0, q=types.length; t < q; ++t)
 			{
@@ -206,10 +206,10 @@ var getDestinationGlobs = function( brand, types, variants, languages, prefix, s
 				var glob = gulp.dest( destination ) ;
 				destinations.push( glob );
 			}
-			
+
 		}
-		
-		
+
+
 	}
 	return destinations;
 };
@@ -226,15 +226,15 @@ var getDestinationPaths = function( brand, types, variants, languages, prefix, s
 	for ( var z=0, p=languages.length; z < p; ++z)
 	{
 		var language = languages[z];
-		
+
 		// Variants :
 		// loop through variants Array and create our subFolder list
 		for ( var v=0, l=variants.length; v < l; ++v)
 		{
 			var variant = variants[v];
-			
-			
-			// Types : 
+
+
+			// Types :
 			// loop through types Array and create our subFolder list
 			for ( var t=0, q=types.length; t < q; ++t)
 			{
@@ -242,43 +242,43 @@ var getDestinationPaths = function( brand, types, variants, languages, prefix, s
 				// ( brand, type, variant, language, prefix, suffix, seperator )
 				var destination = parent.length ? parent + '/' : '';
 				destination += getFolder( brand, type, variant, language, prefix, suffix, seperator ) + '/' + subFolder;
-				
+
 				destinations.push( destination );
 			}
-			
+
 		}
-		
-		
+
+
 	}
 	return destinations;
 };
 
 ///////////////////////////////////////////////////////////////////////////////////
-// Detemine the file 
+// Detemine the file
 ///////////////////////////////////////////////////////////////////////////////////
 var determineDataFromFilename = function( path, options, seperator )
 {
 	// let us split by multiple seperators including the user defined one...
 	//var seperators 		= [ '\.', '\-', '\_' ];//
 	var seperators 		= [ '.','\\-' ];//,'\\-'
-	
+
 	// check to see if seperator is specified and is not in our seperators....
 	if ( seperators.indexOf(seperator) === -1 ) seperators.push( seperator );
-	
+
 	//var divider 		= "/(?:"+seperators+")+/";
 	//var divider 		= "(?:"+ seperators.join('|') +")+";
 	//var reg 			= new RegExp( seperators.join('|'), 'g' );
 	var reg 			= new RegExp('[' + seperators.join('') + ']+', 'g');
-	
+
 	// extrapolate the file name from the glob
 	// this replace simply removes the file extension
 	var data 			= {};
 	var filename 		= path.replace(REMOVER, "");
 	var parts 			= filename.split( reg );
 	var count 			= 0;
-	
+
 	data.type 			= parts[ count ];
-	
+
 	// check to see if we have any language files specified...
 	if ( parts.length > 1 )
 	{
@@ -288,49 +288,85 @@ var determineDataFromFilename = function( path, options, seperator )
 		data.language = '';
 		data.variant = '';
 	}
-	
+
 	return data;
 };
 
+///////////////////////////////////////////////////////////////////////////////////
+// ASC -> a - b; DESC -> b - a
+///////////////////////////////////////////////////////////////////////////////////
+var sortArray = function(a, b){
+  return b.length - a.length;
+};
 
-//
-// Feed this is a file name and it will return the type, variant and language as an object
+///////////////////////////////////////////////////////////////////////////////////
+// Feed this is a file name and it will return the type,
+// variant and language as an object
 // IF it can work them out...
 // IF NOT, it will just return empty object entries
+///////////////////////////////////////////////////////////////////////////////////
 var determineImageDestination = function( file, options )
 {
 	// then remove the file extension
 	var data 			= {};
 	data.name 			= file;
-	data.variant		= '';
-	data.language 		= '';
 	data.extension		= file.substr(file.lastIndexOf('.')+1);
-	
-	var sortedTypes = options.types.sort(function(a, b){
-	  return b.length - a.length; // ASC -> a - b; DESC -> b - a
-	});
-	
-	
-	// Only test for TYPE at this point...
+
+	data.variants 		= []
+	data.variant		= UNKNOWN;
+
+	data.type 			= UNKNOWN;
+	data.types 			= [];
+
+	data.language 		= UNKNOWN;
+
+	//data.hasLanguage 	= false;
+	data.hasVariant 	= false;
+	data.hasType 		= false;
+
+	// Output string for testing
+	data.toString 		= function(){
+		return 'IMAGE "' + data.name + '" has variant: ' + data.variant+ ' and type: ' + data.type;
+	};
+
+	// Test for TYPE :
+	var sortedTypes = options.types.sort( sortArray );
 	var types = sortedTypes.join("|");
-	// We want it to consider the uppercase variants too
-	var regex = new RegExp(types,'ig');	// i for ignore case, g for global match
-	
-	var test = regex.test( file );
-	if ( test ) 
+	var typeRegex = new RegExp(types,'ig');	// i for ignore case, g for global match
+
+	var typeTest = typeRegex.test( file );
+	if ( typeTest )
 	{
-		var match = file.match( regex );
+		var typeMatch = file.match( typeRegex );
 		// At least one match
 		//console.log( "MATCH " , match );
-		data.match = true;
-		// determine match...
-		data.type = match[0];
+		data.hasType = true;
+		data.type = typeMatch[0];
+		data.types = typeMatch;
 	}else{
 		//console.log( "NON-MATCH " + file );
-		data.match = false;
-		data.type = 'unknown';
 	}
-	
+
+	// Test for VARIANT :
+	var sortedVariants = options.variants.sort( sortArray );
+	var variants = sortedVariants.join("|");
+	var variantRegex = new RegExp(variants,'ig');	// i for ignore case, g for global match
+
+	var variantTest = variantRegex.test( file );
+	if ( variantTest )
+	{
+		var variantMatch = file.match( variantRegex );
+		// At least one match
+		data.hasVariant = true;
+		data.variant = variantMatch[0];
+		data.variants = variantMatch;
+	}else{
+		//console.log( "NON-MATCH " + file );
+	}
+
+	// TODO :
+	// Test for LANGUAGE :
+
 	return data;
 };
 

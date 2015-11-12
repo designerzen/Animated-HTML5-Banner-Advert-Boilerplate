@@ -12,18 +12,20 @@
 // They also crash iPad 1 browsers 100% of the time.
 // Since Chrome-windows doesn't currently anti-alias WOFFs,
 // SVG can be replaced right after the EOT
-// NB. (old IE needs EOT first or will break)
+// NB. (<IE8 needs EOT first or will break)
+// NB. You can delete the two eot sources if not targetting IE8
 @font-face {
 	font-family: @font-regular-name;
-	src: url( '@{path-fonts}@{font-regular-filename}.eot');
-	src: url( '@{path-fonts}@{font-regular-filename}.eot?#iefix') format('embedded-opentype'),
-	url( ~'@{path-fonts}@{font-regular-filename}.woff') format('woff'),
-	url( ~'@{path-fonts}@{font-regular-filename}.ttf') format('truetype'),
-	url( ~'@{path-fonts}@{font-regular-filename}.svg#@{font-regular-filename}') format('svg');
+	src:url( '@{path-fonts}@{font-regular-filename}.eot');
+	src:url( '@{path-fonts}@{font-regular-filename}.eot?#iefix') format('embedded-opentype'),
+		url( ~'@{path-fonts}@{font-regular-filename}.woff') format('woff'),
+		url( ~'@{path-fonts}@{font-regular-filename}.ttf') format('truetype'),
+		url( ~'@{path-fonts}@{font-regular-filename}.svg#@{font-regular-filename}') format('svg');
 	font-weight: normal;
 	font-style: normal;
+	font-stretch: normal;
+	//unicode-range: U+0020-2212;
 }
-
 
 // Force SVG font on webit browsers :
 // If you can afford the SVG font face, uncomment the following if you want

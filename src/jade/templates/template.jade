@@ -1,8 +1,8 @@
-//- This file is editable and all changes will get copied into your template files  
+//- This file is editable and all changes will get copied into your template files
 //- when 'gulp scaffold' is run
 //- Please check out the Jade Language References at the following URL
 //- http://jade-lang.com/reference/doctype/
-//- Tabs are very important in Jade! 
+//- Tabs are very important in Jade!
 //- If your editor has a 'view special characters' option - enable it!
 
 //- The following are replaced in your actual templates
@@ -21,16 +21,16 @@ extends partials/base.jade
 block content
 
 	#variant.#{type}
-	
+
 		#first.frame
 			header
 				h1
 				h2
-				
+
 			//- You can omit the src parameter if the asset is going to be dynamically added
 			img.bg( src="img/jpg/bg_#{type}.png", width="#{width}", height="#{height}" )
 			img#logo( src="img/png/logo_#{type}.png" )
-			
+
 		#second.frame
 
 		#third.frame
@@ -40,6 +40,9 @@ block content
 		#fifth.frame
 			.cta
 				a#button( title="Go", href='#' ) Call To Action
-				
+
 block scripts
-	script(src='http://cdn.flashtalking.com/frameworks/js/api/2/8/html5API.js')
+	script(src="https://cdn.flashtalking.com/frameworks/js/gsap/1.17.0/plugins/CSSPlugin.min.js")
+	script(src="https://cdn.flashtalking.com/frameworks/js/gsap/1.17.0/easing/EasePack.min.js")
+	script(src="https://cdn.flashtalking.com/frameworks/js/gsap/1.17.0/TweenLite.min.js")
+	script(src="http://cdn.flashtalking.com/frameworks/js/api/2/9/html5API.js")
