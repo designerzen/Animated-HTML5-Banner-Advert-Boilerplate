@@ -8,9 +8,7 @@ With a few simple changes, html and css are easy to modify and leverage Jade and
 
 It uses the [Gulp](www.github.com) infrastructure to build and create templates for your projects as well as creating deliverable zip files with everything ready and set up built right in.
 
-Contains full versions of [Type Rendering Mix](http://typerendering.com/)
-
-This is a fully working version that has been used in over 250 campaigns already! 
+For instructions on how to use, please check out the [Wiki](https://github.com/designerzen/Animated-HTML5-Banner-Advert-Boilerplate/wiki)
 
 
 ##Requirements##
