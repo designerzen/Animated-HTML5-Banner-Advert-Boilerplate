@@ -8,9 +8,7 @@ With a few simple changes, html and css are easy to modify and leverage Jade and
 
 It uses the [Gulp](www.github.com) infrastructure to build and create templates for your projects as well as creating deliverable zip files with everything ready and set up built right in.
 
-Contains full versions of [Type Rendering Mix](http://typerendering.com/)
-
-This is a fully working version that has been used in over 250 campaigns already! 
+For instructions on how to use, please check out the [Wiki](https://github.com/designerzen/Animated-HTML5-Banner-Advert-Boilerplate/wiki)
 
 
 ##Requirements##
@@ -22,6 +20,11 @@ After installing NodeJS on your machine,
 In a Command Prompt :
 
 > sudo npm install
+
+or on Windows,
+
+> npm install 
+
 
 This will create a folder called "node_modules" which inside will contain all of this project's dependencies.
 
@@ -35,76 +38,11 @@ Which should bring up a little help message with the available options.
 
 _If you cannot see this_, try doing a **fresh clone of this repo** and retrying the installation steps.
 
-Also, you may find an answer to your problems in the **FAQ** below.
-
-###To Create templates###
-You should really start here, with the built in template system. This creates a series of Jade files that just require personalisation of content - ready for adding in your animated elements.
-
-Firstly _ensure that you have editted the config.json_ with your appropriate settings.
-Pay close attention to types (remove any that don't apply) and variants...
-And add as many variants as you wish (these are the duplicate templates named accordingly)
-
-Types are the required sizes for the campaign. You can use any of the following :
-
-##Generic##
-```
-"banner", 
-"halfBanner", 
-"halfPage", 
-"leaderboard", 
-"mpu", 
-"skyscraper", 
-"verticalBanner", 
-"wideSkyscraper
-```
-
-##Mobiles##
-```
-"mobileBanner",
-"mobileMpu",
-"mobileLeaderboard",
-```
-
-##Expandables##
-```
-"expandableLeaderboard",
-"expandableMpu",
-"expandableSkyscraper",
-"expandableWideSkyscraper",
-"expandableHalfPage",
-"expandableBanner",
-"expandableVerticalBanner",
-"expandableHalfBanner",
-"expandableBanner",
-"expandableMpu",
-"expandableLeaderboard"
-```
-
-Variants can be anything you want but primarily are useful for creating language variants
-
-> eg. 'en', 'th', 'hk', 'de'
-
-If you have common elements on all of your pages, you can edit the **template.jade partial** as these will be cloned into your templates. 
-
-You can use the shortcut **#{type}** wherever you want to have type specific elements (mpu/skyscraper/banner etc).
-The shortcuts **#{width}** and **#{height}** are also available if you wish to use them!
-
-Then run :
-
-> gulp scaffold
-
-to create both jade template files for adding in your content, and a project manifest for each size.
-
-NB. if you just want jade (templates) or javascript manifests
-
-> gulp templates
-
-> gulp manifest
-
+Also, you may find an answer to your problems in the **FAQ** in the [Wiki](https://github.com/designerzen/Animated-HTML5-Banner-Advert-Boilerplate/wiki).
 
 ##Configuration##
-All of the settings can be set by altering the parameters in the config.json file.
-You may use various styles of comments within this file (although json itself does not allow them - these are stripped off before compilation).
+All of the settings can be set by altering the parameters in the options.json file.
+You may use various styles of comments within this file.
 
 There is internal documentation directly next to the parameters that you can set. 
 
@@ -112,7 +50,7 @@ You should not have to change the dimensions in the sizes object unless you are 
 
 
 ##To Develop##
-To aid in the rapid development of campaigns, there are a number of _time saving features_ and _helpers_ available to help shape your CSS and HTML.
+To aid in the rapid development of campaigns, there are a number of _time saving features_ and _helpers_ available to shape your CSS and HTML.
 
 Once you have created your templates, you can manually change each one as is relevant for that variant. 
 
@@ -124,30 +62,7 @@ The scaffold task would then create Jade files for each language and size.
 You can then open the hk variant for example, and update the copy to the Chinese language. 
 
 
-#####Less#####
-```
-src/less
-```
-There are a few helper mixins in the src/less/helpers.less file such as
 
-```
-.x(50) 						which once compiled becomes left:50px;
-.y(50) 						which once compiled becomes top:50px;
-
-.size(150px) 				which when compiled becomes width:150px; height:150px;
-.size(150px,75px)			which when compiled becomes width:150px; height:75px;
-
-.w( 50px )					which when compiled becomes width:50px;
-.h( 75px )					which when compiled becomes height:75px;
-
-.position( x, y )
-.position( top, right, bottom, left )
-.position( top, right, bottom, left, z-index )
-
-.user-select()				prevents textfields being selectable for example
-
-.clearfix() 				inserts the clear-fix hack for clearing floating elements
-```
 
 
 #####Jade####
@@ -188,14 +103,14 @@ UTIL.removeClass( element, className )  Remove a class (if it exists) from a nam
 
 ###To Build For _Testing_###
 
-> gulp build
+> gulp debug
 
 
 ###To Compile For Release to _Creatives_###
 
 This creates a minified version that allows creatives to test the varieties easily while retaining a single folder structure
 
-> gulp compile
+> gulp build
 
 
 ###To Compile For _Distribution_###
@@ -216,28 +131,6 @@ _eg. Kittens-mpu-a.zip_
 Uploading your advert to agencies usually requires a zip file with the campaign inside - these are those files.
 
 
-###Troubleshooting###
-**Q.** There are no html files in my build or dist folders!
-
-**A.** Be sure to have run the templater with ```gulp template first```, or at least create jade files in the jade folder that extends the base.jade partial with the same name as your campaign
-
-
-
-**Q.** Config task seems to be failing... it can't find the config.json file?
-
-**A.** Delete the node_modules folder and then run npm install again. This sometimes happens if the dependencies have not fully resolved, yet no error message may be shown.
-
-
-
-**Q.** Getting errors about things not being found when running node
-
-**A.** Weirdness in that the modules do not get added to dependencies so run, so delete node_modules folder then re-run installation steps.
-
-
-
-**Q.** Error while running **distribute**
-
-**A.** Sometimes (in Windows) node will fail to delete a folder due to Explorer keeping certain files in it's cached memory (such as thumbs.db). If you encounter this, try and close down any app that uses those files then re-run the dist task.
 
 
 ---
